@@ -1,0 +1,529 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Check, Plus, Trash2, Timer, Flame, Trophy, 
+  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown 
+} from 'lucide-react';
+import { api } from '../services/api';
+import { sound } from '../utils/sound';
+import RestTimer from '../components/RestTimer';
+
+export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout }) {
+  const [sessionName, setSessionName] = useState(workoutData?.nombre || 'Entrenamiento del Día');
+  const [exercises, setExercises] = useState([]);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [isTimerOpen, setIsTimerOpen] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(90);
+  const [previousRecords, setPreviousRecords] = useState({}); // { ejercicio_id: [series] }
+  const [showAddExerciseModal, setShowAddExerciseModal] = useState(false);
+  const [catalogEjercicios, setCatalogEjercicios] = useState([]);
+  const [muscleFilter, setMuscleFilter] = useState('Todos');
+  const [searchFilter, setSearchFilter] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  // Inicializar ejercicios de la rutina seleccionada o sesión libre
+  useEffect(() => {
+    if (workoutData?.ejercicios && workoutData.ejercicios.length > 0) {
+      const initialExercises = workoutData.ejercicios.map((ej) => {
+        const numSeries = ej.series_objetivo || 3;
+        const seriesList = [];
+        for (let i = 1; i <= numSeries; i++) {
+          seriesList.push({
+            numero_serie: i,
+            peso_kg: '',
+            repeticiones: '',
+            rpe: '',
+            completada: false,
+          });
+        }
+        return {
+          ejercicio_id: ej.ejercicio_id,
+          nombre: ej.nombre,
+          grupo_muscular: ej.grupo_muscular,
+          descanso_segundos: ej.descanso_segundos || 90,
+          reps_objetivo: ej.reps_objetivo || '8-12',
+          series: seriesList,
+          notas: '',
+        };
+      });
+      setExercises(initialExercises);
+      // Cargar marcas anteriores
+      initialExercises.forEach((e) => fetchPreviousRecord(e.ejercicio_id));
+    }
+
+    // Cargar catálogo para agregar ejercicios sobre la marcha
+    api.getEjercicios().then(setCatalogEjercicios).catch(console.error);
+  }, [workoutData]);
+
+  // Cronómetro general de la sesión
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setElapsedSeconds((prev) => prev + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchPreviousRecord = async (ejercicioId) => {
+    try {
+      const lastSeries = await api.getUltimoRegistroEjercicio(ejercicioId);
+      if (lastSeries && lastSeries.length > 0) {
+        setPreviousRecords((prev) => ({ ...prev, [ejercicioId]: lastSeries }));
+      }
+    } catch (e) {
+      console.warn("No previous record", e);
+    }
+  };
+
+  const handleToggleSet = (exIdx, setIdx) => {
+    const ex = exercises[exIdx];
+    const set = ex.series[setIdx];
+    const newStatus = !set.completada;
+
+    const updated = [...exercises];
+    updated[exIdx].series[setIdx].completada = newStatus;
+    setExercises(updated);
+
+    if (newStatus) {
+      sound.playCheck();
+      if (navigator.vibrate) navigator.vibrate(50);
+      // Abrir temporizador con el descanso fijado para este ejercicio
+      setTimerSeconds(ex.descanso_segundos || 90);
+      setIsTimerOpen(true);
+    }
+  };
+
+  const handleUpdateSetField = (exIdx, setIdx, field, value) => {
+    const updated = [...exercises];
+    updated[exIdx].series[setIdx][field] = value;
+    setExercises(updated);
+  };
+
+  const handleAddSet = (exIdx) => {
+    const updated = [...exercises];
+    const currentSets = updated[exIdx].series;
+    const lastSet = currentSets[currentSets.length - 1];
+    currentSets.push({
+      numero_serie: currentSets.length + 1,
+      peso_kg: lastSet?.peso_kg || '',
+      repeticiones: lastSet?.repeticiones || '',
+      rpe: '',
+      completada: false,
+    });
+    setExercises(updated);
+  };
+
+  const handleRemoveSet = (exIdx, setIdx) => {
+    const updated = [...exercises];
+    updated[exIdx].series = updated[exIdx].series.filter((_, idx) => idx !== setIdx);
+    // Renumerar
+    updated[exIdx].series.forEach((s, idx) => {
+      s.numero_serie = idx + 1;
+    });
+    setExercises(updated);
+  };
+
+  const handleAddExerciseFromCatalog = (ej) => {
+    const newEx = {
+      ejercicio_id: ej.id,
+      nombre: ej.nombre,
+      grupo_muscular: ej.grupo_muscular,
+      descanso_segundos: 90,
+      reps_objetivo: '8-12',
+      series: [
+        { numero_serie: 1, peso_kg: '', repeticiones: '', rpe: '', completada: false },
+        { numero_serie: 2, peso_kg: '', repeticiones: '', rpe: '', completada: false },
+        { numero_serie: 3, peso_kg: '', repeticiones: '', rpe: '', completada: false },
+      ],
+      notas: '',
+    };
+    setExercises((prev) => [...prev, newEx]);
+    fetchPreviousRecord(ej.id);
+    setShowAddExerciseModal(false);
+  };
+
+  const handleRemoveExercise = (exIdx) => {
+    setExercises((prev) => prev.filter((_, idx) => idx !== exIdx));
+  };
+
+  const handleMoveLiveExercise = (exIdx, direction) => {
+    const targetIdx = exIdx + direction;
+    if (targetIdx < 0 || targetIdx >= exercises.length) return;
+    setExercises((prev) => {
+      const copy = [...prev];
+      const temp = copy[exIdx];
+      copy[exIdx] = copy[targetIdx];
+      copy[targetIdx] = temp;
+      return copy;
+    });
+  };
+
+  const handleSaveWorkout = async () => {
+    const completedSeries = [];
+    exercises.forEach((ex) => {
+      ex.series.forEach((s) => {
+        if (s.completada || (parseFloat(s.peso_kg) > 0 && parseInt(s.repeticiones) > 0)) {
+          completedSeries.push({
+            ejercicio_id: ex.ejercicio_id,
+            numero_serie: s.numero_serie,
+            peso_kg: parseFloat(s.peso_kg) || 0,
+            repeticiones: parseInt(s.repeticiones) || 0,
+            rpe: parseFloat(s.rpe) || null,
+            completada: true,
+            notas: s.notas || null,
+          });
+        }
+      });
+    });
+
+    if (completedSeries.length === 0) {
+      alert("Por favor completa al menos una serie con peso y repeticiones.");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const payload = {
+        nombre: sessionName,
+        dia_rutina_id: workoutData?.dia_rutina_id || null,
+        duracion_segundos: elapsedSeconds,
+        series: completedSeries,
+      };
+
+      const result = await api.createSesion(payload);
+      
+      // Si hubo algún PR, reproducir sonido de fanfarria
+      const hasPR = result.series?.some((s) => s.es_pr);
+      if (hasPR) {
+        sound.playPRCelebration();
+      }
+
+      onFinishWorkout(result);
+    } catch (e) {
+      alert("Error al guardar la sesión: " + e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const formatDuration = (secs) => {
+    const mins = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${mins}:${s < 10 ? '0' : ''}${s}`;
+  };
+
+  const filteredCatalog = catalogEjercicios.filter((e) => {
+    const matchesGroup = muscleFilter === 'Todos' || e.grupo_muscular === muscleFilter;
+    const matchesSearch = e.nombre.toLowerCase().includes(searchFilter.toLowerCase());
+    return matchesGroup && matchesSearch;
+  });
+
+  return (
+    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 space-y-5 pb-32">
+      {/* Top Bar Entrenamiento */}
+      <div className="sticky top-0 z-30 bg-slate-950/90 backdrop-blur-md -mx-3 px-3 py-3 border-b border-slate-800/80 flex items-center justify-between gap-2">
+        <button
+          onClick={onCancelWorkout}
+          className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          title="Salir del entrenamiento"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+
+        <div className="text-center flex-1 min-w-0">
+          <input
+            type="text"
+            value={sessionName}
+            onChange={(e) => setSessionName(e.target.value)}
+            className="bg-transparent text-center font-black text-base md:text-lg text-white border-b border-transparent focus:border-sky-500 focus:outline-none w-full truncate"
+          />
+          <div className="flex items-center justify-center gap-2 text-xs font-mono text-emerald-400 font-semibold mt-0.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            {formatDuration(elapsedSeconds)}
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            setTimerSeconds(90);
+            setIsTimerOpen(true);
+          }}
+          className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-sky-400 hover:bg-slate-800 text-xs font-bold"
+        >
+          <Timer className="w-4 h-4" />
+          <span className="hidden sm:inline">Cronómetro</span>
+        </button>
+      </div>
+
+      {/* Lista de Ejercicios */}
+      {exercises.length === 0 ? (
+        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 text-center space-y-4">
+          <Flame className="w-12 h-12 text-amber-400 mx-auto" />
+          <div>
+            <h3 className="font-bold text-lg text-white">Sesión Libre</h3>
+            <p className="text-sm text-slate-400 mt-1">Añade los ejercicios que vas a realizar hoy.</p>
+          </div>
+          <button
+            onClick={() => setShowAddExerciseModal(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-500 text-slate-950 font-bold text-sm shadow-lg shadow-sky-500/20"
+          >
+            <Plus className="w-4 h-4 stroke-[3]" /> Añadir Ejercicio
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {exercises.map((ex, exIdx) => {
+            const lastLog = previousRecords[ex.ejercicio_id];
+            return (
+              <div
+                key={exIdx}
+                className="bg-slate-900/90 border border-slate-800/90 rounded-3xl p-4 sm:p-5 space-y-4 shadow-xl"
+              >
+                {/* Header Ejercicio */}
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-md bg-sky-500/10 text-sky-400 text-[11px] font-bold uppercase tracking-wider border border-sky-500/20">
+                        {ex.grupo_muscular}
+                      </span>
+                      <span className="text-xs text-slate-400 font-mono">
+                        Objetivo: {ex.reps_objetivo} reps
+                      </span>
+                    </div>
+                    <h3 className="font-black text-white text-base sm:text-lg mt-1">{ex.nombre}</h3>
+
+                    {/* Referencia Anterior */}
+                    {lastLog && lastLog.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-xs text-amber-400/90 mt-1 font-mono font-medium">
+                        <Flame className="w-3.5 h-3.5" />
+                        <span>
+                          Última vez: {lastLog.map((s) => `${s.peso_kg}kg×${s.repeticiones}`).join(' • ')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <div className="flex flex-col gap-0.5">
+                      <button
+                        type="button"
+                        disabled={exIdx === 0}
+                        onClick={() => handleMoveLiveExercise(exIdx, -1)}
+                        className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-20 transition-colors"
+                        title="Mover ejercicio arriba"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={exIdx === exercises.length - 1}
+                        onClick={() => handleMoveLiveExercise(exIdx, 1)}
+                        className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-20 transition-colors"
+                        title="Mover ejercicio abajo"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => handleRemoveExercise(exIdx)}
+                      className="text-slate-600 hover:text-rose-400 p-2 rounded-xl hover:bg-rose-500/10 transition-colors ml-1"
+                      title="Eliminar ejercicio de la sesión"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Tabla de Series */}
+                <div className="space-y-2">
+                  {/* Encabezados de Columna */}
+                  <div className="grid grid-cols-12 gap-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 px-2">
+                    <span className="col-span-2 text-center">Serie</span>
+                    <span className="col-span-3 text-center">Anterior</span>
+                    <span className="col-span-3 text-center">Kg</span>
+                    <span className="col-span-2 text-center">Reps</span>
+                    <span className="col-span-2 text-center">Hecho</span>
+                  </div>
+
+                  {/* Filas de Series */}
+                  {ex.series.map((set, setIdx) => {
+                    const prevSet = lastLog && lastLog[setIdx];
+                    return (
+                      <div
+                        key={setIdx}
+                        className={`grid grid-cols-12 gap-2 items-center p-2 rounded-2xl transition-all border ${
+                          set.completada
+                            ? 'bg-emerald-950/20 border-emerald-500/30'
+                            : 'bg-slate-950/60 border-slate-800/80'
+                        }`}
+                      >
+                        {/* Número Serie */}
+                        <div className="col-span-2 text-center font-bold text-sm font-mono text-slate-300">
+                          {set.numero_serie}
+                        </div>
+
+                        {/* Marca Anterior */}
+                        <div className="col-span-3 text-center text-xs font-mono text-slate-400 truncate">
+                          {prevSet ? `${prevSet.peso_kg}kg × ${prevSet.repeticiones}` : '-'}
+                        </div>
+
+                        {/* Input Peso */}
+                        <div className="col-span-3">
+                          <input
+                            type="number"
+                            step="0.5"
+                            inputMode="decimal"
+                            placeholder="0"
+                            value={set.peso_kg}
+                            onChange={(e) => handleUpdateSetField(exIdx, setIdx, 'peso_kg', e.target.value)}
+                            className="w-full bg-slate-900 border border-slate-700/80 focus:border-sky-400 rounded-xl py-2 px-1 text-center font-black font-mono text-white text-base focus:outline-none"
+                          />
+                        </div>
+
+                        {/* Input Reps */}
+                        <div className="col-span-2">
+                          <input
+                            type="number"
+                            inputMode="numeric"
+                            placeholder="0"
+                            value={set.repeticiones}
+                            onChange={(e) => handleUpdateSetField(exIdx, setIdx, 'repeticiones', e.target.value)}
+                            className="w-full bg-slate-900 border border-slate-700/80 focus:border-sky-400 rounded-xl py-2 px-1 text-center font-black font-mono text-white text-base focus:outline-none"
+                          />
+                        </div>
+
+                        {/* Check Button */}
+                        <div className="col-span-2 flex justify-center">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSet(exIdx, setIdx)}
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                              set.completada
+                                ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/25 scale-105'
+                                : 'bg-slate-800 text-slate-500 hover:text-slate-300 hover:bg-slate-700'
+                            }`}
+                          >
+                            <Check className={`w-5 h-5 stroke-[3] ${set.completada ? 'stroke-slate-950' : ''}`} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Botón Añadir Serie */}
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="button"
+                    onClick={() => handleAddSet(exIdx)}
+                    className="flex items-center gap-1.5 text-xs font-bold text-sky-400 hover:text-sky-300 bg-sky-500/10 px-3 py-1.5 rounded-xl border border-sky-500/20 transition-all"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Añadir Serie
+                  </button>
+
+                  {ex.series.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSet(exIdx, ex.series.length - 1)}
+                      className="text-slate-500 hover:text-rose-400 text-xs px-2 py-1"
+                    >
+                      Quitar última
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Botones Inferiores de Acción */}
+      <div className="space-y-3 pt-2">
+        <button
+          type="button"
+          onClick={() => setShowAddExerciseModal(true)}
+          className="w-full py-3.5 rounded-2xl border-2 border-dashed border-slate-800 hover:border-sky-500/50 bg-slate-900/40 hover:bg-sky-500/5 text-slate-300 hover:text-sky-400 font-bold text-sm flex items-center justify-center gap-2 transition-all"
+        >
+          <Plus className="w-4 h-4 stroke-[3]" /> Añadir Ejercicio a la Sesión
+        </button>
+
+        <button
+          type="button"
+          disabled={saving}
+          onClick={handleSaveWorkout}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-base shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all active:scale-98 disabled:opacity-50"
+        >
+          <Save className="w-5 h-5 fill-current" />
+          {saving ? 'Guardando...' : 'Finalizar y Guardar Entrenamiento'}
+        </button>
+      </div>
+
+      {/* Modal Agregar Ejercicio sobre la marcha */}
+      {showAddExerciseModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-lg shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-lg text-white">Añadir Ejercicio</h3>
+              <button
+                onClick={() => setShowAddExerciseModal(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+              <input
+                type="text"
+                placeholder="Buscar ejercicio..."
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
+              />
+            </div>
+
+            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+              {['Todos', 'Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core'].map((group) => (
+                <button
+                  key={group}
+                  onClick={() => setMuscleFilter(group)}
+                  className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap ${
+                    muscleFilter === group
+                      ? 'bg-sky-500 text-slate-950'
+                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {group}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
+              {filteredCatalog.map((ej) => (
+                <div
+                  key={ej.id}
+                  onClick={() => handleAddExerciseFromCatalog(ej)}
+                  className="p-3 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800/80 hover:border-sky-500/40 flex items-center justify-between cursor-pointer transition-all"
+                >
+                  <div>
+                    <h4 className="font-bold text-white text-sm">{ej.nombre}</h4>
+                    <span className="text-[10px] text-sky-400 font-semibold">{ej.grupo_muscular}</span>
+                  </div>
+                  <Plus className="w-4 h-4 text-slate-400" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Temporizador de descanso flotante / modal */}
+      {isTimerOpen && (
+        <RestTimer
+          initialSeconds={timerSeconds}
+          onClose={() => setIsTimerOpen(false)}
+        />
+      )}
+    </div>
+  );
+}
