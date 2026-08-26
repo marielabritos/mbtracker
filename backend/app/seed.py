@@ -115,6 +115,32 @@ def seed_database(db: Session):
             if name in ej_map:
                 db.add(DiaEjercicio(dia_id=dia_legs.id, ejercicio_id=ej_map[name], series_objetivo=s, reps_objetivo=r, descanso_segundos=d, orden=idx))
 
+        # Rutina 2: Tren Superior (Tracción, Hombros & Bíceps)
+        rutina_pull = Rutina(
+            nombre="Tren Superior: Tracción, Hombros & Bíceps",
+            descripcion="Enfoque completo en espalda (tracción vertical y horizontal), deltoides y bíceps."
+        )
+        db.add(rutina_pull)
+        db.flush()
+
+        dia_traccion = DiaRutina(nombre="Día 1: Tracción (Espalda), Hombros y Bíceps", orden=1, rutina=rutina_pull)
+        db.add(dia_traccion)
+        db.flush()
+
+        traccion_e = [
+            ("Jalón al Pecho en Polea", 4, "8-10", 90),
+            ("Remo con Barra", 4, "8-10", 90),
+            ("Remo Unilateral con Mancuerna (Serrucho)", 3, "10-12", 60),
+            ("Press Militar con Barra / Mancuernas", 3, "8-10", 90),
+            ("Elevaciones Laterales", 4, "12-15", 60),
+            ("Pájaros / Face Pull en Polea", 3, "12-15", 60),
+            ("Curl de Bíceps con Barra Z", 3, "10-12", 60),
+            ("Curl Martillo con Mancuernas", 3, "12-15", 60)
+        ]
+        for idx, (name, s, r, d) in enumerate(traccion_e, start=1):
+            if name in ej_map:
+                db.add(DiaEjercicio(dia_id=dia_traccion.id, ejercicio_id=ej_map[name], series_objetivo=s, reps_objetivo=r, descanso_segundos=d, orden=idx))
+
         db.commit()
 
     # 3. Crear algunas sesiones históricas de ejemplo si no hay ninguna
