@@ -10,8 +10,8 @@ from app.main import app
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
-    print(f"Iniciando servidor backend MBTracker en http://127.0.0.1:{port}")
+    print(f"Iniciando servidor backend MBTracker en http://0.0.0.0:{port}")
     print(f"Documentación OpenAPI Swagger en http://127.0.0.1:{port}/docs")
-    config = uvicorn.Config(app, host="127.0.0.1", port=port, log_level="info")
+    config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="info")
     server = uvicorn.Server(config)
     asyncio.run(server.serve())
