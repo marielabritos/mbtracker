@@ -309,6 +309,16 @@ export const api = {
     }
   },
 
+  resetRutinasToOfficial: async () => {
+    try {
+      localStorage.removeItem('mbtracker_rutinas');
+      localStorage.removeItem('mbtracker_ejercicios');
+    } catch (e) {}
+    setStored('rutinas', DEFAULT_RUTINAS);
+    setStored('ejercicios', DEFAULT_EJERCICIOS);
+    return DEFAULT_RUTINAS;
+  },
+
   createRutina: async (data) => {
     const current = getStored('rutinas', DEFAULT_RUTINAS);
     const nuevaLocal = {

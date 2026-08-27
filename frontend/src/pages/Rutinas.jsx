@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, Trash2, Edit3, ChevronDown, ChevronUp, Dumbbell, 
-  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, Calendar, CheckCircle2, Save, Sparkles, Eye, Info, RefreshCw 
+  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, Calendar, CheckCircle2, Save, Sparkles, Eye, Info, RefreshCw, RotateCcw 
 } from 'lucide-react';
 import { api } from '../services/api';
 import ExerciseModal from '../components/ExerciseModal';
@@ -256,6 +256,23 @@ export default function Rutinas({ onStartWorkout }) {
     }
   };
 
+  const handleResetRutinas = async () => {
+    if (!confirm("¿Deseas reparar y restablecer las rutinas oficiales limpias? Esto eliminará cualquier ejercicio duplicado y restaurará la estructura correcta.")) return;
+    try {
+      setLoading(true);
+      const data = await api.resetRutinasToOfficial();
+      setRutinas(data);
+      const ejercicios = await api.getEjercicios();
+      setCatalogEjercicios(ejercicios);
+      if (data.length > 0) setExpandedRutina(data[0].id);
+      showToast("✓ Rutinas reparadas y limpias sin duplicados");
+    } catch (e) {
+      alert("Error al restablecer rutinas: " + e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSaveRutina = async (e) => {
     if (e) e.preventDefault();
     if (!formRutina.nombre.trim()) return alert("Por favor ingresa un nombre para la rutina");
@@ -342,13 +359,25 @@ export default function Rutinas({ onStartWorkout }) {
           <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Mis Rutinas</h2>
           <p className="text-sm text-slate-400">Organiza, edita y planifica tus ciclos de entrenamiento</p>
         </div>
-        <button
-          onClick={handleOpenCreateModal}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm shadow-lg shadow-sky-500/20 transition-all active:scale-95"
-        >
-          <Plus className="w-4 h-4 stroke-[3]" />
-          Nueva Rutina
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleResetRutinas}
+            className="flex items-center gap-1.5 px-3 py-2.5 rounded-2xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-bold transition-all shadow-md active:scale-95"
+            title="Limpiar ejercicios duplicados y restablecer rutinas oficiales limpias"
+          >
+            <RotateCcw className="w-3.5 h-3.5 text-sky-400" />
+            <span className="hidden sm:inline">Reparar / Limpiar Rutinas</span>
+          </button>
+
+          <button
+            onClick={handleOpenCreateModal}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm shadow-lg shadow-sky-500/20 transition-all active:scale-95"
+          >
+            <Plus className="w-4 h-4 stroke-[3]" />
+            Nueva Rutina
+          </button>
+        </div>
       </div>
 
       {/* Lista de Rutinas */}
