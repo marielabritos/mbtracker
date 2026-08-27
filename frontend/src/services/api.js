@@ -330,6 +330,7 @@ export const api = {
     const deletedIds = getStored('deleted_rutina_ids', []);
     setStored('deleted_rutina_ids', deletedIds.filter(x => x !== newId));
 
+    const catalog = getStored('ejercicios', DEFAULT_EJERCICIOS);
     const current = getStored('rutinas', DEFAULT_RUTINAS);
     const nuevaLocal = {
       ...data,
@@ -339,12 +340,15 @@ export const api = {
         ...d,
         id: Date.now() + dIdx + 1,
         orden: dIdx + 1,
-        ejercicios: (d.ejercicios || []).map((e, eIdx) => ({
-          ...e,
-          id: Date.now() + dIdx * 100 + eIdx + 1,
-          orden: eIdx + 1,
-          ejercicio: e.ejercicio || DEFAULT_EJERCICIOS.find(x => x.id === e.ejercicio_id) || { nombre: 'Ejercicio', grupo_muscular: 'General' }
-        }))
+        ejercicios: (d.ejercicios || []).map((e, eIdx) => {
+          const ejObj = e.ejercicio || catalog.find(x => x.id === e.ejercicio_id) || { id: e.ejercicio_id, nombre: 'Ejercicio', grupo_muscular: 'General' };
+          return {
+            ...e,
+            id: Date.now() + dIdx * 100 + eIdx + 1,
+            orden: eIdx + 1,
+            ejercicio: ejObj
+          };
+        })
       }))
     };
 
@@ -362,6 +366,7 @@ export const api = {
     const deletedIds = getStored('deleted_rutina_ids', []);
     setStored('deleted_rutina_ids', deletedIds.filter(x => x !== parseInt(id)));
 
+    const catalog = getStored('ejercicios', DEFAULT_EJERCICIOS);
     const current = getStored('rutinas', DEFAULT_RUTINAS);
     const updatedList = current.map(r => {
       if (r.id === parseInt(id)) {
@@ -370,14 +375,17 @@ export const api = {
           ...data,
           dias: (data.dias || []).map((d, dIdx) => ({
             ...d,
-            id: d.id || Date.now() + dIdx,
+            id: d.id || Date.now() + dIdx + 1,
             orden: dIdx + 1,
-            ejercicios: (d.ejercicios || []).map((e, eIdx) => ({
-              ...e,
-              id: e.id || Date.now() + eIdx,
-              orden: eIdx + 1,
-              ejercicio: e.ejercicio || DEFAULT_EJERCICIOS.find(x => x.id === e.ejercicio_id) || { nombre: 'Ejercicio', grupo_muscular: 'General' }
-            }))
+            ejercicios: (d.ejercicios || []).map((e, eIdx) => {
+              const ejObj = e.ejercicio || catalog.find(x => x.id === e.ejercicio_id) || { id: e.ejercicio_id, nombre: 'Ejercicio', grupo_muscular: 'General' };
+              return {
+                ...e,
+                id: e.id || Date.now() + dIdx * 100 + eIdx + 1,
+                orden: eIdx + 1,
+                ejercicio: ejObj
+              };
+            })
           }))
         };
       }

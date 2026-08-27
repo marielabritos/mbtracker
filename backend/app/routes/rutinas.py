@@ -75,8 +75,11 @@ def actualizar_rutina(rutina_id: int, rutina_in: RutinaCreate, db: Session = Dep
     rutina.duracion_estimada_minutos = rutina_in.duracion_estimada_minutos or 50
     rutina.activa = rutina_in.activa
 
-    # Borrar días anteriores y reemplazarlos
-    db.query(DiaRutina).filter(DiaRutina.rutina_id == rutina_id).delete()
+    # Borrar ejercicios y días anteriores de forma segura
+    dias_anteriores = db.query(DiaRutina).filter(DiaRutina.rutina_id == rutina_id).all()
+    for d in dias_anteriores:
+        db.query(DiaEjercicio).filter(DiaEjercicio.dia_id == d.id).delete()
+        db.delete(d)
     db.flush()
 
     for dia_in in rutina_in.dias:

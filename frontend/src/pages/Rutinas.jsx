@@ -277,18 +277,6 @@ export default function Rutinas({ onStartWorkout }) {
     if (e) e.preventDefault();
     if (!formRutina.nombre.trim()) return alert("Por favor ingresa un nombre para la rutina");
 
-    // Guardar cambios en nombres de ejercicios si fueron editados inline
-    for (const dia of formRutina.dias) {
-      for (const ej of dia.ejercicios) {
-        if (ej.ejercicio?.nombre && ej.ejercicio_id) {
-          api.updateEjercicio(ej.ejercicio_id, {
-            nombre: ej.ejercicio.nombre,
-            grupo_muscular: ej.ejercicio.grupo_muscular || 'General'
-          }).catch(() => {});
-        }
-      }
-    }
-
     const payload = {
       nombre: formRutina.nombre,
       descripcion: formRutina.descripcion,
@@ -304,17 +292,20 @@ export default function Rutinas({ onStartWorkout }) {
           reps_objetivo: String(e.reps_objetivo || "8-12"),
           descanso_segundos: parseInt(e.descanso_segundos) || 90,
           orden: eIdx + 1,
-          notas: e.notas || null
+          notas: e.notas || null,
+          ejercicio: e.ejercicio
         }))
       }))
     };
 
     try {
       if (editingRutinaId) {
-        await api.updateRutina(editingRutinaId, payload);
+        const updated = await api.updateRutina(editingRutinaId, payload);
+        setRutinas(prev => prev.map(r => r.id === editingRutinaId ? (updated || { ...r, ...payload }) : r));
         showToast("✓ Rutina actualizada y guardada correctamente");
       } else {
-        await api.createRutina(payload);
+        const created = await api.createRutina(payload);
+        setRutinas(prev => [created, ...prev]);
         showToast("✓ Nueva rutina creada con éxito");
       }
       setIsModalOpen(false);
