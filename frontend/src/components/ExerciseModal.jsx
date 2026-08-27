@@ -140,72 +140,25 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
           </form>
         ) : (
           <>
-            {/* Selector de Modo de Visualización (Video Real YouTube vs Animación 60 FPS) */}
-            <div className="flex items-center justify-center gap-1 p-1 bg-slate-950 rounded-2xl border border-slate-800">
-              <button
-                type="button"
-                onClick={() => setViewMode('animation')}
-                className={`flex-1 py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                  viewMode === 'animation'
-                    ? 'bg-sky-500 text-slate-950 shadow-md'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <Zap className="w-3.5 h-3.5" />
-                <span>Animación 60 FPS</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setViewMode('video')}
-                className={`flex-1 py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                  viewMode === 'video'
-                    ? 'bg-rose-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <Play className="w-3.5 h-3.5 fill-current" />
-                <span>Video Real (YouTube)</span>
-              </button>
-            </div>
-
-            {/* Render según modo */}
-            {viewMode === 'animation' ? (
+            {/* Reproductor Biomecánico 60 FPS en Vivo */}
+            <div className="space-y-3">
               <AnimatedExercisePlayer
                 exerciseName={exercise.nombre}
                 muscleGroup={exercise.grupo_muscular}
                 animationType={visualData.animacion_tipo}
               />
-            ) : (
-              <div className="space-y-3">
-                <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl aspect-video w-full flex flex-col items-center justify-center">
-                  {visualData.youtube_id ? (
-                    <iframe
-                      title={`Video ${exercise.nombre}`}
-                      src={`https://www.youtube.com/embed/${visualData.youtube_id}?rel=0&modestbranding=1&playsinline=1`}
-                      className="w-full h-full border-0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <div className="aspect-video flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2">
-                      <Play className="w-10 h-10 text-rose-500 fill-rose-500" />
-                      <p className="text-xs font-semibold">Toca el botón inferior para abrir la técnica completa en YouTube.</p>
-                    </div>
-                  )}
-                </div>
 
-                <a
-                  href={visualData.youtube_id ? `https://www.youtube.com/watch?v=${visualData.youtube_id}` : `https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.nombre + ' tecnica explicacion gym')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-rose-600/25 active:scale-98"
-                >
-                  <Play className="w-4 h-4 fill-current" />
-                  <span>▶️ Ver Video en Pantalla Completa / App de YouTube</span>
-                </a>
-              </div>
-            )}
+              {/* Botón de Videos Reales en YouTube (Búsqueda Directa en Vivo) */}
+              <a
+                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.nombre + ' como hacer tecnica correcta gimnasio')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-rose-600/25 active:scale-98"
+              >
+                <Play className="w-4 h-4 fill-current" />
+                <span>🔴 Ver Tutoriales en Video Real en YouTube HD</span>
+              </a>
+            </div>
 
             {/* Músculos Involucrados */}
             <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-3.5 space-y-2">
