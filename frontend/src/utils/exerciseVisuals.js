@@ -1,9 +1,9 @@
-// Base de datos de Demostraciones Visuales con técnica, IDs de YouTube HD y activación biomecánica para todos los ejercicios
+// Base de datos de Demostraciones Visuales con GIFs reales en bucle, técnica y activación biomecánica para todos los ejercicios
 
 export const EXERCISE_VISUALS = {
   // --- PECHO ---
   "Press de Banca Plano con Barra": {
-    youtube_id: "rT7DgCr-3pg",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/BARBELL-BENCH-PRESS.gif",
     animacion_tipo: "bench_press",
     musculo_principal: "Pectoral Mayor (Medio e Inferior)",
     musculos_secundarios: ["Deltoides Anterior", "Tríceps Braquial"],
@@ -15,7 +15,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al bajar la barra; exhala al empujar hacia arriba."
   },
   "Press de Banca Plano con Mancuernas": {
-    youtube_id: "VmB1G1K7v94",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Press.gif",
     animacion_tipo: "bench_press",
     musculo_principal: "Pectoral Mayor (Mayor rango de movimiento)",
     musculos_secundarios: ["Deltoides Anterior", "Tríceps"],
@@ -26,7 +26,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al descender; exhala al empujar arriba."
   },
   "Press Inclinado con Mancuernas": {
-    youtube_id: "8iPEnn-ltC8",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Press.gif",
     animacion_tipo: "bench_press",
     musculo_principal: "Pectoral Superior (Clavicular)",
     musculos_secundarios: ["Deltoides Anterior", "Tríceps"],
@@ -38,7 +38,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al bajar; exhala al empujar arriba."
   },
   "Aperturas en Polea (Cruces)": {
-    youtube_id: "taI4XduLp4M",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Crossover.gif",
     animacion_tipo: "bench_press",
     musculo_principal: "Pectoral Mayor (Aislamiento)",
     musculos_secundarios: ["Deltoides Anterior"],
@@ -49,7 +49,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al abrir; exhala al juntar las manos."
   },
   "Flexiones de pecho (Push-ups)": {
-    youtube_id: "IODxDxX7oi4",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Push-Up.gif",
     animacion_tipo: "bench_press",
     musculo_principal: "Pectoral y Tríceps",
     musculos_secundarios: ["Core", "Deltoides Anterior"],
@@ -60,7 +60,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al bajar; exhala al empujar el suelo."
   },
   "Fondos en Paralelas (Dips)": {
-    youtube_id: "2z8JmcrW-As",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dips.gif",
     animacion_tipo: "tricep_pushdown",
     musculo_principal: "Pectoral Inferior y Tríceps",
     musculos_secundarios: ["Deltoides Anterior", "Core"],
@@ -73,7 +73,7 @@ export const EXERCISE_VISUALS = {
 
   // --- ESPALDA ---
   "Jalón al Pecho en Polea": {
-    youtube_id: "CAwf7n6Luuc",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Lat-Pulldown.gif",
     animacion_tipo: "lat_pulldown",
     musculo_principal: "Dorsal Ancho (Amplitud de Espalda)",
     musculos_secundarios: ["Bíceps", "Redondo Mayor", "Trapecio"],
@@ -85,7 +85,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al bajar la barra al pecho; inhala al subir."
   },
   "Dominadas (Pull-ups)": {
-    youtube_id: "eGo4IYlbE5g",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Pull-up.gif",
     animacion_tipo: "lat_pulldown",
     musculo_principal: "Dorsales y Espalda Alta",
     musculos_secundarios: ["Bíceps", "Antebrazos", "Core"],
@@ -96,7 +96,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al subir; inhala al bajar."
   },
   "Remo con Barra": {
-    youtube_id: "FWJR5Ve8gkQ",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Bent-Over-Row.gif",
     animacion_tipo: "barbell_row",
     musculo_principal: "Dorsal Ancho y Espalda Media (Grosor)",
     musculos_secundarios: ["Bíceps", "Trapecio", "Erectores Espinales"],
@@ -108,7 +108,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al tirar hacia el torso; inhala al bajar controladamente."
   },
   "Remo Unilateral con Mancuerna (Serrucho)": {
-    youtube_id: "pYcpY20QaE8",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/One-Arm-Dumbbell-Row.gif",
     animacion_tipo: "barbell_row",
     musculo_principal: "Dorsal Ancho (Unilateral)",
     musculos_secundarios: ["Bíceps", "Deltoides Posterior"],
@@ -119,7 +119,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al subir; inhala al bajar estirando el dorsal."
   },
   "Remo en Polea Baja (Gironda)": {
-    youtube_id: "GZbfZ033f74",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Cable-Row.gif",
     animacion_tipo: "barbell_row",
     musculo_principal: "Espalda Media y Romboides",
     musculos_secundarios: ["Bíceps", "Trapecio"],
@@ -132,7 +132,7 @@ export const EXERCISE_VISUALS = {
 
   // --- PIERNAS & GLÚTEOS ---
   "Sentadilla con Barra (Back Squat)": {
-    youtube_id: "bEv6CCg2BC8",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/BARBELL-SQUAT.gif",
     animacion_tipo: "squat",
     musculo_principal: "Cuádriceps, Glúteos e Isquios",
     musculos_secundarios: ["Core", "Erectores Espinales"],
@@ -144,7 +144,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala y compacta el abdomen al bajar; exhala al subir."
   },
   "Prensa de Piernas 45°": {
-    youtube_id: "IZxyjW7MPJQ",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Press.gif",
     animacion_tipo: "squat",
     musculo_principal: "Cuádriceps y Glúteos",
     musculos_secundarios: ["Isquiosurales"],
@@ -156,7 +156,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al bajar el carro; exhala al empujar."
   },
   "Peso Muerto Rumano (RDL)": {
-    youtube_id: "_oyxCn2iSjU",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Romanian-Deadlift.gif",
     animacion_tipo: "hip_hinge",
     musculo_principal: "Isquiosurales y Glúteos",
     musculos_secundarios: ["Erectores Espinales"],
@@ -167,7 +167,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al bajar; exhala al subir apretando glúteos."
   },
   "Hip Thrust con Barra": {
-    youtube_id: "SEdqd1n01G4",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Hip-Thrust.gif",
     animacion_tipo: "hip_hinge",
     musculo_principal: "Glúteo Mayor",
     musculos_secundarios: ["Isquiosurales", "Cuádriceps"],
@@ -180,7 +180,7 @@ export const EXERCISE_VISUALS = {
 
   // --- HOMBROS ---
   "Press Militar con Barra / Mancuernas": {
-    youtube_id: "2yjwXTZQDDI",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Shoulder-Press.gif",
     animacion_tipo: "overhead_press",
     musculo_principal: "Deltoides Anterior y Medio",
     musculos_secundarios: ["Tríceps", "Trapecio", "Core"],
@@ -191,7 +191,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala abajo; exhala al empujar sobre la cabeza."
   },
   "Elevaciones Laterales": {
-    youtube_id: "3VcKaXpzqRo",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif",
     animacion_tipo: "lateral_raise",
     musculo_principal: "Deltoides Lateral (Hombros Redondos)",
     musculos_secundarios: ["Trapecio Superior"],
@@ -202,7 +202,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al subir; inhala al bajar en 2 segundos."
   },
   "Pájaros / Face Pull en Polea": {
-    youtube_id: "rep-qVOkqgk",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Face-Pull.gif",
     animacion_tipo: "lateral_raise",
     musculo_principal: "Deltoides Posterior y Manguito Rotador",
     musculos_secundarios: ["Romboides", "Trapecio"],
@@ -215,7 +215,7 @@ export const EXERCISE_VISUALS = {
 
   // --- BRAZOS ---
   "Curl de Bíceps con Barra Z": {
-    youtube_id: "ykJmrZ5v0Oo",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/EZ-Barbell-Curl.gif",
     animacion_tipo: "bicep_curl",
     musculo_principal: "Bíceps Braquial",
     musculos_secundarios: ["Braquial Anterior", "Antebrazos"],
@@ -226,7 +226,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al subir la barra; inhala al descender."
   },
   "Curl Martillo con Mancuernas": {
-    youtube_id: "zC3nLlEvin4",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Hammer-Curl.gif",
     animacion_tipo: "bicep_curl",
     musculo_principal: "Braquial y Braquiorradial (Grosor del Brazo)",
     musculos_secundarios: ["Bíceps"],
@@ -237,7 +237,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al subir; inhala al bajar."
   },
   "Extensiones de Tríceps en Polea (Cuerda)": {
-    youtube_id: "2-LAMcpzODU",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Triceps-Rope-Pushdown.gif",
     animacion_tipo: "tricep_pushdown",
     musculo_principal: "Tríceps Braquial",
     musculos_secundarios: ["Antebrazos"],
@@ -248,7 +248,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al extender los brazos; inhala al flexionar."
   },
   "Press Francés con Barra Z": {
-    youtube_id: "d_KZxkY_0aw",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Lying-EZ-Bar-Triceps-Extension.gif",
     animacion_tipo: "tricep_pushdown",
     musculo_principal: "Tríceps (Cabeza Larga)",
     musculos_secundarios: ["Antebrazos"],
@@ -261,7 +261,7 @@ export const EXERCISE_VISUALS = {
 
   // --- 🔥 CALENTAMIENTO Y MOVILIDAD ---
   "Dislocaciones de Hombro con Banda / Pica": {
-    youtube_id: "33pnA8tP-3U",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Band-Shoulder-Dislocations.gif",
     animacion_tipo: "lateral_raise",
     musculo_principal: "Movilidad de Hombros y Pectoral",
     musculos_secundarios: ["Manguito Rotador", "Trapecio"],
@@ -272,7 +272,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al subir los brazos; exhala al llevarlos atrás."
   },
   "Gato-Camello (Cat-Cow) Columna": {
-    youtube_id: "Kpms6D_uXgM",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/09/Cat-Cow-Pose.gif",
     animacion_tipo: "core_crunch",
     musculo_principal: "Movilidad de Columna y Lumbar",
     musculos_secundarios: ["Core", "Erectores Espinales"],
@@ -283,7 +283,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al arquear hacia arriba; inhala al descender el abdomen."
   },
   "Rotación Torácica en Cuadrupedia": {
-    youtube_id: "4F_Jt2N9aY8",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/09/Quadruped-Thoracic-Rotation.gif",
     animacion_tipo: "barbell_row",
     musculo_principal: "Movilidad Torácica y Dorsal",
     musculos_secundarios: ["Deltoides Posterior", "Romboides"],
@@ -294,7 +294,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al rotar hacia arriba; inhala al bajar el codo."
   },
   "Apertura de Cadera en 90/90": {
-    youtube_id: "V1yE_Fw8zX0",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2022/02/90-90-Hip-Stretch.gif",
     animacion_tipo: "squat",
     musculo_principal: "Cápsula Articular de la Cadera",
     musculos_secundarios: ["Glúteo Medio", "Aductores"],
@@ -307,7 +307,7 @@ export const EXERCISE_VISUALS = {
 
   // --- 🦵 REHABILITACIÓN Y FORTALECIMIENTO DE RODILLA ---
   "Sentadilla Isométrica en Pared (Wall Sit)": {
-    youtube_id: "y-wV4Venusw",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Wall-Sit.gif",
     animacion_tipo: "squat",
     musculo_principal: "Cuádriceps y Tendón Rotuliano",
     musculos_secundarios: ["Glúteos", "Core"],
@@ -318,7 +318,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Respiraciones diafragmáticas lentas y continuas."
   },
   "Extensiones Terminales de Rodilla con Banda (TKE)": {
-    youtube_id: "V_oXqI8_U9E",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Band-Leg-Extension.gif",
     animacion_tipo: "squat",
     musculo_principal: "Vasto Medial del Cuádriceps (Estabilidad de Rodilla)",
     musculos_secundarios: ["Isquiosurales"],
@@ -329,7 +329,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al extender la pierna; inhala al flexionar."
   },
   "Puente de Glúteo Unipodal": {
-    youtube_id: "_h303eDqYQc",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Single-Leg-Glute-Bridge.gif",
     animacion_tipo: "hip_hinge",
     musculo_principal: "Glúteo Mayor y Cadena Posterior",
     musculos_secundarios: ["Isquiotibiales", "Core"],
@@ -340,7 +340,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al elevar la pelvis; inhala al descender."
   },
   "Clamshells / Almejas con Banda": {
-    youtube_id: "v16h0R2j0Xk",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Clamshell.gif",
     animacion_tipo: "hip_hinge",
     musculo_principal: "Glúteo Medio (Prevención de Valgo de Rodilla)",
     musculos_secundarios: ["Rotadores de Cadera"],
@@ -351,7 +351,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al abrir la rodilla; inhala al cerrar."
   },
   "Monster Walk / Pasos con Banda": {
-    youtube_id: "rQy33E-61h8",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Band-Monster-Walk.gif",
     animacion_tipo: "squat",
     musculo_principal: "Glúteo Medio y Abductores",
     musculos_secundarios: ["Cuádriceps", "Tobillos"],
@@ -364,7 +364,7 @@ export const EXERCISE_VISUALS = {
 
   // --- 🦶 REHABILITACIÓN DE TOBILLO Y PIE ---
   "Dorsiflexión de Tobillo en Pared": {
-    youtube_id: "F0z37b_d_9g",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/09/Ankle-Mobility-Wall-Stretch.gif",
     animacion_tipo: "squat",
     musculo_principal: "Tendón de Aquiles y Movilidad de Tobillo",
     musculos_secundarios: ["Sóleo", "Gemelos"],
@@ -375,7 +375,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al adelantar la rodilla; inhala al regresar."
   },
   "Elevación de Gemelos Excéntrica a 1 Pierna": {
-    youtube_id: "0B331t24E_4",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Single-Leg-Calf-Raise.gif",
     animacion_tipo: "squat",
     musculo_principal: "Gemelos y Tendón de Aquiles",
     musculos_secundarios: ["Planta del pie"],
@@ -386,7 +386,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al subir; inhala durante los 4 segundos de bajada."
   },
   "Caminata en Talones y Puntas": {
-    youtube_id: "G9B_Lz_q8U4",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/09/Toe-Heel-Walk.gif",
     animacion_tipo: "squat",
     musculo_principal: "Tibial Anterior y Estabilidad de Tobillo",
     musculos_secundarios: ["Gemelos", "Fascia Plantar"],
@@ -399,7 +399,7 @@ export const EXERCISE_VISUALS = {
 
   // --- 🧘 ESTIRAMIENTOS Y VUELTA A LA CALMA ---
   "Estiramiento de Isquiosurales en Suelo": {
-    youtube_id: "1K8A0L4K1Qc",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Seated-Hamstring-Stretch.gif",
     animacion_tipo: "hip_hinge",
     musculo_principal: "Isquiosurales y Cadena Posterior",
     musculos_secundarios: ["Lumbar", "Gemelos"],
@@ -410,7 +410,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala profundo; exhala relajando y profundizando el estiramiento."
   },
   "Estiramiento de Cuádriceps y Psoas": {
-    youtube_id: "W3f90L993k0",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Standing-Quad-Stretch.gif",
     animacion_tipo: "squat",
     musculo_principal: "Cuádriceps y Flexores de Cadera",
     musculos_secundarios: ["Abdomen"],
@@ -421,7 +421,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Sostén 30 segundos respirando con calma."
   },
   "Posición del Niño (Child's Pose)": {
-    youtube_id: "2MJGg-dUKh0",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/09/Child-Pose.gif",
     animacion_tipo: "core_crunch",
     musculo_principal: "Espalda Completa, Dorsales y Cadera",
     musculos_secundarios: ["Hombros", "Columna"],
@@ -432,7 +432,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Respiraciones profundas y lentas sintiendo la apertura dorsal."
   },
   "Cobra / Extensión Lumbar Suave": {
-    youtube_id: "JDcdhTuycOI",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/09/Cobra-Pose.gif",
     animacion_tipo: "core_crunch",
     musculo_principal: "Pared Abdominal y Descompresión Lumbar",
     musculos_secundarios: ["Pectorales", "Flexores"],
@@ -443,7 +443,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al elevar el pecho; exhala relajando la tensión."
   },
   "Estiramiento Pectoral en Pared": {
-    youtube_id: "g7X4Jm7N9X0",
+    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Chest-Stretch.gif",
     animacion_tipo: "bench_press",
     musculo_principal: "Pectoral Mayor y Menor",
     musculos_secundarios: ["Deltoides Anterior", "Bíceps"],

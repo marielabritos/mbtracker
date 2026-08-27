@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { X, Info, Dumbbell, Sparkles, Check, Edit3, Activity, Play, RefreshCw, Zap } from 'lucide-react';
+import { X, Info, Dumbbell, Sparkles, Check, Edit3, Activity, Play, RefreshCw, Zap, Image as ImageIcon } from 'lucide-react';
 import { getExerciseVisual } from '../utils/exerciseVisuals';
 import AnimatedExercisePlayer from './AnimatedExercisePlayer';
 
 export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [viewMode, setViewMode] = useState('animation'); // 'animation' | 'gif'
+  const [viewMode, setViewMode] = useState('gif'); // 'gif' | 'animation'
   const [customName, setCustomName] = useState(exercise?.nombre || '');
   const [customGif, setCustomGif] = useState(exercise?.gif_url || '');
   const [customDesc, setCustomDesc] = useState(exercise?.descripcion || '');
@@ -41,7 +41,7 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 w-full max-w-lg shadow-2xl space-y-4 my-6 max-h-[92vh] overflow-y-auto">
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 w-full max-w-lg shadow-2xl space-y-4 my-auto max-h-[92vh] overflow-y-auto">
         {/* Header Modal */}
         <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-3">
           <div>
@@ -140,25 +140,93 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
           </form>
         ) : (
           <>
-            {/* Reproductor Biomecánico 60 FPS en Vivo */}
-            <div className="space-y-3">
-              <AnimatedExercisePlayer
-                exerciseName={exercise.nombre}
-                muscleGroup={exercise.grupo_muscular}
-                animationType={visualData.animacion_tipo}
-              />
-
-              {/* Botón de Videos Reales en YouTube (Búsqueda Directa en Vivo) */}
-              <a
-                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.nombre + ' como hacer tecnica correcta gimnasio')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-rose-600/25 active:scale-98"
+            {/* Selector de Modo de Visualización (GIF Real vs Animación 60 FPS) */}
+            <div className="flex items-center justify-center gap-1.5 p-1 bg-slate-950 rounded-2xl border border-slate-800">
+              <button
+                type="button"
+                onClick={() => {
+                  setViewMode('gif');
+                  setImgError(false);
+                }}
+                className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  viewMode === 'gif'
+                    ? 'bg-sky-500 text-slate-950 shadow-md'
+                    : 'text-slate-400 hover:text-white'
+                }`}
               >
-                <Play className="w-4 h-4 fill-current" />
-                <span>🔴 Ver Tutoriales en Video Real en YouTube HD</span>
-              </a>
+                <Activity className="w-3.5 h-3.5" />
+                <span>🎬 GIF Real en Bucle</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewMode('animation')}
+                className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  viewMode === 'animation'
+                    ? 'bg-sky-500 text-slate-950 shadow-md'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>⚡ Animación 60 FPS</span>
+              </button>
             </div>
+
+            {/* Visualización según modo */}
+            {viewMode === 'gif' ? (
+              <div className="space-y-3">
+                <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl aspect-video w-full flex items-center justify-center">
+                  {displayGif && !imgError ? (
+                    <img
+                      key={displayGif}
+                      src={displayGif}
+                      alt={exercise.nombre}
+                      referrerPolicy="no-referrer"
+                      crossOrigin="anonymous"
+                      onError={() => setImgError(true)}
+                      className="w-full h-full object-contain object-center bg-black"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-4">
+                      <AnimatedExercisePlayer
+                        exerciseName={exercise.nombre}
+                        muscleGroup={exercise.grupo_muscular}
+                        animationType={visualData.animacion_tipo}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Botón de Videos Reales en YouTube (Búsqueda Directa en Vivo) */}
+                <a
+                  href={`https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.nombre + ' como hacer tecnica correcta gimnasio')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-rose-600/20 active:scale-98"
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>🔴 Ver Tutoriales en Video Real en YouTube HD</span>
+                </a>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <AnimatedExercisePlayer
+                  exerciseName={exercise.nombre}
+                  muscleGroup={exercise.grupo_muscular}
+                  animationType={visualData.animacion_tipo}
+                />
+
+                <a
+                  href={`https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.nombre + ' como hacer tecnica correcta gimnasio')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-rose-600/20 active:scale-98"
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>🔴 Ver Tutoriales en Video Real en YouTube HD</span>
+                </a>
+              </div>
+            )}
 
             {/* Músculos Involucrados */}
             <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-3.5 space-y-2">
