@@ -3,49 +3,72 @@ import {
   User, Flame, Apple, Heart, Activity, Dumbbell, 
   Scale, Droplets, Sparkles, Check, Save, ChevronRight, Info, Award, Zap, Utensils 
 } from 'lucide-react';
-import { api } from '../services/api';
 
 export default function Perfil() {
   const [profile, setProfile] = useState({
     nombre: 'Mariela',
     sexo: 'femenino', // 'femenino' | 'masculino'
-    edad: 28,
-    peso_kg: 62,
-    altura_cm: 165,
+    edad: '28',
+    peso_kg: '62',
+    altura_cm: '165',
     nivel_actividad: 'moderado', // 'sedentario' | 'ligero' | 'moderado' | 'intenso'
     objetivo: 'hipertrofia', // 'definicion' | 'hipertrofia' | 'recomposicion' | 'mantenimiento'
-    preferencia_dieta: 'equilibrada' // 'equilibrada' | 'alta_proteina' | 'vegetariana'
+    preferencia_dieta: 'equilibrada'
   });
 
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [selectedMealTab, setSelectedMealTab] = useState('desayuno');
 
-  // Cargar perfil guardado
+  // Cargar perfil guardado de localStorage al montar
   useEffect(() => {
     try {
       const saved = localStorage.getItem('mbtracker_user_profile');
       if (saved) {
-        setProfile(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        setProfile({
+          nombre: parsed.nombre || 'Mariela',
+          sexo: parsed.sexo || 'femenino',
+          edad: String(parsed.edad ?? '28'),
+          peso_kg: String(parsed.peso_kg ?? '62'),
+          altura_cm: String(parsed.altura_cm ?? '165'),
+          nivel_actividad: parsed.nivel_actividad || 'moderado',
+          objetivo: parsed.objetivo || 'hipertrofia',
+          preferencia_dieta: parsed.preferencia_dieta || 'equilibrada'
+        });
       }
-    } catch (e) {}
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
-  // Guardar perfil
+  // Guardar perfil permanentemente
   const handleSaveProfile = (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     try {
       localStorage.setItem('mbtracker_user_profile', JSON.stringify(profile));
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
-    } catch (e) {
-      alert("Error al guardar perfil");
+    } catch (err) {
+      alert("Error al guardar datos");
     }
+  };
+
+  // Actualizar campo de texto o número permitiendo escribir y borrar libremente
+  const handleChange = (field, value) => {
+    setProfile(prev => {
+      const updated = { ...prev, [field]: value };
+      // Auto-guardado en segundo plano
+      try {
+        localStorage.setItem('mbtracker_user_profile', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
   };
 
   // --- CÁLCULOS METABÓLICOS Y NUTRICIONALES (Fórmula Mifflin-St Jeor) ---
   const peso = parseFloat(profile.peso_kg) || 60;
   const altura = parseFloat(profile.altura_cm) || 165;
-  const edad = parseInt(profile.edad) || 25;
+  const edad = parseFloat(profile.edad) || 25;
 
   // 1. Tasa Metabólica Basal (TMB)
   let tmb = (10 * peso) + (6.25 * altura) - (5 * edad);
@@ -54,7 +77,7 @@ export default function Perfil() {
   } else {
     tmb += 5;
   }
-  tmb = Math.round(tmb);
+  tmb = Math.max(Math.round(tmb), 1000);
 
   // 2. Gasto Energético Total Diario (TDEE) según nivel de actividad
   const factorActividad = {
@@ -77,26 +100,20 @@ export default function Perfil() {
   }
 
   // 4. Macronutrientes Diarios
-  // Proteína: 2.0g/kg para hipertrofia/definición
   const factorProteina = profile.objetivo === 'definicion' ? 2.2 : (profile.objetivo === 'hipertrofia' ? 2.0 : 1.8);
   const proteinaGramos = Math.round(peso * factorProteina);
   const proteinaCalorias = proteinaGramos * 4;
 
-  // Grasas Saludables: 0.9g/kg
   const grasasGramos = Math.round(peso * 0.9);
   const grasasCalorias = grasasGramos * 9;
 
-  // Carbohidratos: El restante calórico
   const carbohidratosCalorias = Math.max(caloriasObjetivo - proteinaCalorias - grasasCalorias, 400);
   const carbohidratosGramos = Math.round(carbohidratosCalorias / 4);
 
-  // Hidratación recomendada (Litros de agua al día)
   const aguaLitros = ((peso * 35) / 1000 + 0.6).toFixed(1);
-
-  // IMC
   const imc = (peso / ((altura / 100) * (altura / 100))).toFixed(1);
 
-  // Sugerencias de comidas según el objetivo
+  // Sugerencias de comidas adaptadas
   const mealSuggestions = {
     desayuno: {
       titulo: 'Desayuno Energético',
@@ -176,7 +193,7 @@ export default function Perfil() {
       {savedSuccess && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-slate-950 px-4 py-2.5 rounded-2xl shadow-xl font-black text-sm flex items-center gap-2 animate-bounce">
           <Check className="w-5 h-5" />
-          <span>¡Datos y plan nutricional actualizados!</span>
+          <span>¡Datos y plan nutricional guardados correctamente!</span>
         </div>
       )}
 
@@ -202,7 +219,7 @@ export default function Perfil() {
               {caloriasObjetivo} <span className="text-base font-bold text-sky-400">kcal / día</span>
             </h3>
             <p className="text-xs text-slate-400 mt-1">
-              Gasto metabólico basal: {tmb} kcal • Gasto total estimado: {tdee} kcal
+              Gasto metabólico basal: {tmb} kcal • Gasto total diario estimado: {tdee} kcal
             </p>
           </div>
 
@@ -242,12 +259,15 @@ export default function Perfil() {
         </div>
       </div>
 
-      {/* Formulario de Datos Personales */}
+      {/* Formulario de Datos Personales Totalmente Editable */}
       <form onSubmit={handleSaveProfile} className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 space-y-4 shadow-xl">
-        <h3 className="font-bold text-lg text-white flex items-center gap-2">
-          <Scale className="w-5 h-5 text-sky-400" />
-          Mis Datos Personales
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-bold text-lg text-white flex items-center gap-2">
+            <Scale className="w-5 h-5 text-sky-400" />
+            Mis Datos Personales
+          </h3>
+          <span className="text-[11px] text-slate-400">Edita y se guarda automáticamente</span>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {/* Nombre */}
@@ -256,9 +276,9 @@ export default function Perfil() {
             <input
               type="text"
               value={profile.nombre}
-              onChange={(e) => setProfile({ ...profile, nombre: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
-              required
+              onChange={(e) => handleChange('nombre', e.target.value)}
+              placeholder="Tu nombre..."
+              className="w-full bg-slate-950 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 font-bold"
             />
           </div>
 
@@ -267,7 +287,7 @@ export default function Perfil() {
             <label className="text-xs font-bold text-slate-300 block mb-1">Sexo Biológico</label>
             <select
               value={profile.sexo}
-              onChange={(e) => setProfile({ ...profile, sexo: e.target.value })}
+              onChange={(e) => handleChange('sexo', e.target.value)}
               className="w-full bg-slate-950 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
             >
               <option value="femenino">Femenino</option>
@@ -279,12 +299,12 @@ export default function Perfil() {
           <div>
             <label className="text-xs font-bold text-slate-300 block mb-1">Edad (años)</label>
             <input
-              type="number"
-              min="14"
-              max="99"
+              type="text"
+              inputMode="numeric"
               value={profile.edad}
-              onChange={(e) => setProfile({ ...profile, edad: parseInt(e.target.value) || 25 })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 font-mono"
+              onChange={(e) => handleChange('edad', e.target.value)}
+              placeholder="Ej. 28"
+              className="w-full bg-slate-950 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 font-mono font-bold"
             />
           </div>
 
@@ -292,13 +312,12 @@ export default function Perfil() {
           <div>
             <label className="text-xs font-bold text-slate-300 block mb-1">Peso Actual (kg)</label>
             <input
-              type="number"
-              step="0.5"
-              min="30"
-              max="250"
+              type="text"
+              inputMode="decimal"
               value={profile.peso_kg}
-              onChange={(e) => setProfile({ ...profile, peso_kg: parseFloat(e.target.value) || 60 })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 font-mono font-bold"
+              onChange={(e) => handleChange('peso_kg', e.target.value)}
+              placeholder="Ej. 62.5"
+              className="w-full bg-slate-950 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 font-mono font-black text-sky-400"
             />
           </div>
 
@@ -306,12 +325,12 @@ export default function Perfil() {
           <div>
             <label className="text-xs font-bold text-slate-300 block mb-1">Altura (cm)</label>
             <input
-              type="number"
-              min="100"
-              max="230"
+              type="text"
+              inputMode="numeric"
               value={profile.altura_cm}
-              onChange={(e) => setProfile({ ...profile, altura_cm: parseInt(e.target.value) || 165 })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 font-mono"
+              onChange={(e) => handleChange('altura_cm', e.target.value)}
+              placeholder="Ej. 165"
+              className="w-full bg-slate-950 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 font-mono font-bold"
             />
           </div>
 
@@ -320,7 +339,7 @@ export default function Perfil() {
             <label className="text-xs font-bold text-slate-300 block mb-1">Actividad Física</label>
             <select
               value={profile.nivel_actividad}
-              onChange={(e) => setProfile({ ...profile, nivel_actividad: e.target.value })}
+              onChange={(e) => handleChange('nivel_actividad', e.target.value)}
               className="w-full bg-slate-950 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
             >
               <option value="sedentario">Sedentario (Poco o nada)</option>
@@ -342,10 +361,10 @@ export default function Perfil() {
             ].map((obj) => (
               <div
                 key={obj.id}
-                onClick={() => setProfile({ ...profile, objetivo: obj.id })}
+                onClick={() => handleChange('objetivo', obj.id)}
                 className={`p-3 rounded-2xl border cursor-pointer transition-all ${
                   profile.objetivo === obj.id
-                    ? 'bg-sky-500/15 border-sky-400 text-white shadow-md'
+                    ? 'bg-sky-500/20 border-sky-400 text-white shadow-lg'
                     : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
                 }`}
               >
@@ -362,7 +381,7 @@ export default function Perfil() {
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm shadow-xl shadow-emerald-500/20 active:scale-95 transition-all"
           >
             <Save className="w-4 h-4 fill-current" />
-            Guardar y Recalcular Nutrición
+            Guardar Cambios
           </button>
         </div>
       </form>
