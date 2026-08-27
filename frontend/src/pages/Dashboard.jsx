@@ -6,70 +6,72 @@ import {
 import { api } from '../services/api';
 import ExerciseModal from '../components/ExerciseModal';
 
+const PROTOCOLS = {
+  calentamiento: {
+    key: 'calentamiento',
+    icon: '🔥',
+    nombre: '🔥 Calentamiento & Movilidad Articular',
+    descripcion: 'Movilidad escapular, columna y apertura de caderas para preparar el cuerpo.',
+    tag: '4 Ejercicios • ~5-8 min',
+    badgeColor: 'text-amber-400 border-amber-500/30 bg-amber-500/10',
+    ejercicios: [
+      { ejercicio_id: 28, nombre: 'Dislocaciones de Hombro con Banda / Pica', grupo_muscular: 'Calentamiento', reps_objetivo: '15 reps', descanso_segundos: 30 },
+      { ejercicio_id: 29, nombre: 'Gato-Camello (Cat-Cow) Columna', grupo_muscular: 'Calentamiento', reps_objetivo: '12 reps', descanso_segundos: 30 },
+      { ejercicio_id: 30, nombre: 'Rotación Torácica en Cuadrupedia', grupo_muscular: 'Calentamiento', reps_objetivo: '10/lado', descanso_segundos: 30 },
+      { ejercicio_id: 31, nombre: 'Apertura de Cadera en 90/90', grupo_muscular: 'Calentamiento', reps_objetivo: '10 reps', descanso_segundos: 30 },
+    ]
+  },
+  rodilla: {
+    key: 'rodilla',
+    icon: '🦵',
+    nombre: '🦵 Rehabilitación de Rodilla & Piernas',
+    descripcion: 'Fortalece el tendón rotuliano, activa el vasto medial y estabiliza cadera.',
+    tag: '5 Ejercicios • ~10-12 min',
+    badgeColor: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+    ejercicios: [
+      { ejercicio_id: 32, nombre: 'Sentadilla Isométrica en Pared (Wall Sit)', grupo_muscular: 'Rehabilitación', reps_objetivo: '45s', descanso_segundos: 45 },
+      { ejercicio_id: 33, nombre: 'Extensiones Terminales de Rodilla con Banda (TKE)', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 45 },
+      { ejercicio_id: 34, nombre: 'Puente de Glúteo Unipodal', grupo_muscular: 'Rehabilitación', reps_objetivo: '12/lado', descanso_segundos: 45 },
+      { ejercicio_id: 35, nombre: 'Clamshells / Almejas con Banda', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 45 },
+      { ejercicio_id: 36, nombre: 'Monster Walk / Pasos con Banda', grupo_muscular: 'Rehabilitación', reps_objetivo: '20 pasos', descanso_segundos: 45 },
+    ]
+  },
+  tobillo: {
+    key: 'tobillo',
+    icon: '🦶',
+    nombre: '🦶 Rehabilitación de Tobillo & Pie',
+    descripcion: 'Mejora la dorsiflexión, previene esguinces y fortalece tendón de Aquiles.',
+    tag: '3 Ejercicios • ~8 min',
+    badgeColor: 'text-sky-400 border-sky-500/30 bg-sky-500/10',
+    ejercicios: [
+      { ejercicio_id: 37, nombre: 'Dorsiflexión de Tobillo en Pared', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 30 },
+      { ejercicio_id: 38, nombre: 'Elevación de Gemelos Excéntrica a 1 Pierna', grupo_muscular: 'Rehabilitación', reps_objetivo: '12/lado', descanso_segundos: 45 },
+      { ejercicio_id: 39, nombre: 'Caminata en Talones y Puntas', grupo_muscular: 'Rehabilitación', reps_objetivo: '40 pasos', descanso_segundos: 30 },
+    ]
+  },
+  estiramientos: {
+    key: 'estiramientos',
+    icon: '🧘',
+    nombre: '🧘 Estiramientos & Vuelta a la Calma',
+    descripcion: 'Descompresión de columna, flexibilidad de isquios, cuádriceps y pecho.',
+    tag: '5 Ejercicios • ~8-10 min',
+    badgeColor: 'text-purple-400 border-purple-500/30 bg-purple-500/10',
+    ejercicios: [
+      { ejercicio_id: 40, nombre: 'Estiramiento de Isquiosurales en Suelo', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+      { ejercicio_id: 41, nombre: 'Estiramiento de Cuádriceps y Psoas', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+      { ejercicio_id: 42, nombre: 'Posición del Niño (Child\'s Pose)', grupo_muscular: 'Estiramientos', reps_objetivo: '45s', descanso_segundos: 30 },
+      { ejercicio_id: 43, nombre: 'Cobra / Extensión Lumbar Suave', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+      { ejercicio_id: 44, nombre: 'Estiramiento Pectoral en Pared', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+    ]
+  }
+};
+
 export default function Dashboard({ onStartWorkout, onNavigateTab }) {
   const [stats, setStats] = useState(null);
   const [rutinas, setRutinas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const PROTOCOLS = {
-    calentamiento: {
-      key: 'calentamiento',
-      icon: '🔥',
-      nombre: '🔥 Calentamiento & Movilidad Articular',
-      descripcion: 'Movilidad escapular, columna y apertura de caderas para preparar el cuerpo.',
-      tag: '4 Ejercicios • ~5-8 min',
-      badgeColor: 'text-amber-400 border-amber-500/30 bg-amber-500/10',
-      ejercicios: [
-        { ejercicio_id: 28, nombre: 'Dislocaciones de Hombro con Banda / Pica', grupo_muscular: 'Calentamiento', reps_objetivo: '15 reps', descanso_segundos: 30 },
-        { ejercicio_id: 29, nombre: 'Gato-Camello (Cat-Cow) Columna', grupo_muscular: 'Calentamiento', reps_objetivo: '12 reps', descanso_segundos: 30 },
-        { ejercicio_id: 30, nombre: 'Rotación Torácica en Cuadrupedia', grupo_muscular: 'Calentamiento', reps_objetivo: '10/lado', descanso_segundos: 30 },
-        { ejercicio_id: 31, nombre: 'Apertura de Cadera en 90/90', grupo_muscular: 'Calentamiento', reps_objetivo: '10 reps', descanso_segundos: 30 },
-      ]
-    },
-    rodilla: {
-      key: 'rodilla',
-      icon: '🦵',
-      nombre: '🦵 Rehabilitación de Rodilla & Piernas',
-      descripcion: 'Fortalece el tendón rotuliano, activa el vasto medial y estabiliza cadera.',
-      tag: '5 Ejercicios • ~10-12 min',
-      badgeColor: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
-      ejercicios: [
-        { ejercicio_id: 32, nombre: 'Sentadilla Isométrica en Pared (Wall Sit)', grupo_muscular: 'Rehabilitación', reps_objetivo: '45s', descanso_segundos: 45 },
-        { ejercicio_id: 33, nombre: 'Extensiones Terminales de Rodilla con Banda (TKE)', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 45 },
-        { ejercicio_id: 34, nombre: 'Puente de Glúteo Unipodal', grupo_muscular: 'Rehabilitación', reps_objetivo: '12/lado', descanso_segundos: 45 },
-        { ejercicio_id: 35, nombre: 'Clamshells / Almejas con Banda', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 45 },
-        { ejercicio_id: 36, nombre: 'Monster Walk / Pasos con Banda', grupo_muscular: 'Rehabilitación', reps_objetivo: '20 pasos', descanso_segundos: 45 },
-      ]
-    },
-    tobillo: {
-      key: 'tobillo',
-      icon: '🦶',
-      nombre: '🦶 Rehabilitación de Tobillo & Pie',
-      descripcion: 'Mejora la dorsiflexión, previene esguinces y fortalece tendón de Aquiles.',
-      tag: '3 Ejercicios • ~8 min',
-      badgeColor: 'text-sky-400 border-sky-500/30 bg-sky-500/10',
-      ejercicios: [
-        { ejercicio_id: 37, nombre: 'Dorsiflexión de Tobillo en Pared', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 30 },
-        { ejercicio_id: 38, nombre: 'Elevación de Gemelos Excéntrica a 1 Pierna', grupo_muscular: 'Rehabilitación', reps_objetivo: '12/lado', descanso_segundos: 45 },
-        { ejercicio_id: 39, nombre: 'Caminata en Talones y Puntas', grupo_muscular: 'Rehabilitación', reps_objetivo: '40 pasos', descanso_segundos: 30 },
-      ]
-    },
-    estiramientos: {
-      key: 'estiramientos',
-      icon: '🧘',
-      nombre: '🧘 Estiramientos & Vuelta a la Calma',
-      descripcion: 'Descompresión de columna, flexibilidad de isquios, cuádriceps y pecho.',
-      tag: '5 Ejercicios • ~8-10 min',
-      badgeColor: 'text-purple-400 border-purple-500/30 bg-purple-500/10',
-      ejercicios: [
-        { ejercicio_id: 40, nombre: 'Estiramiento de Isquiosurales en Suelo', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
-        { ejercicio_id: 41, nombre: 'Estiramiento de Cuádriceps y Psoas', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
-        { ejercicio_id: 42, nombre: 'Posición del Niño (Child\'s Pose)', grupo_muscular: 'Estiramientos', reps_objetivo: '45s', descanso_segundos: 30 },
-        { ejercicio_id: 43, nombre: 'Cobra / Extensión Lumbar Suave', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
-        { ejercicio_id: 44, nombre: 'Estiramiento Pectoral en Pared', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
-      ]
-    }
-  };
-
+  const [selectedRutinaId, setSelectedRutinaId] = useState('');
+  const [selectedDiaId, setSelectedDiaId] = useState('');
   const [activeProtocolModal, setActiveProtocolModal] = useState(null);
   const [selectedExerciseIds, setSelectedExerciseIds] = useState(new Set());
   const [selectedVisualExercise, setSelectedVisualExercise] = useState(null);
@@ -147,11 +149,11 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
       dia_rutina_id: dia?.id || null,
       ejercicios: dia?.ejercicios?.map(e => ({
         ejercicio_id: e.ejercicio_id,
-        nombre: e.ejercicio.nombre,
-        grupo_muscular: e.ejercicio.grupo_muscular,
-        series_objetivo: e.series_objetivo,
-        reps_objetivo: e.reps_objetivo,
-        descanso_segundos: e.descanso_segundos
+        nombre: e.ejercicio?.nombre || 'Ejercicio',
+        grupo_muscular: e.ejercicio?.grupo_muscular || 'General',
+        series_objetivo: e.series_objetivo || 3,
+        reps_objetivo: e.reps_objetivo || '8-12',
+        descanso_segundos: e.descanso_segundos || 90
       })) || []
     });
   };
