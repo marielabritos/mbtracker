@@ -177,12 +177,12 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
                 animationType={visualData.animacion_tipo}
               />
             ) : (
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl aspect-video w-full flex flex-col items-center justify-center">
                   {visualData.youtube_id ? (
                     <iframe
                       title={`Video ${exercise.nombre}`}
-                      src={`https://www.youtube-nocookie.com/embed/${visualData.youtube_id}?autoplay=1&mute=1&loop=1&playlist=${visualData.youtube_id}&controls=1&modestbranding=1&rel=0&playsinline=1`}
+                      src={`https://www.youtube.com/embed/${visualData.youtube_id}?rel=0&modestbranding=1&playsinline=1`}
                       className="w-full h-full border-0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
@@ -196,13 +196,13 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
                 </div>
 
                 <a
-                  href={`https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.nombre + ' como hacer tecnica correcta gym')}`}
+                  href={visualData.youtube_id ? `https://www.youtube.com/watch?v=${visualData.youtube_id}` : `https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.nombre + ' tecnica explicacion gym')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2.5 px-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-rose-600/20 active:scale-98"
+                  className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-rose-600/25 active:scale-98"
                 >
                   <Play className="w-4 h-4 fill-current" />
-                  <span>Ver más tutoriales y videos en YouTube HD</span>
+                  <span>▶️ Ver Video en Pantalla Completa / App de YouTube</span>
                 </a>
               </div>
             )}

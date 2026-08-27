@@ -13,6 +13,29 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive }) {
 
   return (
     <>
+      {/* Mobile Top Header */}
+      <header className="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 shadow-md">
+        <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-emerald-400 flex items-center justify-center shadow-md shadow-sky-500/20">
+            <Dumbbell className="w-4 h-4 text-slate-950 stroke-[2.5]" />
+          </div>
+          <div>
+            <h1 className="font-black text-sm text-white tracking-tight leading-none">MBTracker</h1>
+            <span className="text-[10px] text-sky-400 font-bold">Mariela Britos</span>
+          </div>
+        </div>
+
+        {isWorkoutActive && (
+          <button
+            onClick={() => setActiveTab('entrenar')}
+            className="px-2.5 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[11px] font-black flex items-center gap-1.5 animate-pulse"
+          >
+            <Play className="w-3 h-3 fill-current" />
+            <span>En vivo</span>
+          </button>
+        )}
+      </header>
+
       {/* Desktop Header Topbar */}
       <header className="hidden md:flex items-center justify-between px-8 py-4 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
