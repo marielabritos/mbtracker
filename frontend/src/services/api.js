@@ -297,15 +297,20 @@ export const api = {
 
   // --- RUTINAS ---
   getRutinas: async () => {
+    const deletedIds = getStored('deleted_rutina_ids', []);
     try {
       const data = await request('/api/rutinas');
       if (Array.isArray(data) && data.length > 0) {
-        setStored('rutinas', data);
-        return data;
+        // Filtrar cualquier rutina que el usuario haya borrado explícitamente
+        const cleanData = data.filter(r => !deletedIds.includes(r.id));
+        setStored('rutinas', cleanData);
+        return cleanData;
       }
-      return getStored('rutinas', DEFAULT_RUTINAS);
+      const local = getStored('rutinas', DEFAULT_RUTINAS);
+      return local.filter(r => !deletedIds.includes(r.id));
     } catch (e) {
-      return getStored('rutinas', DEFAULT_RUTINAS);
+      const local = getStored('rutinas', DEFAULT_RUTINAS);
+      return local.filter(r => !deletedIds.includes(r.id));
     }
   },
 
@@ -313,6 +318,7 @@ export const api = {
     try {
       localStorage.removeItem('mbtracker_rutinas');
       localStorage.removeItem('mbtracker_ejercicios');
+      localStorage.removeItem('mbtracker_deleted_rutina_ids');
     } catch (e) {}
     setStored('rutinas', DEFAULT_RUTINAS);
     setStored('ejercicios', DEFAULT_EJERCICIOS);
@@ -320,10 +326,14 @@ export const api = {
   },
 
   createRutina: async (data) => {
+    const newId = Date.now();
+    const deletedIds = getStored('deleted_rutina_ids', []);
+    setStored('deleted_rutina_ids', deletedIds.filter(x => x !== newId));
+
     const current = getStored('rutinas', DEFAULT_RUTINAS);
     const nuevaLocal = {
       ...data,
-      id: Date.now(),
+      id: newId,
       fecha_creacion: new Date().toISOString(),
       dias: (data.dias || []).map((d, dIdx) => ({
         ...d,
@@ -349,6 +359,9 @@ export const api = {
   },
 
   updateRutina: async (id, data) => {
+    const deletedIds = getStored('deleted_rutina_ids', []);
+    setStored('deleted_rutina_ids', deletedIds.filter(x => x !== parseInt(id)));
+
     const current = getStored('rutinas', DEFAULT_RUTINAS);
     const updatedList = current.map(r => {
       if (r.id === parseInt(id)) {
@@ -381,11 +394,23 @@ export const api = {
   },
 
   deleteRutina: async (id) => {
+    // 1. Guardar id en la lista negra de rutinas eliminadas
+    const deletedIds = getStored('deleted_rutina_ids', []);
+    if (!deletedIds.includes(parseInt(id))) {
+      setStored('deleted_rutina_ids', [...deletedIds, parseInt(id)]);
+    }
+
+    // 2. Eliminar del almacenamiento local
     const current = getStored('rutinas', DEFAULT_RUTINAS);
-    setStored('rutinas', current.filter(r => r.id !== parseInt(id)));
+    const filtered = current.filter(r => r.id !== parseInt(id));
+    setStored('rutinas', filtered);
+
+    // 3. Enviar borrado al backend
     try {
       await request(`/api/rutinas/${id}`, { method: 'DELETE' });
-    } catch (e) {}
+    } catch (e) {
+      console.warn("Backend delete request caught:", e);
+    }
     return { success: true };
   },
 

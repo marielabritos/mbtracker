@@ -325,13 +325,18 @@ export default function Rutinas({ onStartWorkout }) {
   };
 
   const handleDeleteRutina = async (rutinaId) => {
-    if (!confirm("¿Seguro que deseas eliminar esta rutina?")) return;
+    if (!confirm("¿Seguro que deseas eliminar esta rutina de forma permanente?")) return;
     try {
+      // 1. Eliminación visual inmediata en pantalla
+      setRutinas(prev => prev.filter(r => r.id !== rutinaId));
+      if (expandedRutina === rutinaId) setExpandedRutina(null);
+      showToast("✓ Rutina eliminada permanentemente");
+
+      // 2. Persistencia en storage y backend
       await api.deleteRutina(rutinaId);
-      showToast("Rutina eliminada");
-      loadData();
     } catch (err) {
-      alert("Error al eliminar la rutina");
+      alert("Error al eliminar la rutina: " + err.message);
+      loadData();
     }
   };
 
