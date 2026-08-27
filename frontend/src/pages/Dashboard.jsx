@@ -86,28 +86,29 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
       </div>
 
       {/* Hero: Empezar Entrenamiento */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-600 via-sky-700 to-indigo-900 p-6 md:p-8 shadow-2xl text-white">
-        <div className="relative z-10 space-y-4">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-600 via-sky-700 to-indigo-950 p-5 sm:p-7 md:p-8 shadow-2xl text-white">
+        <div className="relative z-10 space-y-4 max-w-full">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold tracking-wide uppercase text-sky-200 border border-white/15">
             <Flame className="w-3.5 h-3.5 text-amber-300" />
             Entrenamiento del Día
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4 items-center">
-            <div>
-              <h3 className="text-xl md:text-2xl font-black tracking-tight">Inicia tu rutina ahora</h3>
-              <p className="text-sky-100/80 text-sm mt-1">
-                Registra tus series en vivo, visualiza tus pesos anteriores y usa el cronómetro de descanso.
-              </p>
-            </div>
+          <div>
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-tight">Inicia tu rutina ahora</h3>
+            <p className="text-sky-100/80 text-xs sm:text-sm mt-1">
+              Registra tus series en vivo, visualiza tus pesos anteriores y usa el cronómetro de descanso.
+            </p>
+          </div>
 
-            {/* Selectores de Rutina & Día */}
-            {rutinas.length > 0 && (
-              <div className="flex flex-col sm:flex-row gap-2">
+          {/* Selectores de Rutina & Día Responsivos */}
+          {rutinas.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              <div className="space-y-1 min-w-0">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-sky-200 block">Rutina</label>
                 <select
                   value={selectedRutinaId}
                   onChange={(e) => handleRutinaChange(e.target.value)}
-                  className="bg-slate-900/80 border border-white/20 text-white rounded-2xl px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-400"
+                  className="w-full bg-slate-900/90 border border-white/20 text-white rounded-2xl px-3.5 py-3 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-400 truncate shadow-inner"
                 >
                   {rutinas.map((r) => (
                     <option key={r.id} value={r.id} className="bg-slate-900 text-white">
@@ -115,11 +116,14 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
                     </option>
                   ))}
                 </select>
+              </div>
 
+              <div className="space-y-1 min-w-0">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-sky-200 block">Día</label>
                 <select
                   value={selectedDiaId}
                   onChange={(e) => setSelectedDiaId(e.target.value)}
-                  className="bg-slate-900/80 border border-white/20 text-white rounded-2xl px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-400"
+                  className="w-full bg-slate-900/90 border border-white/20 text-white rounded-2xl px-3.5 py-3 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-400 truncate shadow-inner"
                 >
                   {rutinas
                     .find((r) => r.id === parseInt(selectedRutinaId))
@@ -130,34 +134,38 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
                     ))}
                 </select>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Badges de duración en el Dashboard */}
-            {selectedRutinaId && (
-              <div className="flex items-center gap-2 text-xs font-semibold text-sky-200">
-                <span className="bg-white/10 px-2.5 py-1 rounded-lg border border-white/15">
-                  📅 Vigencia: {rutinas.find(r => r.id === parseInt(selectedRutinaId))?.duracion_semanas || '4 semanas'}
-                </span>
-                <span className="bg-white/10 px-2.5 py-1 rounded-lg border border-white/15">
-                  ⏱️ ~{rutinas.find(r => r.id === parseInt(selectedRutinaId))?.duracion_estimada_minutos || 50} min
-                </span>
-              </div>
-            )}
-          </div>
+          {/* Badges de Duración y Tiempo */}
+          {selectedRutinaId && (
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-200 bg-black/25 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
+                <Calendar className="w-3.5 h-3.5 text-amber-300" />
+                Vigencia: {rutinas.find(r => r.id === parseInt(selectedRutinaId))?.duracion_semanas || '4 semanas'}
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-200 bg-black/25 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
+                <Clock className="w-3.5 h-3.5 text-sky-300" />
+                ~{rutinas.find(r => r.id === parseInt(selectedRutinaId))?.duracion_estimada_minutos || 50} min por sesión
+              </span>
+            </div>
+          )}
 
-          <div className="pt-2 flex flex-col sm:flex-row gap-3">
+          {/* Botones de Acción */}
+          <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
             <button
               onClick={handleStartSelected}
-              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-950 font-black text-base shadow-xl transition-all active:scale-95"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-950 font-black text-sm sm:text-base shadow-xl transition-all active:scale-95"
             >
               <Play className="w-5 h-5 fill-current text-sky-600" />
               Empezar Entrenamiento
             </button>
             <button
               onClick={handleStartQuickEmpty}
-              className="sm:hidden flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/15"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/15 transition-all"
             >
-              Sesión Libre / Sin Rutina
+              <Dumbbell className="w-4 h-4 text-sky-300" />
+              Sesión Libre (Sin Rutina)
             </button>
           </div>
         </div>
