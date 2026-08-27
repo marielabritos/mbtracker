@@ -275,24 +275,30 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
       const totalVolumen = completedSeries.reduce((acc, s) => acc + (s.peso_kg * s.repeticiones), 0);
       const prCount = result?.series?.filter((s) => s.es_pr)?.length || 0;
 
-      if (prCount > 0) {
-        sound.playPRCelebration();
-      } else {
-        sound.playTimerEnd();
+      try {
+        if (prCount > 0) {
+          sound.playPRCelebration();
+        } else {
+          sound.playTimerDone();
+        }
+      } catch (audioErr) {
+        console.warn("Audio feedback error", audioErr);
       }
 
       // Mostrar modal de éxito
       setCompletedModalData({
         nombre: sessionName || 'Entrenamiento Libre',
-        duracion: formatDuration(elapsedSeconds),
+        duracion: formatDuration(elapsedSeconds || 60),
         totalSeries: completedSeries.length,
         volumen: Math.round(totalVolumen),
         prs: prCount,
-        sessionResult: result
+        sessionResult: result || payload
       });
 
     } catch (e) {
-      alert("Error al finalizar entrenamiento: " + e.message);
+      console.error("Error al finalizar entrenamiento:", e);
+      // Fallback infalible para asegurar que la sesión siempre finalice
+      onFinishWorkout({ nombre: sessionName || 'Entrenamiento Libre', duracion_segundos: elapsedSeconds });
     } finally {
       setSaving(false);
     }

@@ -73,6 +73,11 @@ class SoundFX {
     }
   }
 
+  // Alias para finalización
+  playTimerEnd() {
+    return this.playTimerDone();
+  }
+
   // Sonido de victoria al registrar un nuevo récord personal (PR)
   playPRCelebration() {
     try {
