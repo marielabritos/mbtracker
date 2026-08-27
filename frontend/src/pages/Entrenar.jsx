@@ -215,6 +215,43 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
     setExercises((prev) => prev.filter((_, idx) => idx !== exIdx));
   };
 
+  const handleLoadPreset = (type) => {
+    let presetEjercicios = [];
+    if (type === 'calentamiento') {
+      presetEjercicios = catalogEjercicios.filter(e => e.grupo_muscular === 'Calentamiento');
+    } else if (type === 'rodilla') {
+      presetEjercicios = catalogEjercicios.filter(e => e.nombre.includes('Wall Sit') || e.nombre.includes('TKE') || e.nombre.includes('Glúteo') || e.nombre.includes('Almejas') || e.nombre.includes('Monster'));
+    } else if (type === 'tobillo') {
+      presetEjercicios = catalogEjercicios.filter(e => e.nombre.includes('Tobillo') || e.nombre.includes('Gemelos') || e.nombre.includes('Talones'));
+    } else if (type === 'estiramientos') {
+      presetEjercicios = catalogEjercicios.filter(e => e.grupo_muscular === 'Estiramientos');
+    }
+
+    if (presetEjercicios.length === 0) {
+      const allCatalog = catalogEjercicios.length > 0 ? catalogEjercicios : [];
+      presetEjercicios = allCatalog.filter(e => 
+        type === 'calentamiento' ? e.grupo_muscular === 'Calentamiento' :
+        type === 'estiramientos' ? e.grupo_muscular === 'Estiramientos' :
+        e.grupo_muscular === 'Rehabilitación'
+      );
+    }
+
+    const formatted = presetEjercicios.map((ej) => ({
+      ejercicio_id: ej.id,
+      nombre: ej.nombre,
+      grupo_muscular: ej.grupo_muscular,
+      reps_objetivo: ej.grupo_muscular === 'Estiramientos' ? '30s' : '12-15 reps',
+      descanso_segundos: 45,
+      series: [
+        { numero_serie: 1, peso_kg: '', repeticiones: ej.grupo_muscular === 'Estiramientos' ? '30s' : '12', rpe: '', completada: false },
+        { numero_serie: 2, peso_kg: '', repeticiones: ej.grupo_muscular === 'Estiramientos' ? '30s' : '12', rpe: '', completada: false },
+      ],
+      notas: '',
+    }));
+
+    setExercises(prev => [...prev, ...formatted]);
+  };
+
   const handleMoveLiveExercise = (exIdx, direction) => {
     const targetIdx = exIdx + direction;
     if (targetIdx < 0 || targetIdx >= exercises.length) return;
@@ -374,18 +411,74 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
 
       {/* Lista de Ejercicios */}
       {exercises.length === 0 ? (
-        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 text-center space-y-4">
-          <Flame className="w-12 h-12 text-amber-400 mx-auto" />
-          <div>
-            <h3 className="font-bold text-lg text-white">Sesión Libre</h3>
-            <p className="text-sm text-slate-400 mt-1">Añade los ejercicios que vas a realizar hoy.</p>
+        <div className="space-y-4">
+          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 text-center space-y-4 shadow-xl">
+            <div className="w-14 h-14 rounded-3xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto text-3xl">
+              ⚡
+            </div>
+            <div>
+              <h3 className="font-black text-xl text-white">Sesión Libre</h3>
+              <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-md mx-auto">
+                Añade ejercicios individuales del catálogo o carga un bloque completo de movilidad y salud con 1 toque.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowAddExerciseModal(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-sm shadow-lg shadow-sky-500/25 active:scale-95 transition-all"
+            >
+              <Plus className="w-4 h-4 stroke-[3]" /> Añadir Ejercicio del Catálogo
+            </button>
           </div>
-          <button
-            onClick={() => setShowAddExerciseModal(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-500 text-slate-950 font-bold text-sm shadow-lg shadow-sky-500/20 active:scale-95"
-          >
-            <Plus className="w-4 h-4 stroke-[3]" /> Añadir Ejercicio
-          </button>
+
+          {/* Bloques Rápidos de Salud y Movilidad */}
+          <div className="bg-slate-900/60 border border-slate-800/90 rounded-3xl p-4 sm:p-5 space-y-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-300">Cargar Bloque Rápido a la Sesión</h4>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <button
+                type="button"
+                onClick={() => handleLoadPreset('calentamiento')}
+                className="p-3.5 rounded-2xl bg-slate-950 hover:bg-amber-500/10 border border-slate-800 hover:border-amber-500/40 text-left transition-all active:scale-95 group"
+              >
+                <div className="text-2xl mb-1 group-hover:scale-110 transition-transform">🔥</div>
+                <div className="font-black text-xs text-white group-hover:text-amber-400">+ Calentamiento</div>
+                <div className="text-[10px] text-slate-400 mt-0.5">Movilidad articular</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleLoadPreset('rodilla')}
+                className="p-3.5 rounded-2xl bg-slate-950 hover:bg-emerald-500/10 border border-slate-800 hover:border-emerald-500/40 text-left transition-all active:scale-95 group"
+              >
+                <div className="text-2xl mb-1 group-hover:scale-110 transition-transform">🦵</div>
+                <div className="font-black text-xs text-white group-hover:text-emerald-400">+ Rehab Rodilla</div>
+                <div className="text-[10px] text-slate-400 mt-0.5">Wall sit, TKE, glúteo</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleLoadPreset('tobillo')}
+                className="p-3.5 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800 hover:border-sky-500/40 text-left transition-all active:scale-95 group"
+              >
+                <div className="text-2xl mb-1 group-hover:scale-110 transition-transform">🦶</div>
+                <div className="font-black text-xs text-white group-hover:text-sky-400">+ Rehab Tobillo</div>
+                <div className="text-[10px] text-slate-400 mt-0.5">Dorsiflexión y gemelos</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleLoadPreset('estiramientos')}
+                className="p-3.5 rounded-2xl bg-slate-950 hover:bg-purple-500/10 border border-slate-800 hover:border-purple-500/40 text-left transition-all active:scale-95 group"
+              >
+                <div className="text-2xl mb-1 group-hover:scale-110 transition-transform">🧘</div>
+                <div className="font-black text-xs text-white group-hover:text-purple-400">+ Estiramientos</div>
+                <div className="text-[10px] text-slate-400 mt-0.5">Flexibilidad y calma</div>
+              </button>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="space-y-4">

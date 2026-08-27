@@ -171,6 +171,126 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
         </div>
       </div>
 
+      {/* Sección Dedicada: Calentamiento, Rehabilitación y Estiramientos */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between px-1">
+          <div>
+            <h3 className="font-black text-lg text-white">Movilidad & Rehabilitación</h3>
+            <p className="text-xs text-slate-400">Sesiones rápidas para articulaciones, rodilla, tobillo y flexibilidad</p>
+          </div>
+          <span className="text-[11px] font-bold text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-lg border border-sky-500/20">
+            1 toque
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div 
+            onClick={() => onStartWorkout({
+              nombre: '🔥 Calentamiento & Movilidad Articular',
+              dia_rutina_id: null,
+              ejercicios: [
+                { ejercicio_id: 28, nombre: 'Dislocaciones de Hombro con Banda / Pica', grupo_muscular: 'Calentamiento', reps_objetivo: '15 reps', descanso_segundos: 30 },
+                { ejercicio_id: 29, nombre: 'Gato-Camello (Cat-Cow) Columna', grupo_muscular: 'Calentamiento', reps_objetivo: '12 reps', descanso_segundos: 30 },
+                { ejercicio_id: 30, nombre: 'Rotación Torácica en Cuadrupedia', grupo_muscular: 'Calentamiento', reps_objetivo: '10/lado', descanso_segundos: 30 },
+                { ejercicio_id: 31, nombre: 'Apertura de Cadera en 90/90', grupo_muscular: 'Calentamiento', reps_objetivo: '10 reps', descanso_segundos: 30 },
+              ]
+            })}
+            className="p-4 rounded-3xl bg-slate-900/90 border border-amber-500/30 hover:border-amber-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
+                🔥
+              </div>
+              <h4 className="font-black text-sm text-white group-hover:text-amber-400">Calentamiento</h4>
+              <p className="text-[11px] text-slate-400 mt-1 leading-snug">Hombros, columna y caderas</p>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-xs font-bold text-amber-400">
+              <span>Iniciar</span>
+              <Play className="w-3.5 h-3.5 fill-current" />
+            </div>
+          </div>
+
+          <div 
+            onClick={() => onStartWorkout({
+              nombre: '🦵 Rehabilitación y Fortalecimiento de Rodilla',
+              dia_rutina_id: null,
+              ejercicios: [
+                { ejercicio_id: 32, nombre: 'Sentadilla Isométrica en Pared (Wall Sit)', grupo_muscular: 'Rehabilitación', reps_objetivo: '45s', descanso_segundos: 45 },
+                { ejercicio_id: 33, nombre: 'Extensiones Terminales de Rodilla con Banda (TKE)', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 45 },
+                { ejercicio_id: 34, nombre: 'Puente de Glúteo Unipodal', grupo_muscular: 'Rehabilitación', reps_objetivo: '12/lado', descanso_segundos: 45 },
+                { ejercicio_id: 35, nombre: 'Clamshells / Almejas con Banda', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 45 },
+                { ejercicio_id: 36, nombre: 'Monster Walk / Pasos con Banda', grupo_muscular: 'Rehabilitación', reps_objetivo: '20 pasos', descanso_segundos: 45 },
+              ]
+            })}
+            className="p-4 rounded-3xl bg-slate-900/90 border border-emerald-500/30 hover:border-emerald-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
+                🦵
+              </div>
+              <h4 className="font-black text-sm text-white group-hover:text-emerald-400">Rehab Rodilla</h4>
+              <p className="text-[11px] text-slate-400 mt-1 leading-snug">Tendón rotuliano y glúteo medio</p>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-xs font-bold text-emerald-400">
+              <span>Iniciar</span>
+              <Play className="w-3.5 h-3.5 fill-current" />
+            </div>
+          </div>
+
+          <div 
+            onClick={() => onStartWorkout({
+              nombre: '🦶 Rehabilitación de Tobillo y Pie',
+              dia_rutina_id: null,
+              ejercicios: [
+                { ejercicio_id: 37, nombre: 'Dorsiflexión de Tobillo en Pared', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 30 },
+                { ejercicio_id: 38, nombre: 'Elevación de Gemelos Excéntrica a 1 Pierna', grupo_muscular: 'Rehabilitación', reps_objetivo: '12/lado', descanso_segundos: 45 },
+                { ejercicio_id: 39, nombre: 'Caminata en Talones y Puntas', grupo_muscular: 'Rehabilitación', reps_objetivo: '40 pasos', descanso_segundos: 30 },
+              ]
+            })}
+            className="p-4 rounded-3xl bg-slate-900/90 border border-sky-500/30 hover:border-sky-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
+                🦶
+              </div>
+              <h4 className="font-black text-sm text-white group-hover:text-sky-400">Rehab Tobillo</h4>
+              <p className="text-[11px] text-slate-400 mt-1 leading-snug">Dorsiflexión y tendón de Aquiles</p>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-xs font-bold text-sky-400">
+              <span>Iniciar</span>
+              <Play className="w-3.5 h-3.5 fill-current" />
+            </div>
+          </div>
+
+          <div 
+            onClick={() => onStartWorkout({
+              nombre: '🧘 Estiramientos & Vuelta a la Calma',
+              dia_rutina_id: null,
+              ejercicios: [
+                { ejercicio_id: 40, nombre: 'Estiramiento de Isquiosurales en Suelo', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+                { ejercicio_id: 41, nombre: 'Estiramiento de Cuádriceps y Psoas', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+                { ejercicio_id: 42, nombre: 'Posición del Niño (Child\'s Pose)', grupo_muscular: 'Estiramientos', reps_objetivo: '45s', descanso_segundos: 30 },
+                { ejercicio_id: 43, nombre: 'Cobra / Extensión Lumbar Suave', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+                { ejercicio_id: 44, nombre: 'Estiramiento Pectoral en Pared', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+              ]
+            })}
+            className="p-4 rounded-3xl bg-slate-900/90 border border-purple-500/30 hover:border-purple-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
+                🧘
+              </div>
+              <h4 className="font-black text-sm text-white group-hover:text-purple-400">Estiramientos</h4>
+              <p className="text-[11px] text-slate-400 mt-1 leading-snug">Flexibilidad y descompresión</p>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-xs font-bold text-purple-400">
+              <span>Iniciar</span>
+              <Play className="w-3.5 h-3.5 fill-current" />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Métricas / Estadísticas Rápidas */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-5 flex flex-col justify-between">
