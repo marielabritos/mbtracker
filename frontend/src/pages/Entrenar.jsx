@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Check, Plus, Trash2, Timer, Flame, Trophy, 
-  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown 
+  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown, Award, Sparkles, CheckCircle2 
 } from 'lucide-react';
 import { api } from '../services/api';
 import { sound } from '../utils/sound';
@@ -13,12 +13,22 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isTimerOpen, setIsTimerOpen] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(90);
-  const [previousRecords, setPreviousRecords] = useState({}); // { ejercicio_id: [series] }
+  const [previousRecords, setPreviousRecords] = useState({});
   const [showAddExerciseModal, setShowAddExerciseModal] = useState(false);
+  const [showCreateCustomExercise, setShowCreateCustomExercise] = useState(false);
   const [catalogEjercicios, setCatalogEjercicios] = useState([]);
   const [muscleFilter, setMuscleFilter] = useState('Todos');
   const [searchFilter, setSearchFilter] = useState('');
   const [saving, setSaving] = useState(false);
+  const [completedModalData, setCompletedModalData] = useState(null);
+
+  // Formulario nuevo ejercicio personalizado
+  const [newCustomEx, setNewCustomEx] = useState({
+    nombre: '',
+    grupo_muscular: 'Pecho',
+    equipo: 'Mancuerna',
+    descripcion: ''
+  });
 
   // Inicializar ejercicios de la rutina seleccionada o sesión libre
   useEffect(() => {
@@ -46,13 +56,20 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
         };
       });
       setExercises(initialExercises);
-      // Cargar marcas anteriores
       initialExercises.forEach((e) => fetchPreviousRecord(e.ejercicio_id));
     }
 
-    // Cargar catálogo para agregar ejercicios sobre la marcha
-    api.getEjercicios().then(setCatalogEjercicios).catch(console.error);
+    loadCatalog();
   }, [workoutData]);
+
+  const loadCatalog = async () => {
+    try {
+      const eData = await api.getEjercicios();
+      setCatalogEjercicios(eData);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   // Cronómetro general de la sesión
   useEffect(() => {
@@ -80,12 +97,18 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
 
     const updated = [...exercises];
     updated[exIdx].series[setIdx].completada = newStatus;
+    
+    // Si no se especificó repeticiones, sugerir el objetivo o 10
+    if (newStatus && !updated[exIdx].series[setIdx].repeticiones) {
+      const defaultReps = parseInt(ex.reps_objetivo) || 10;
+      updated[exIdx].series[setIdx].repeticiones = defaultReps;
+    }
+
     setExercises(updated);
 
     if (newStatus) {
       sound.playCheck();
       if (navigator.vibrate) navigator.vibrate(50);
-      // Abrir temporizador con el descanso fijado para este ejercicio
       setTimerSeconds(ex.descanso_segundos || 90);
       setIsTimerOpen(true);
     }
@@ -114,7 +137,6 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
   const handleRemoveSet = (exIdx, setIdx) => {
     const updated = [...exercises];
     updated[exIdx].series = updated[exIdx].series.filter((_, idx) => idx !== setIdx);
-    // Renumerar
     updated[exIdx].series.forEach((s, idx) => {
       s.numero_serie = idx + 1;
     });
@@ -140,6 +162,20 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
     setShowAddExerciseModal(false);
   };
 
+  const handleCreateAndAddCustomExercise = async (e) => {
+    e.preventDefault();
+    if (!newCustomEx.nombre.trim()) return alert("Por favor ingresa un nombre para el ejercicio");
+    try {
+      const created = await api.createEjercicio(newCustomEx);
+      setCatalogEjercicios(prev => [created, ...prev]);
+      handleAddExerciseFromCatalog(created);
+      setShowCreateCustomExercise(false);
+      setNewCustomEx({ nombre: '', grupo_muscular: 'Pecho', equipo: 'Mancuerna', descripcion: '' });
+    } catch (err) {
+      alert("Error al crear ejercicio: " + err.message);
+    }
+  };
+
   const handleRemoveExercise = (exIdx) => {
     setExercises((prev) => prev.filter((_, idx) => idx !== exIdx));
   };
@@ -160,12 +196,14 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
     const completedSeries = [];
     exercises.forEach((ex) => {
       ex.series.forEach((s) => {
-        if (s.completada || (parseFloat(s.peso_kg) > 0 && parseInt(s.repeticiones) > 0)) {
+        const hasWeight = parseFloat(s.peso_kg) > 0;
+        const hasReps = parseInt(s.repeticiones) > 0;
+        if (s.completada || hasWeight || hasReps) {
           completedSeries.push({
             ejercicio_id: ex.ejercicio_id,
             numero_serie: s.numero_serie,
             peso_kg: parseFloat(s.peso_kg) || 0,
-            repeticiones: parseInt(s.repeticiones) || 0,
+            repeticiones: parseInt(s.repeticiones) || (hasWeight ? 10 : 0),
             rpe: parseFloat(s.rpe) || null,
             completada: true,
             notas: s.notas || null,
@@ -174,8 +212,25 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
       });
     });
 
+    if (completedSeries.length === 0 && exercises.length > 0) {
+      // Si no marcó ninguna, marcar automáticamente las series del primer ejercicio
+      exercises.forEach((ex) => {
+        ex.series.forEach((s) => {
+          completedSeries.push({
+            ejercicio_id: ex.ejercicio_id,
+            numero_serie: s.numero_serie,
+            peso_kg: parseFloat(s.peso_kg) || 0,
+            repeticiones: parseInt(s.repeticiones) || 10,
+            rpe: null,
+            completada: true,
+            notas: null
+          });
+        });
+      });
+    }
+
     if (completedSeries.length === 0) {
-      alert("Por favor completa al menos una serie con peso y repeticiones.");
+      alert("Por favor añade al menos un ejercicio o completa una serie.");
       return;
     }
 
@@ -190,17 +245,33 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
 
       const result = await api.createSesion(payload);
       
-      // Si hubo algún PR, reproducir sonido de fanfarria
-      const hasPR = result.series?.some((s) => s.es_pr);
-      if (hasPR) {
+      const totalVolumen = completedSeries.reduce((acc, s) => acc + (s.peso_kg * s.repeticiones), 0);
+      const prCount = result.series?.filter((s) => s.es_pr).length || 0;
+
+      if (prCount > 0) {
         sound.playPRCelebration();
       }
 
-      onFinishWorkout(result);
+      // Mostrar modal de éxito
+      setCompletedModalData({
+        nombre: sessionName,
+        duracion: formatDuration(elapsedSeconds),
+        totalSeries: completedSeries.length,
+        volumen: Math.round(totalVolumen),
+        prs: prCount,
+        sessionResult: result
+      });
+
     } catch (e) {
-      alert("Error al guardar la sesión: " + e.message);
+      alert("Error al finalizar entrenamiento: " + e.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleFinishAndRedirect = () => {
+    if (completedModalData) {
+      onFinishWorkout(completedModalData.sessionResult);
     }
   };
 
@@ -217,9 +288,9 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
   });
 
   return (
-    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 space-y-5 pb-32">
+    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 space-y-5 pb-36">
       {/* Top Bar Entrenamiento */}
-      <div className="sticky top-0 z-30 bg-slate-950/90 backdrop-blur-md -mx-3 px-3 py-3 border-b border-slate-800/80 flex items-center justify-between gap-2">
+      <div className="sticky top-0 z-30 bg-slate-950/95 backdrop-blur-md -mx-3 px-3 py-3 border-b border-slate-800/90 flex items-center justify-between gap-2 shadow-lg">
         <button
           onClick={onCancelWorkout}
           className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
@@ -241,16 +312,29 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
           </div>
         </div>
 
-        <button
-          onClick={() => {
-            setTimerSeconds(90);
-            setIsTimerOpen(true);
-          }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-sky-400 hover:bg-slate-800 text-xs font-bold"
-        >
-          <Timer className="w-4 h-4" />
-          <span className="hidden sm:inline">Cronómetro</span>
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => {
+              setTimerSeconds(90);
+              setIsTimerOpen(true);
+            }}
+            className="flex items-center gap-1 p-2 sm:px-3 sm:py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-sky-400 hover:bg-slate-800 text-xs font-bold"
+            title="Cronómetro de descanso"
+          >
+            <Timer className="w-4 h-4" />
+            <span className="hidden sm:inline">Cronómetro</span>
+          </button>
+
+          <button
+            onClick={handleSaveWorkout}
+            disabled={saving}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black shadow-md shadow-emerald-500/20 active:scale-95 transition-all"
+            title="Guardar y finalizar"
+          >
+            <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
+            <span>Finalizar</span>
+          </button>
+        </div>
       </div>
 
       {/* Lista de Ejercicios */}
@@ -263,7 +347,7 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
           </div>
           <button
             onClick={() => setShowAddExerciseModal(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-500 text-slate-950 font-bold text-sm shadow-lg shadow-sky-500/20"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-500 text-slate-950 font-bold text-sm shadow-lg shadow-sky-500/20 active:scale-95"
           >
             <Plus className="w-4 h-4 stroke-[3]" /> Añadir Ejercicio
           </button>
@@ -452,72 +536,208 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
           onClick={handleSaveWorkout}
           className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-base shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all active:scale-98 disabled:opacity-50"
         >
-          <Save className="w-5 h-5 fill-current" />
+          <CheckCircle2 className="w-5 h-5 fill-current" />
           {saving ? 'Guardando...' : 'Finalizar y Guardar Entrenamiento'}
         </button>
       </div>
 
-      {/* Modal Agregar Ejercicio sobre la marcha */}
+      {/* Modal Agregar / Crear Ejercicio */}
       {showAddExerciseModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-lg shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-lg text-white">Añadir Ejercicio</h3>
+              <div>
+                <h3 className="font-bold text-lg text-white">Añadir Ejercicio</h3>
+                <p className="text-xs text-slate-400">Elige del catálogo o crea uno nuevo</p>
+              </div>
               <button
-                onClick={() => setShowAddExerciseModal(false)}
+                onClick={() => {
+                  setShowAddExerciseModal(false);
+                  setShowCreateCustomExercise(false);
+                }}
                 className="p-1.5 rounded-xl text-slate-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-              <input
-                type="text"
-                placeholder="Buscar ejercicio..."
-                value={searchFilter}
-                onChange={(e) => setSearchFilter(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
-              />
-            </div>
-
-            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-              {['Todos', 'Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core'].map((group) => (
-                <button
-                  key={group}
-                  onClick={() => setMuscleFilter(group)}
-                  className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap ${
-                    muscleFilter === group
-                      ? 'bg-sky-500 text-slate-950'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {group}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
-              {filteredCatalog.map((ej) => (
-                <div
-                  key={ej.id}
-                  onClick={() => handleAddExerciseFromCatalog(ej)}
-                  className="p-3 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800/80 hover:border-sky-500/40 flex items-center justify-between cursor-pointer transition-all"
-                >
-                  <div>
-                    <h4 className="font-bold text-white text-sm">{ej.nombre}</h4>
-                    <span className="text-[10px] text-sky-400 font-semibold">{ej.grupo_muscular}</span>
+            {/* Alternar entre Catálogo y Crear Nuevo */}
+            {!showCreateCustomExercise ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                    <input
+                      type="text"
+                      placeholder="Buscar ejercicio..."
+                      value={searchFilter}
+                      onChange={(e) => setSearchFilter(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
+                    />
                   </div>
-                  <Plus className="w-4 h-4 text-slate-400" />
+                  <button
+                    onClick={() => setShowCreateCustomExercise(true)}
+                    className="flex items-center gap-1 px-3 py-2.5 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-400 font-bold text-xs whitespace-nowrap hover:bg-sky-500/25"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> + Crear
+                  </button>
                 </div>
-              ))}
-            </div>
+
+                <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                  {['Todos', 'Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core'].map((group) => (
+                    <button
+                      key={group}
+                      onClick={() => setMuscleFilter(group)}
+                      className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap ${
+                        muscleFilter === group
+                          ? 'bg-sky-500 text-slate-950'
+                          : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {group}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
+                  {filteredCatalog.map((ej) => (
+                    <div
+                      key={ej.id}
+                      onClick={() => handleAddExerciseFromCatalog(ej)}
+                      className="p-3 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800/80 hover:border-sky-500/40 flex items-center justify-between cursor-pointer transition-all"
+                    >
+                      <div>
+                        <h4 className="font-bold text-white text-sm">{ej.nombre}</h4>
+                        <span className="text-[10px] text-sky-400 font-semibold">{ej.grupo_muscular}</span>
+                      </div>
+                      <Plus className="w-4 h-4 text-slate-400" />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              /* Formulario Crear Ejercicio Personalizado */
+              <form onSubmit={handleCreateAndAddCustomExercise} className="space-y-3 pt-1">
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">Nombre del Ejercicio</label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Press Francés con Mancuerna"
+                    value={newCustomEx.nombre}
+                    onChange={(e) => setNewCustomEx({ ...newCustomEx, nombre: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-xs font-bold text-slate-300 block mb-1">Grupo Muscular</label>
+                    <select
+                      value={newCustomEx.grupo_muscular}
+                      onChange={(e) => setNewCustomEx({ ...newCustomEx, grupo_muscular: e.target.value })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500"
+                    >
+                      {['Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core', 'Cardio'].map(g => (
+                        <option key={g} value={g}>{g}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-300 block mb-1">Equipo / Tipo</label>
+                    <select
+                      value={newCustomEx.equipo}
+                      onChange={(e) => setNewCustomEx({ ...newCustomEx, equipo: e.target.value })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500"
+                    >
+                      {['Mancuerna', 'Barra', 'Máquina', 'Polea', 'Peso Corporal'].map(eq => (
+                        <option key={eq} value={eq}>{eq}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">Notas / Instrucciones (Opcional)</label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Altura en posición 4"
+                    value={newCustomEx.descripcion}
+                    onChange={(e) => setNewCustomEx({ ...newCustomEx, descripcion: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateCustomExercise(false)}
+                    className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                  >
+                    Volver al Catálogo
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-sky-500 text-slate-950 font-bold text-xs shadow-md shadow-sky-500/20"
+                  >
+                    Guardar y Usar Ejercicio
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
 
-      {/* Temporizador de descanso flotante / modal */}
+      {/* Modal de Éxito / Celebración al Finalizar */}
+      {completedModalData && (
+        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-emerald-500/40 rounded-3xl p-6 w-full max-w-sm text-center space-y-5 shadow-2xl shadow-emerald-500/10">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/30">
+              <Check className="w-8 h-8 text-slate-950 stroke-[3]" />
+            </div>
+
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">¡Buen trabajo!</span>
+              <h3 className="text-xl font-black text-white mt-0.5">Entrenamiento Guardado</h3>
+              <p className="text-xs text-slate-400 mt-1 font-medium">{completedModalData.nombre}</p>
+            </div>
+
+            {/* Resumen Métricas */}
+            <div className="grid grid-cols-3 gap-2 p-3 bg-slate-950/80 rounded-2xl border border-slate-800">
+              <div>
+                <span className="text-[10px] text-slate-400 font-bold block uppercase">Tiempo</span>
+                <span className="text-base font-black text-white font-mono">{completedModalData.duracion}</span>
+              </div>
+              <div>
+                <span className="text-[10px] text-slate-400 font-bold block uppercase">Series</span>
+                <span className="text-base font-black text-sky-400 font-mono">{completedModalData.totalSeries}</span>
+              </div>
+              <div>
+                <span className="text-[10px] text-slate-400 font-bold block uppercase">Volumen</span>
+                <span className="text-base font-black text-emerald-400 font-mono">{completedModalData.volumen} kg</span>
+              </div>
+            </div>
+
+            {completedModalData.prs > 0 && (
+              <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center gap-2 text-amber-300 text-xs font-bold">
+                <Trophy className="w-4 h-4 text-amber-400 fill-amber-400" />
+                <span>¡Lograste {completedModalData.prs} nuevo(s) Récord(s) Personal(es)!</span>
+              </div>
+            )}
+
+            <button
+              onClick={handleFinishAndRedirect}
+              className="w-full py-3.5 rounded-2xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-sm shadow-xl shadow-sky-500/20 transition-all active:scale-95"
+            >
+              Ver en Historial
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Temporizador de descanso */}
       {isTimerOpen && (
         <RestTimer
           initialSeconds={timerSeconds}

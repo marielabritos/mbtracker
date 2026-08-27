@@ -24,6 +24,8 @@ class Rutina(Base):
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(100), nullable=False)
     descripcion = Column(Text, nullable=True)
+    duracion_semanas = Column(String(50), default="4 semanas") # Ej: 4 semanas, 6 semanas
+    duracion_estimada_minutos = Column(Integer, default=50) # Minutos por sesión
     activa = Column(Boolean, default=True)
     fecha_creacion = Column(DateTime, default=datetime.utcnow)
 

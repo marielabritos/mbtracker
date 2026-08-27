@@ -63,6 +63,8 @@ class DiaRutinaResponse(DiaRutinaBase):
 class RutinaBase(BaseModel):
     nombre: str
     descripcion: Optional[str] = None
+    duracion_semanas: Optional[str] = "4 semanas"
+    duracion_estimada_minutos: Optional[int] = 50
     activa: bool = True
 
 class RutinaCreate(RutinaBase):

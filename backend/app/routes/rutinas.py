@@ -32,6 +32,8 @@ def crear_rutina(rutina_in: RutinaCreate, db: Session = Depends(get_db)):
     nueva_rutina = Rutina(
         nombre=rutina_in.nombre,
         descripcion=rutina_in.descripcion,
+        duracion_semanas=rutina_in.duracion_semanas or "4 semanas",
+        duracion_estimada_minutos=rutina_in.duracion_estimada_minutos or 50,
         activa=rutina_in.activa
     )
     db.add(nueva_rutina)
@@ -69,6 +71,8 @@ def actualizar_rutina(rutina_id: int, rutina_in: RutinaCreate, db: Session = Dep
 
     rutina.nombre = rutina_in.nombre
     rutina.descripcion = rutina_in.descripcion
+    rutina.duracion_semanas = rutina_in.duracion_semanas or "4 semanas"
+    rutina.duracion_estimada_minutos = rutina_in.duracion_estimada_minutos or 50
     rutina.activa = rutina_in.activa
 
     # Borrar días anteriores y reemplazarlos

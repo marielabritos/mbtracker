@@ -131,6 +131,18 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
                 </select>
               </div>
             )}
+
+            {/* Badges de duración en el Dashboard */}
+            {selectedRutinaId && (
+              <div className="flex items-center gap-2 text-xs font-semibold text-sky-200">
+                <span className="bg-white/10 px-2.5 py-1 rounded-lg border border-white/15">
+                  📅 Vigencia: {rutinas.find(r => r.id === parseInt(selectedRutinaId))?.duracion_semanas || '4 semanas'}
+                </span>
+                <span className="bg-white/10 px-2.5 py-1 rounded-lg border border-white/15">
+                  ⏱️ ~{rutinas.find(r => r.id === parseInt(selectedRutinaId))?.duracion_estimada_minutos || 50} min
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">

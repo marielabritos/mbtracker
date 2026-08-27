@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, Trash2, Edit3, ChevronDown, ChevronUp, Dumbbell, 
-  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, GripVertical 
+  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, Calendar, CheckCircle2, Save, Sparkles 
 } from 'lucide-react';
 import { api } from '../services/api';
 
@@ -14,11 +14,23 @@ export default function Rutinas({ onStartWorkout }) {
   const [catalogEjercicios, setCatalogEjercicios] = useState([]);
   const [selectedMuscle, setSelectedMuscle] = useState('Todos');
   const [searchEj, setSearchEj] = useState('');
+  const [showCreateCustomExercise, setShowCreateCustomExercise] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
-  // Estado del formulario de creación / edición
+  // Formulario nuevo ejercicio personalizado
+  const [newCustomEx, setNewCustomEx] = useState({
+    nombre: '',
+    grupo_muscular: 'Pecho',
+    equipo: 'Mancuerna',
+    descripcion: ''
+  });
+
+  // Estado del formulario de creación / edición de rutina
   const [formRutina, setFormRutina] = useState({
     nombre: '',
     descripcion: '',
+    duracion_semanas: '4 semanas',
+    duracion_estimada_minutos: 50,
     dias: [
       {
         nombre: 'Día 1',
@@ -34,6 +46,11 @@ export default function Rutinas({ onStartWorkout }) {
   useEffect(() => {
     loadData();
   }, []);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(''), 3500);
+  };
 
   const loadData = async () => {
     try {
@@ -59,6 +76,8 @@ export default function Rutinas({ onStartWorkout }) {
     setFormRutina({
       nombre: '',
       descripcion: '',
+      duracion_semanas: '4 semanas',
+      duracion_estimada_minutos: 50,
       dias: [
         {
           nombre: 'Día 1',
@@ -67,6 +86,7 @@ export default function Rutinas({ onStartWorkout }) {
         }
       ]
     });
+    setShowCreateCustomExercise(false);
     setIsModalOpen(true);
   };
 
@@ -75,20 +95,23 @@ export default function Rutinas({ onStartWorkout }) {
     setFormRutina({
       nombre: rutina.nombre,
       descripcion: rutina.descripcion || '',
-      dias: rutina.dias.map((d, dIdx) => ({
+      duracion_semanas: rutina.duracion_semanas || '4 semanas',
+      duracion_estimada_minutos: rutina.duracion_estimada_minutos || 50,
+      dias: (rutina.dias || []).map((d, dIdx) => ({
         nombre: d.nombre,
         orden: dIdx + 1,
-        ejercicios: d.ejercicios.map((e, eIdx) => ({
+        ejercicios: (d.ejercicios || []).map((e, eIdx) => ({
           ejercicio_id: e.ejercicio_id,
-          ejercicio: e.ejercicio,
-          series_objetivo: e.series_objetivo,
-          reps_objetivo: e.reps_objetivo,
-          descanso_segundos: e.descanso_segundos,
+          ejercicio: e.ejercicio || catalogEjercicios.find(x => x.id === e.ejercicio_id) || { nombre: 'Ejercicio' },
+          series_objetivo: e.series_objetivo || 3,
+          reps_objetivo: e.reps_objetivo || '8-12',
+          descanso_segundos: e.descanso_segundos || 90,
           orden: eIdx + 1,
           notas: e.notas || ''
         }))
       }))
     });
+    setShowCreateCustomExercise(false);
     setIsModalOpen(true);
   };
 
@@ -122,7 +145,6 @@ export default function Rutinas({ onStartWorkout }) {
       const temp = newDias[diaIdx];
       newDias[diaIdx] = newDias[targetIdx];
       newDias[targetIdx] = temp;
-      // Re-indexar orden
       newDias.forEach((d, i) => { d.orden = i + 1; });
       return { ...prev, dias: newDias };
     });
@@ -139,7 +161,6 @@ export default function Rutinas({ onStartWorkout }) {
       const temp = exList[ejIdx];
       exList[ejIdx] = exList[targetIdx];
       exList[targetIdx] = temp;
-      // Re-indexar orden
       exList.forEach((e, i) => { e.orden = i + 1; });
       newDias[diaIdx].ejercicios = exList;
       return { ...prev, dias: newDias };
@@ -165,16 +186,32 @@ export default function Rutinas({ onStartWorkout }) {
     });
 
     setExerciseSelectorTarget(null);
+    showToast(`✓ "${ejercicio.nombre}" añadido`);
+  };
+
+  const handleCreateCustomExercise = async (e) => {
+    e.preventDefault();
+    if (!newCustomEx.nombre.trim()) return alert("Por favor ingresa el nombre del ejercicio");
+    try {
+      const created = await api.createEjercicio(newCustomEx);
+      setCatalogEjercicios(prev => [created, ...prev]);
+      handleAddExerciseToDay(created);
+      setShowCreateCustomExercise(false);
+      setNewCustomEx({ nombre: '', grupo_muscular: 'Pecho', equipo: 'Mancuerna', descripcion: '' });
+    } catch (err) {
+      alert("Error al crear ejercicio: " + err.message);
+    }
   };
 
   const handleSaveRutina = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!formRutina.nombre.trim()) return alert("Por favor ingresa un nombre para la rutina");
 
-    // Formatear payload asegurando numeración secuencial de orden
     const payload = {
       nombre: formRutina.nombre,
       descripcion: formRutina.descripcion,
+      duracion_semanas: formRutina.duracion_semanas || '4 semanas',
+      duracion_estimada_minutos: parseInt(formRutina.duracion_estimada_minutos) || 50,
       activa: true,
       dias: formRutina.dias.map((d, dIdx) => ({
         nombre: d.nombre,
@@ -193,8 +230,10 @@ export default function Rutinas({ onStartWorkout }) {
     try {
       if (editingRutinaId) {
         await api.updateRutina(editingRutinaId, payload);
+        showToast("✓ Rutina actualizada y guardada correctamente");
       } else {
         await api.createRutina(payload);
+        showToast("✓ Nueva rutina creada con éxito");
       }
       setIsModalOpen(false);
       loadData();
@@ -207,6 +246,7 @@ export default function Rutinas({ onStartWorkout }) {
     if (!confirm("¿Seguro que deseas eliminar esta rutina?")) return;
     try {
       await api.deleteRutina(rutinaId);
+      showToast("Rutina eliminada");
       loadData();
     } catch (err) {
       alert("Error al eliminar la rutina");
@@ -222,12 +262,20 @@ export default function Rutinas({ onStartWorkout }) {
   });
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 space-y-6 pb-28">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-6 space-y-6 pb-28">
+      {/* Toast Notificación */}
+      {toastMessage && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-slate-950 px-4 py-2.5 rounded-2xl shadow-xl font-black text-sm flex items-center gap-2 animate-bounce">
+          <CheckCircle2 className="w-5 h-5" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Mis Rutinas</h2>
-          <p className="text-sm text-slate-400">Crea, edita y ordena tus ejercicios y días de entreno</p>
+          <p className="text-sm text-slate-400">Organiza, edita y planifica tus ciclos de entrenamiento</p>
         </div>
         <button
           onClick={handleOpenCreateModal}
@@ -264,23 +312,33 @@ export default function Rutinas({ onStartWorkout }) {
               >
                 {/* Header Rutina */}
                 <div
-                  className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/40 transition-colors"
+                  className="p-4 sm:p-5 flex items-start sm:items-center justify-between cursor-pointer hover:bg-slate-800/40 transition-colors gap-3"
                   onClick={() => setExpandedRutina(isExpanded ? null : rutina.id)}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 font-black">
+                  <div className="flex items-start sm:items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 font-black shrink-0">
                       {rutina.dias?.length || 0}d
                     </div>
-                    <div>
-                      <h3 className="font-bold text-white text-base md:text-lg">{rutina.nombre}</h3>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-white text-base md:text-lg truncate">{rutina.nombre}</h3>
+                      
+                      {/* Badges de Duración y Tiempo */}
+                      <div className="flex flex-wrap items-center gap-2 mt-1">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                          <Calendar className="w-3 h-3" /> {rutina.duracion_semanas || '4 semanas'}
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">
+                          <Clock className="w-3 h-3" /> {rutina.duracion_estimada_minutos || 50} min / sesión
+                        </span>
+                      </div>
+
                       {rutina.descripcion && (
-                        <p className="text-xs text-slate-400 mt-0.5">{rutina.descripcion}</p>
+                        <p className="text-xs text-slate-400 mt-1 line-clamp-1">{rutina.descripcion}</p>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 sm:gap-2">
-                    {/* Botón Editar */}
+                  <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -293,7 +351,6 @@ export default function Rutinas({ onStartWorkout }) {
                       <span className="hidden sm:inline">Editar</span>
                     </button>
 
-                    {/* Botón Eliminar */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -313,7 +370,7 @@ export default function Rutinas({ onStartWorkout }) {
 
                 {/* Días y Ejercicios desplegables */}
                 {isExpanded && (
-                  <div className="border-t border-slate-800/80 p-5 space-y-4 bg-slate-950/40">
+                  <div className="border-t border-slate-800/80 p-4 sm:p-5 space-y-4 bg-slate-950/40">
                     {rutina.dias?.map((dia) => (
                       <div
                         key={dia.id}
@@ -336,13 +393,13 @@ export default function Rutinas({ onStartWorkout }) {
                                 onStartWorkout({
                                   nombre: dia.nombre,
                                   dia_rutina_id: dia.id,
-                                  ejercicios: dia.ejercicios.map((e) => ({
+                                  ejercicios: (dia.ejercicios || []).map((e) => ({
                                     ejercicio_id: e.ejercicio_id,
-                                    nombre: e.ejercicio.nombre,
-                                    grupo_muscular: e.ejercicio.grupo_muscular,
-                                    series_objetivo: e.series_objetivo,
-                                    reps_objetivo: e.reps_objetivo,
-                                    descanso_segundos: e.descanso_segundos
+                                    nombre: e.ejercicio?.nombre || 'Ejercicio',
+                                    grupo_muscular: e.ejercicio?.grupo_muscular || 'General',
+                                    series_objetivo: e.series_objetivo || 3,
+                                    reps_objetivo: e.reps_objetivo || '8-12',
+                                    descanso_segundos: e.descanso_segundos || 90
                                   }))
                                 })
                               }
@@ -395,12 +452,13 @@ export default function Rutinas({ onStartWorkout }) {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 w-full max-w-2xl shadow-2xl space-y-5 my-6 max-h-[92vh] overflow-y-auto">
+            {/* Header Modal */}
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
                 <h3 className="font-black text-xl text-white">
-                  {editingRutinaId ? 'Editar Rutina y Ejercicios' : 'Crear Nueva Rutina'}
+                  {editingRutinaId ? 'Editar Rutina' : 'Crear Nueva Rutina'}
                 </h3>
-                <p className="text-xs text-slate-400">Reordena los ejercicios y ajusta series, repeticiones y descanso</p>
+                <p className="text-xs text-slate-400">Ajusta los días, reordena ejercicios y define su duración</p>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -415,7 +473,7 @@ export default function Rutinas({ onStartWorkout }) {
                 <label className="text-xs font-bold text-slate-300 block mb-1">Nombre de la Rutina</label>
                 <input
                   type="text"
-                  placeholder="Ej: Torso / Pierna 4 Días"
+                  placeholder="Ej: Tren Superior: Tracción & Brazos"
                   value={formRutina.nombre}
                   onChange={(e) => setFormRutina({ ...formRutina, nombre: e.target.value })}
                   className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
@@ -423,8 +481,40 @@ export default function Rutinas({ onStartWorkout }) {
                 />
               </div>
 
+              {/* Duración de la Rutina & Tiempo estimado */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">Duración del Plan / Ciclo</label>
+                  <select
+                    value={formRutina.duracion_semanas}
+                    onChange={(e) => setFormRutina({ ...formRutina, duracion_semanas: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
+                  >
+                    <option value="2 semanas">2 semanas</option>
+                    <option value="4 semanas">4 semanas (1 mes)</option>
+                    <option value="6 semanas">6 semanas</option>
+                    <option value="8 semanas">8 semanas (2 meses)</option>
+                    <option value="12 semanas">12 semanas (3 meses)</option>
+                    <option value="Continuo">Continuo</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">Tiempo Estimado (min)</label>
+                  <input
+                    type="number"
+                    min="15"
+                    max="180"
+                    step="5"
+                    value={formRutina.duracion_estimada_minutos}
+                    onChange={(e) => setFormRutina({ ...formRutina, duracion_estimada_minutos: parseInt(e.target.value) || 45 })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 font-mono"
+                  />
+                </div>
+              </div>
+
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">Descripción / Objetivo (Opcional)</label>
+                <label className="text-xs font-bold text-slate-300 block mb-1">Descripción u Objetivo</label>
                 <input
                   type="text"
                   placeholder="Ej: Enfoque en hipertrofia y sobrecarga progresiva"
@@ -449,7 +539,7 @@ export default function Rutinas({ onStartWorkout }) {
 
                 {formRutina.dias.map((dia, diaIdx) => (
                   <div key={diaIdx} className="bg-slate-950 border border-slate-800/90 rounded-2xl p-4 space-y-3">
-                    {/* Header Día con Mover Día */}
+                    {/* Header Día */}
                     <div className="flex items-center justify-between gap-2 border-b border-slate-800/60 pb-2">
                       <div className="flex items-center gap-2 flex-1">
                         <span className="text-xs font-bold text-sky-400 font-mono">Día {diaIdx + 1}:</span>
@@ -497,7 +587,7 @@ export default function Rutinas({ onStartWorkout }) {
                       </div>
                     </div>
 
-                    {/* Lista de Ejercicios del Día con Botones de Reordenar */}
+                    {/* Lista de Ejercicios */}
                     <div className="space-y-2">
                       {dia.ejercicios.map((ej, ejIdx) => (
                         <div 
@@ -541,7 +631,6 @@ export default function Rutinas({ onStartWorkout }) {
 
                           {/* Ajustes de Series, Reps y Descanso */}
                           <div className="flex items-center gap-2 self-end sm:self-auto">
-                            {/* Series */}
                             <div className="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">
                               <span className="text-slate-500 text-[10px]">Series:</span>
                               <input
@@ -558,7 +647,6 @@ export default function Rutinas({ onStartWorkout }) {
                               />
                             </div>
 
-                            {/* Reps */}
                             <div className="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">
                               <span className="text-slate-500 text-[10px]">Reps:</span>
                               <input
@@ -573,7 +661,6 @@ export default function Rutinas({ onStartWorkout }) {
                               />
                             </div>
 
-                            {/* Descanso */}
                             <div className="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">
                               <span className="text-slate-500 text-[10px]">Desc:</span>
                               <input
@@ -590,7 +677,6 @@ export default function Rutinas({ onStartWorkout }) {
                               <span className="text-slate-500 text-[10px]">s</span>
                             </div>
 
-                            {/* Eliminar ejercicio */}
                             <button
                               type="button"
                               onClick={() => {
@@ -620,19 +706,21 @@ export default function Rutinas({ onStartWorkout }) {
                 ))}
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+              {/* Botón Guardar Cambios Destacado */}
+              <div className="sticky bottom-0 bg-slate-900/95 backdrop-blur-md pt-3 border-t border-slate-800 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold"
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm shadow-lg shadow-sky-500/20 active:scale-95 transition-all"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm shadow-xl shadow-emerald-500/20 active:scale-95 transition-all"
                 >
-                  {editingRutinaId ? 'Guardar Cambios' : 'Crear Rutina'}
+                  <Save className="w-4 h-4 fill-current" />
+                  {editingRutinaId ? 'Guardar Cambios' : 'Guardar Rutina'}
                 </button>
               </div>
             </form>
@@ -640,68 +728,152 @@ export default function Rutinas({ onStartWorkout }) {
         </div>
       )}
 
-      {/* Modal Selector de Ejercicio */}
+      {/* Modal Selector & Creador de Ejercicios */}
       {exerciseSelectorTarget !== null && (
         <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-lg text-white">Seleccionar Ejercicio</h3>
+              <div>
+                <h3 className="font-bold text-lg text-white">Seleccionar Ejercicio</h3>
+                <p className="text-xs text-slate-400">Elige del catálogo o crea uno personalizado</p>
+              </div>
               <button
-                onClick={() => setExerciseSelectorTarget(null)}
+                onClick={() => {
+                  setExerciseSelectorTarget(null);
+                  setShowCreateCustomExercise(false);
+                }}
                 className="p-1.5 rounded-xl text-slate-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Buscador */}
-            <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-              <input
-                type="text"
-                placeholder="Buscar por nombre..."
-                value={searchEj}
-                onChange={(e) => setSearchEj(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
-              />
-            </div>
-
-            {/* Filtros de Músculos */}
-            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-              {muscleGroups.map((group) => (
-                <button
-                  key={group}
-                  onClick={() => setSelectedMuscle(group)}
-                  className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
-                    selectedMuscle === group
-                      ? 'bg-sky-500 text-slate-950'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {group}
-                </button>
-              ))}
-            </div>
-
-            {/* Lista de Resultados */}
-            <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
-              {filteredEjercicios.map((ej) => (
-                <div
-                  key={ej.id}
-                  onClick={() => handleAddExerciseToDay(ej)}
-                  className="p-3 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800/80 hover:border-sky-500/40 flex items-center justify-between cursor-pointer transition-all"
-                >
-                  <div>
-                    <h4 className="font-bold text-white text-sm">{ej.nombre}</h4>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] text-sky-400 font-semibold">{ej.grupo_muscular}</span>
-                      {ej.equipo && <span className="text-[10px] text-slate-500">• {ej.equipo}</span>}
-                    </div>
+            {!showCreateCustomExercise ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                    <input
+                      type="text"
+                      placeholder="Buscar por nombre..."
+                      value={searchEj}
+                      onChange={(e) => setSearchEj(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
+                    />
                   </div>
-                  <Plus className="w-4 h-4 text-slate-400" />
+                  <button
+                    onClick={() => setShowCreateCustomExercise(true)}
+                    className="flex items-center gap-1 px-3 py-2.5 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-400 font-bold text-xs whitespace-nowrap hover:bg-sky-500/25"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> + Crear
+                  </button>
                 </div>
-              ))}
-            </div>
+
+                <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                  {muscleGroups.map((group) => (
+                    <button
+                      key={group}
+                      onClick={() => setSelectedMuscle(group)}
+                      className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                        selectedMuscle === group
+                          ? 'bg-sky-500 text-slate-950'
+                          : 'bg-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {group}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
+                  {filteredEjercicios.map((ej) => (
+                    <div
+                      key={ej.id}
+                      onClick={() => handleAddExerciseToDay(ej)}
+                      className="p-3 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800/80 hover:border-sky-500/40 flex items-center justify-between cursor-pointer transition-all"
+                    >
+                      <div>
+                        <h4 className="font-bold text-white text-sm">{ej.nombre}</h4>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[10px] text-sky-400 font-semibold">{ej.grupo_muscular}</span>
+                          {ej.equipo && <span className="text-[10px] text-slate-500">• {ej.equipo}</span>}
+                        </div>
+                      </div>
+                      <Plus className="w-4 h-4 text-slate-400" />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <form onSubmit={handleCreateCustomExercise} className="space-y-3 pt-1">
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">Nombre del Ejercicio</label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Press Guillotina"
+                    value={newCustomEx.nombre}
+                    onChange={(e) => setNewCustomEx({ ...newCustomEx, nombre: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-xs font-bold text-slate-300 block mb-1">Grupo Muscular</label>
+                    <select
+                      value={newCustomEx.grupo_muscular}
+                      onChange={(e) => setNewCustomEx({ ...newCustomEx, grupo_muscular: e.target.value })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500"
+                    >
+                      {['Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core', 'Cardio'].map(g => (
+                        <option key={g} value={g}>{g}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-300 block mb-1">Equipo</label>
+                    <select
+                      value={newCustomEx.equipo}
+                      onChange={(e) => setNewCustomEx({ ...newCustomEx, equipo: e.target.value })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500"
+                    >
+                      {['Mancuerna', 'Barra', 'Máquina', 'Polea', 'Peso Corporal'].map(eq => (
+                        <option key={eq} value={eq}>{eq}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">Notas (Opcional)</label>
+                  <input
+                    type="text"
+                    placeholder="Ej. En banco inclinado a 30°"
+                    value={newCustomEx.descripcion}
+                    onChange={(e) => setNewCustomEx({ ...newCustomEx, descripcion: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateCustomExercise(false)}
+                    className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                  >
+                    Volver al Catálogo
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20"
+                  >
+                    Guardar y Añadir a la Rutina
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
