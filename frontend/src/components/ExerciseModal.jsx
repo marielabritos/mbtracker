@@ -140,32 +140,32 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
           </form>
         ) : (
           <>
-            {/* Selector de Modo de Animación (Animación 60FPS vs GIF Web) */}
+            {/* Selector de Modo de Visualización (Video Real YouTube vs Animación 60 FPS) */}
             <div className="flex items-center justify-center gap-1 p-1 bg-slate-950 rounded-2xl border border-slate-800">
               <button
                 type="button"
                 onClick={() => setViewMode('animation')}
-                className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                className={`flex-1 py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                   viewMode === 'animation'
                     ? 'bg-sky-500 text-slate-950 shadow-md'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
                 <Zap className="w-3.5 h-3.5" />
-                <span>Animación Biomecánica 60 FPS</span>
+                <span>Animación 60 FPS</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setViewMode('gif')}
-                className={`py-1.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                  viewMode === 'gif'
-                    ? 'bg-sky-500 text-slate-950 shadow-md'
+                onClick={() => setViewMode('video')}
+                className={`flex-1 py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  viewMode === 'video'
+                    ? 'bg-rose-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <Activity className="w-3.5 h-3.5" />
-                <span>GIF Web</span>
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Video Real (YouTube)</span>
               </button>
             </div>
 
@@ -177,24 +177,26 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
                 animationType={visualData.animacion_tipo}
               />
             ) : (
-              <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner">
-                {displayGif && !imgError ? (
-                  <div className="relative aspect-video w-full flex items-center justify-center bg-black overflow-hidden">
-                    <img
-                      key={displayGif}
-                      src={displayGif}
-                      alt={exercise.nombre}
-                      referrerPolicy="no-referrer"
-                      onError={() => setImgError(true)}
-                      className="w-full h-full object-contain object-center"
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-video flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2">
-                    <Dumbbell className="w-10 h-10 text-sky-400" />
-                    <p className="text-xs font-semibold">Usa la pestaña "Animación Biomecánica" para ver el movimiento en 60 FPS continuo.</p>
-                  </div>
-                )}
+              <div className="space-y-2">
+                <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner aspect-video w-full flex flex-col items-center justify-center">
+                  <iframe
+                    title={`Video ${exercise.nombre}`}
+                    src={`https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(exercise.nombre + ' como hacer tecnica correcta gym')}`}
+                    className="w-full h-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+
+                <a
+                  href={`https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.nombre + ' tecnica gym')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2 px-3 rounded-xl bg-rose-600/15 hover:bg-rose-600/25 border border-rose-500/30 text-rose-300 hover:text-rose-200 text-xs font-bold flex items-center justify-center gap-2 transition-colors"
+                >
+                  <Play className="w-3.5 h-3.5 fill-current text-rose-500" />
+                  <span>Abrir búsqueda de videos en YouTube HD</span>
+                </a>
               </div>
             )}
 

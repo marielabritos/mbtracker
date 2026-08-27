@@ -1,13 +1,109 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Flame, Trophy, Dumbbell, Clock, ChevronRight, TrendingUp, CalendarCheck, Calendar } from 'lucide-react';
+import { 
+  Play, Flame, Trophy, Dumbbell, Clock, ChevronRight, TrendingUp, 
+  CalendarCheck, Calendar, Check, X, Eye, Sparkles, CheckCircle2, Zap 
+} from 'lucide-react';
 import { api } from '../services/api';
+import ExerciseModal from '../components/ExerciseModal';
 
 export default function Dashboard({ onStartWorkout, onNavigateTab }) {
   const [stats, setStats] = useState(null);
   const [rutinas, setRutinas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRutinaId, setSelectedRutinaId] = useState('');
-  const [selectedDiaId, setSelectedDiaId] = useState('');
+  const PROTOCOLS = {
+    calentamiento: {
+      key: 'calentamiento',
+      icon: '🔥',
+      nombre: '🔥 Calentamiento & Movilidad Articular',
+      descripcion: 'Movilidad escapular, columna y apertura de caderas para preparar el cuerpo.',
+      tag: '4 Ejercicios • ~5-8 min',
+      badgeColor: 'text-amber-400 border-amber-500/30 bg-amber-500/10',
+      ejercicios: [
+        { ejercicio_id: 28, nombre: 'Dislocaciones de Hombro con Banda / Pica', grupo_muscular: 'Calentamiento', reps_objetivo: '15 reps', descanso_segundos: 30 },
+        { ejercicio_id: 29, nombre: 'Gato-Camello (Cat-Cow) Columna', grupo_muscular: 'Calentamiento', reps_objetivo: '12 reps', descanso_segundos: 30 },
+        { ejercicio_id: 30, nombre: 'Rotación Torácica en Cuadrupedia', grupo_muscular: 'Calentamiento', reps_objetivo: '10/lado', descanso_segundos: 30 },
+        { ejercicio_id: 31, nombre: 'Apertura de Cadera en 90/90', grupo_muscular: 'Calentamiento', reps_objetivo: '10 reps', descanso_segundos: 30 },
+      ]
+    },
+    rodilla: {
+      key: 'rodilla',
+      icon: '🦵',
+      nombre: '🦵 Rehabilitación de Rodilla & Piernas',
+      descripcion: 'Fortalece el tendón rotuliano, activa el vasto medial y estabiliza cadera.',
+      tag: '5 Ejercicios • ~10-12 min',
+      badgeColor: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+      ejercicios: [
+        { ejercicio_id: 32, nombre: 'Sentadilla Isométrica en Pared (Wall Sit)', grupo_muscular: 'Rehabilitación', reps_objetivo: '45s', descanso_segundos: 45 },
+        { ejercicio_id: 33, nombre: 'Extensiones Terminales de Rodilla con Banda (TKE)', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 45 },
+        { ejercicio_id: 34, nombre: 'Puente de Glúteo Unipodal', grupo_muscular: 'Rehabilitación', reps_objetivo: '12/lado', descanso_segundos: 45 },
+        { ejercicio_id: 35, nombre: 'Clamshells / Almejas con Banda', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 45 },
+        { ejercicio_id: 36, nombre: 'Monster Walk / Pasos con Banda', grupo_muscular: 'Rehabilitación', reps_objetivo: '20 pasos', descanso_segundos: 45 },
+      ]
+    },
+    tobillo: {
+      key: 'tobillo',
+      icon: '🦶',
+      nombre: '🦶 Rehabilitación de Tobillo & Pie',
+      descripcion: 'Mejora la dorsiflexión, previene esguinces y fortalece tendón de Aquiles.',
+      tag: '3 Ejercicios • ~8 min',
+      badgeColor: 'text-sky-400 border-sky-500/30 bg-sky-500/10',
+      ejercicios: [
+        { ejercicio_id: 37, nombre: 'Dorsiflexión de Tobillo en Pared', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 30 },
+        { ejercicio_id: 38, nombre: 'Elevación de Gemelos Excéntrica a 1 Pierna', grupo_muscular: 'Rehabilitación', reps_objetivo: '12/lado', descanso_segundos: 45 },
+        { ejercicio_id: 39, nombre: 'Caminata en Talones y Puntas', grupo_muscular: 'Rehabilitación', reps_objetivo: '40 pasos', descanso_segundos: 30 },
+      ]
+    },
+    estiramientos: {
+      key: 'estiramientos',
+      icon: '🧘',
+      nombre: '🧘 Estiramientos & Vuelta a la Calma',
+      descripcion: 'Descompresión de columna, flexibilidad de isquios, cuádriceps y pecho.',
+      tag: '5 Ejercicios • ~8-10 min',
+      badgeColor: 'text-purple-400 border-purple-500/30 bg-purple-500/10',
+      ejercicios: [
+        { ejercicio_id: 40, nombre: 'Estiramiento de Isquiosurales en Suelo', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+        { ejercicio_id: 41, nombre: 'Estiramiento de Cuádriceps y Psoas', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+        { ejercicio_id: 42, nombre: 'Posición del Niño (Child\'s Pose)', grupo_muscular: 'Estiramientos', reps_objetivo: '45s', descanso_segundos: 30 },
+        { ejercicio_id: 43, nombre: 'Cobra / Extensión Lumbar Suave', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+        { ejercicio_id: 44, nombre: 'Estiramiento Pectoral en Pared', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
+      ]
+    }
+  };
+
+  const [activeProtocolModal, setActiveProtocolModal] = useState(null);
+  const [selectedExerciseIds, setSelectedExerciseIds] = useState(new Set());
+  const [selectedVisualExercise, setSelectedVisualExercise] = useState(null);
+
+  const handleOpenProtocolModal = (protoKey) => {
+    const proto = PROTOCOLS[protoKey];
+    setActiveProtocolModal(proto);
+    setSelectedExerciseIds(new Set(proto.ejercicios.map(e => e.ejercicio_id)));
+  };
+
+  const handleToggleExerciseSelection = (ejId) => {
+    setSelectedExerciseIds(prev => {
+      const next = new Set(prev);
+      if (next.has(ejId)) {
+        next.delete(ejId);
+      } else {
+        next.add(ejId);
+      }
+      return next;
+    });
+  };
+
+  const handleStartProtocolWorkout = () => {
+    if (!activeProtocolModal) return;
+    const chosen = activeProtocolModal.ejercicios.filter(e => selectedExerciseIds.has(e.ejercicio_id));
+    if (chosen.length === 0) return alert("Por favor selecciona al menos un ejercicio.");
+
+    onStartWorkout({
+      nombre: activeProtocolModal.nombre,
+      dia_rutina_id: null,
+      ejercicios: chosen
+    });
+    setActiveProtocolModal(null);
+  };
 
   useEffect(() => {
     loadData();
@@ -185,17 +281,8 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div 
-            onClick={() => onStartWorkout({
-              nombre: '🔥 Calentamiento & Movilidad Articular',
-              dia_rutina_id: null,
-              ejercicios: [
-                { ejercicio_id: 28, nombre: 'Dislocaciones de Hombro con Banda / Pica', grupo_muscular: 'Calentamiento', reps_objetivo: '15 reps', descanso_segundos: 30 },
-                { ejercicio_id: 29, nombre: 'Gato-Camello (Cat-Cow) Columna', grupo_muscular: 'Calentamiento', reps_objetivo: '12 reps', descanso_segundos: 30 },
-                { ejercicio_id: 30, nombre: 'Rotación Torácica en Cuadrupedia', grupo_muscular: 'Calentamiento', reps_objetivo: '10/lado', descanso_segundos: 30 },
-                { ejercicio_id: 31, nombre: 'Apertura de Cadera en 90/90', grupo_muscular: 'Calentamiento', reps_objetivo: '10 reps', descanso_segundos: 30 },
-              ]
-            })}
-            className="p-4 rounded-3xl bg-slate-900/90 border border-amber-500/30 hover:border-amber-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between"
+            onClick={() => handleOpenProtocolModal('calentamiento')}
+            className="p-4 rounded-3xl bg-slate-900/90 border border-amber-500/30 hover:border-amber-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
           >
             <div>
               <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
@@ -205,24 +292,14 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
               <p className="text-[11px] text-slate-400 mt-1 leading-snug">Hombros, columna y caderas</p>
             </div>
             <div className="mt-3 flex items-center justify-between text-xs font-bold text-amber-400">
-              <span>Iniciar</span>
-              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Elegir Ejercicios</span>
+              <ChevronRight className="w-3.5 h-3.5" />
             </div>
           </div>
 
           <div 
-            onClick={() => onStartWorkout({
-              nombre: '🦵 Rehabilitación y Fortalecimiento de Rodilla',
-              dia_rutina_id: null,
-              ejercicios: [
-                { ejercicio_id: 32, nombre: 'Sentadilla Isométrica en Pared (Wall Sit)', grupo_muscular: 'Rehabilitación', reps_objetivo: '45s', descanso_segundos: 45 },
-                { ejercicio_id: 33, nombre: 'Extensiones Terminales de Rodilla con Banda (TKE)', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 45 },
-                { ejercicio_id: 34, nombre: 'Puente de Glúteo Unipodal', grupo_muscular: 'Rehabilitación', reps_objetivo: '12/lado', descanso_segundos: 45 },
-                { ejercicio_id: 35, nombre: 'Clamshells / Almejas con Banda', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 45 },
-                { ejercicio_id: 36, nombre: 'Monster Walk / Pasos con Banda', grupo_muscular: 'Rehabilitación', reps_objetivo: '20 pasos', descanso_segundos: 45 },
-              ]
-            })}
-            className="p-4 rounded-3xl bg-slate-900/90 border border-emerald-500/30 hover:border-emerald-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between"
+            onClick={() => handleOpenProtocolModal('rodilla')}
+            className="p-4 rounded-3xl bg-slate-900/90 border border-emerald-500/30 hover:border-emerald-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
           >
             <div>
               <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
@@ -232,22 +309,14 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
               <p className="text-[11px] text-slate-400 mt-1 leading-snug">Tendón rotuliano y glúteo medio</p>
             </div>
             <div className="mt-3 flex items-center justify-between text-xs font-bold text-emerald-400">
-              <span>Iniciar</span>
-              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Elegir Ejercicios</span>
+              <ChevronRight className="w-3.5 h-3.5" />
             </div>
           </div>
 
           <div 
-            onClick={() => onStartWorkout({
-              nombre: '🦶 Rehabilitación de Tobillo y Pie',
-              dia_rutina_id: null,
-              ejercicios: [
-                { ejercicio_id: 37, nombre: 'Dorsiflexión de Tobillo en Pared', grupo_muscular: 'Rehabilitación', reps_objetivo: '15/lado', descanso_segundos: 30 },
-                { ejercicio_id: 38, nombre: 'Elevación de Gemelos Excéntrica a 1 Pierna', grupo_muscular: 'Rehabilitación', reps_objetivo: '12/lado', descanso_segundos: 45 },
-                { ejercicio_id: 39, nombre: 'Caminata en Talones y Puntas', grupo_muscular: 'Rehabilitación', reps_objetivo: '40 pasos', descanso_segundos: 30 },
-              ]
-            })}
-            className="p-4 rounded-3xl bg-slate-900/90 border border-sky-500/30 hover:border-sky-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between"
+            onClick={() => handleOpenProtocolModal('tobillo')}
+            className="p-4 rounded-3xl bg-slate-900/90 border border-sky-500/30 hover:border-sky-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
           >
             <div>
               <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
@@ -257,24 +326,14 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
               <p className="text-[11px] text-slate-400 mt-1 leading-snug">Dorsiflexión y tendón de Aquiles</p>
             </div>
             <div className="mt-3 flex items-center justify-between text-xs font-bold text-sky-400">
-              <span>Iniciar</span>
-              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Elegir Ejercicios</span>
+              <ChevronRight className="w-3.5 h-3.5" />
             </div>
           </div>
 
           <div 
-            onClick={() => onStartWorkout({
-              nombre: '🧘 Estiramientos & Vuelta a la Calma',
-              dia_rutina_id: null,
-              ejercicios: [
-                { ejercicio_id: 40, nombre: 'Estiramiento de Isquiosurales en Suelo', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
-                { ejercicio_id: 41, nombre: 'Estiramiento de Cuádriceps y Psoas', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
-                { ejercicio_id: 42, nombre: 'Posición del Niño (Child\'s Pose)', grupo_muscular: 'Estiramientos', reps_objetivo: '45s', descanso_segundos: 30 },
-                { ejercicio_id: 43, nombre: 'Cobra / Extensión Lumbar Suave', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
-                { ejercicio_id: 44, nombre: 'Estiramiento Pectoral en Pared', grupo_muscular: 'Estiramientos', reps_objetivo: '30s', descanso_segundos: 30 },
-              ]
-            })}
-            className="p-4 rounded-3xl bg-slate-900/90 border border-purple-500/30 hover:border-purple-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between"
+            onClick={() => handleOpenProtocolModal('estiramientos')}
+            className="p-4 rounded-3xl bg-slate-900/90 border border-purple-500/30 hover:border-purple-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
           >
             <div>
               <div className="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
@@ -284,8 +343,8 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
               <p className="text-[11px] text-slate-400 mt-1 leading-snug">Flexibilidad y descompresión</p>
             </div>
             <div className="mt-3 flex items-center justify-between text-xs font-bold text-purple-400">
-              <span>Iniciar</span>
-              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Elegir Ejercicios</span>
+              <ChevronRight className="w-3.5 h-3.5" />
             </div>
           </div>
         </div>
@@ -437,6 +496,130 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
           </div>
         )}
       </div>
+
+      {/* Modal Interactivo de Protocolo (Calentamiento / Rehabilitación / Estiramientos) */}
+      {activeProtocolModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+            {/* Header del Protocolo */}
+            <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">{activeProtocolModal.icon}</span>
+                  <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider border ${activeProtocolModal.badgeColor}`}>
+                    {activeProtocolModal.tag}
+                  </span>
+                </div>
+                <h3 className="font-black text-lg sm:text-xl text-white mt-1">
+                  {activeProtocolModal.nombre}
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {activeProtocolModal.descripcion}
+                </p>
+              </div>
+
+              <button
+                onClick={() => setActiveProtocolModal(null)}
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Selector: Seleccionar Todo / Deseleccionar */}
+            <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+              <span className="font-semibold">
+                Seleccionados: <strong className="text-sky-400">{selectedExerciseIds.size}</strong> de {activeProtocolModal.ejercicios.length}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedExerciseIds(new Set(activeProtocolModal.ejercicios.map(e => e.ejercicio_id)))}
+                  className="text-sky-400 hover:underline font-bold"
+                >
+                  Todos
+                </button>
+                <span>•</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedExerciseIds(new Set())}
+                  className="text-slate-400 hover:underline"
+                >
+                  Ninguno
+                </button>
+              </div>
+            </div>
+
+            {/* Lista de Ejercicios con Checkbox y Ver Video / Técnica */}
+            <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+              {activeProtocolModal.ejercicios.map((ej) => {
+                const isSelected = selectedExerciseIds.has(ej.ejercicio_id);
+                return (
+                  <div
+                    key={ej.ejercicio_id}
+                    onClick={() => handleToggleExerciseSelection(ej.ejercicio_id)}
+                    className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                      isSelected
+                        ? 'bg-slate-950 border-sky-500/50 shadow-md'
+                        : 'bg-slate-950/40 border-slate-800/80 opacity-60'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
+                        isSelected ? 'bg-sky-500 text-slate-950' : 'border border-slate-700 bg-slate-900'
+                      }`}>
+                        {isSelected && <Check className="w-4 h-4 stroke-[3]" />}
+                      </div>
+
+                      <div className="min-w-0">
+                        <h4 className="font-bold text-white text-xs sm:text-sm truncate">{ej.nombre}</h4>
+                        <div className="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400 font-mono">
+                          <span className="text-sky-400 font-semibold">{ej.reps_objetivo}</span>
+                          <span>• descanso {ej.descanso_segundos}s</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedVisualExercise({ id: ej.ejercicio_id, nombre: ej.nombre, grupo_muscular: ej.grupo_muscular });
+                      }}
+                      className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-400 hover:text-sky-300 border border-slate-800 flex items-center gap-1 text-xs font-bold shrink-0 transition-colors"
+                      title="Ver técnica y video real de YouTube"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Técnica</span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Botón Inferior: Play y Comenzar Sesión */}
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={handleStartProtocolWorkout}
+                disabled={selectedExerciseIds.size === 0}
+                className="w-full py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-400 hover:to-indigo-400 text-slate-950 font-black text-sm sm:text-base shadow-xl shadow-sky-500/25 flex items-center justify-center gap-2 transition-all active:scale-98 disabled:opacity-40"
+              >
+                <Play className="w-5 h-5 fill-current" />
+                <span>Empezar Sesión ({selectedExerciseIds.size} ejercicios)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Demostración Visual / Video de YouTube */}
+      {selectedVisualExercise && (
+        <ExerciseModal
+          exercise={selectedVisualExercise}
+          onClose={() => setSelectedVisualExercise(null)}
+        />
+      )}
     </div>
   );
 }
