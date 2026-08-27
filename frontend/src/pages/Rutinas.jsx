@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, Trash2, Edit3, ChevronDown, ChevronUp, Dumbbell, 
-  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, Calendar, CheckCircle2, Save, Sparkles, Eye, Info 
+  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, Calendar, CheckCircle2, Save, Sparkles, Eye, Info, RefreshCw 
 } from 'lucide-react';
 import { api } from '../services/api';
 import ExerciseModal from '../components/ExerciseModal';
@@ -172,24 +172,47 @@ export default function Rutinas({ onStartWorkout }) {
 
   const handleAddExerciseToDay = (ejercicio) => {
     if (exerciseSelectorTarget === null) return;
-    const diaIdx = exerciseSelectorTarget.diaIndex;
+    const { diaIndex, replaceIndex } = exerciseSelectorTarget;
 
     setFormRutina(prev => {
       const newDias = [...prev.dias];
-      newDias[diaIdx].ejercicios.push({
-        ejercicio_id: ejercicio.id,
-        ejercicio: ejercicio,
-        series_objetivo: 3,
-        reps_objetivo: "8-12",
-        descanso_segundos: 90,
-        orden: newDias[diaIdx].ejercicios.length + 1,
-        notas: ""
-      });
+      if (replaceIndex !== undefined && replaceIndex !== null) {
+        // Reemplazar ejercicio en esa misma posición
+        const oldEj = newDias[diaIndex].ejercicios[replaceIndex];
+        newDias[diaIndex].ejercicios[replaceIndex] = {
+          ...oldEj,
+          ejercicio_id: ejercicio.id,
+          ejercicio: ejercicio
+        };
+      } else {
+        // Agregar al final
+        newDias[diaIndex].ejercicios.push({
+          ejercicio_id: ejercicio.id,
+          ejercicio: ejercicio,
+          series_objetivo: 3,
+          reps_objetivo: "8-12",
+          descanso_segundos: 90,
+          orden: newDias[diaIndex].ejercicios.length + 1,
+          notas: ""
+        });
+      }
       return { ...prev, dias: newDias };
     });
 
     setExerciseSelectorTarget(null);
-    showToast(`✓ "${ejercicio.nombre}" añadido`);
+    showToast(replaceIndex !== undefined ? `✓ Cambiado a "${ejercicio.nombre}"` : `✓ "${ejercicio.nombre}" añadido`);
+  };
+
+  const handleDeleteCatalogExercise = async (e, ejId) => {
+    e.stopPropagation();
+    if (!confirm("¿Deseas eliminar este ejercicio del catálogo?")) return;
+    try {
+      await api.deleteEjercicio(ejId);
+      setCatalogEjercicios(prev => prev.filter(x => x.id !== ejId));
+      showToast("Ejercicio eliminado del catálogo");
+    } catch (err) {
+      alert("Error al eliminar ejercicio");
+    }
   };
 
   const handleCreateCustomExercise = async (e) => {
@@ -688,15 +711,25 @@ export default function Rutinas({ onStartWorkout }) {
                               />
                             </div>
 
-                            {/* Botón GIF y Eliminar */}
+                            {/* Botón GIF, Cambiar y Eliminar */}
                             <button
                               type="button"
                               onClick={() => setSelectedVisualExercise(ej.ejercicio)}
-                              className="p-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 border border-sky-500/30 flex items-center gap-1.5 text-xs font-bold shrink-0 transition-colors"
+                              className="p-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 border border-sky-500/30 flex items-center gap-1 text-xs font-bold shrink-0 transition-colors"
                               title="Ver demostración GIF y técnica"
                             >
                               <Eye className="w-4 h-4" />
                               <span className="hidden sm:inline">Ver GIF</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setExerciseSelectorTarget({ diaIndex: diaIdx, replaceIndex: ejIdx })}
+                              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 flex items-center gap-1 text-xs font-bold shrink-0 transition-colors"
+                              title="Cambiar este ejercicio por otro del catálogo"
+                            >
+                              <RefreshCw className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline">Cambiar</span>
                             </button>
 
                             <button
@@ -879,7 +912,7 @@ export default function Rutinas({ onStartWorkout }) {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         <button
                           type="button"
                           onClick={() => setSelectedVisualExercise(ej)}
@@ -888,13 +921,23 @@ export default function Rutinas({ onStartWorkout }) {
                         >
                           <Eye className="w-3.5 h-3.5" />
                         </button>
+                        
+                        <button
+                          type="button"
+                          onClick={(e) => handleDeleteCatalogExercise(e, ej.id)}
+                          className="p-2 rounded-xl bg-slate-900 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 border border-slate-800 transition-colors"
+                          title="Eliminar del catálogo"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+
                         <button
                           type="button"
                           onClick={() => handleAddExerciseToDay(ej)}
-                          className="p-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold"
-                          title="Añadir a la rutina"
+                          className="p-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold shadow-md shadow-sky-500/20"
+                          title="Seleccionar este ejercicio"
                         >
-                          <Plus className="w-4 h-4" />
+                          <Plus className="w-4 h-4 stroke-[3]" />
                         </button>
                       </div>
                     </div>

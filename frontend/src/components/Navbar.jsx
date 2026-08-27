@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Dumbbell, Calendar, History, TrendingUp, Play } from 'lucide-react';
+import { Home, Dumbbell, Calendar, History, TrendingUp, Play, User } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab, isWorkoutActive }) {
   const navItems = [
@@ -8,6 +8,7 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive }) {
     { id: 'rutinas', label: 'Rutinas', icon: Calendar },
     { id: 'historial', label: 'Historial', icon: History },
     { id: 'progreso', label: 'Progreso', icon: TrendingUp },
+    { id: 'perfil', label: 'Perfil', icon: User },
   ];
 
   return (

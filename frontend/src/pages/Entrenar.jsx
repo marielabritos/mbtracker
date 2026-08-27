@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Check, Plus, Trash2, Timer, Flame, Trophy, 
-  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown, Award, Sparkles, CheckCircle2, Eye, Edit3 
+  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown, Award, Sparkles, CheckCircle2, Eye, Edit3, RefreshCw 
 } from 'lucide-react';
 import { api } from '../services/api';
 import { sound } from '../utils/sound';
@@ -146,7 +146,28 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
     setExercises(updated);
   };
 
+  const [swapExerciseIndex, setSwapExerciseIndex] = useState(null);
+
   const handleAddExerciseFromCatalog = (ej) => {
+    if (swapExerciseIndex !== null) {
+      // Reemplazar ejercicio en vivo manteniendo las series ya realizadas
+      setExercises((prev) => {
+        const copy = [...prev];
+        const old = copy[swapExerciseIndex];
+        copy[swapExerciseIndex] = {
+          ...old,
+          ejercicio_id: ej.id,
+          nombre: ej.nombre,
+          grupo_muscular: ej.grupo_muscular
+        };
+        return copy;
+      });
+      fetchPreviousRecord(ej.id);
+      setSwapExerciseIndex(null);
+      setShowAddExerciseModal(false);
+      return;
+    }
+
     const newEx = {
       ejercicio_id: ej.id,
       nombre: ej.nombre,
@@ -163,6 +184,17 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
     setExercises((prev) => [...prev, newEx]);
     fetchPreviousRecord(ej.id);
     setShowAddExerciseModal(false);
+  };
+
+  const handleDeleteCatalogExercise = async (e, ejId) => {
+    e.stopPropagation();
+    if (!confirm("¿Deseas eliminar este ejercicio del catálogo?")) return;
+    try {
+      await api.deleteEjercicio(ejId);
+      setCatalogEjercicios((prev) => prev.filter((x) => x.id !== ejId));
+    } catch (err) {
+      alert("Error al eliminar ejercicio");
+    }
   };
 
   const handleCreateAndAddCustomExercise = async (e) => {
@@ -375,17 +407,31 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
                         Objetivo: {ex.reps_objetivo} reps
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center flex-wrap gap-2 mt-1">
                       <h3 className="font-black text-white text-base sm:text-lg">{ex.nombre}</h3>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedVisualExercise({ id: ex.ejercicio_id, nombre: ex.nombre, grupo_muscular: ex.grupo_muscular })}
-                        className="p-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/25 flex items-center gap-1 text-[10px] font-bold transition-colors"
-                        title="Ver GIF y técnica correcta"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline">Técnica</span>
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedVisualExercise({ id: ex.ejercicio_id, nombre: ex.nombre, grupo_muscular: ex.grupo_muscular })}
+                          className="p-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/25 flex items-center gap-1 text-[10px] font-bold transition-colors"
+                          title="Ver GIF y técnica correcta"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">Técnica</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSwapExerciseIndex(exIdx);
+                            setShowAddExerciseModal(true);
+                          }}
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 flex items-center gap-1 text-[10px] font-bold transition-colors"
+                          title="Cambiar este ejercicio por otro del catálogo"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">Cambiar</span>
+                        </button>
+                      </div>
                     </div>
 
                     {/* Referencia Anterior */}
@@ -617,14 +663,45 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
                   {filteredCatalog.map((ej) => (
                     <div
                       key={ej.id}
-                      onClick={() => handleAddExerciseFromCatalog(ej)}
-                      className="p-3 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800/80 hover:border-sky-500/40 flex items-center justify-between cursor-pointer transition-all"
+                      className="p-3 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800/80 hover:border-sky-500/40 flex items-center justify-between transition-all"
                     >
-                      <div>
+                      <div 
+                        onClick={() => handleAddExerciseFromCatalog(ej)}
+                        className="flex-1 cursor-pointer"
+                      >
                         <h4 className="font-bold text-white text-sm">{ej.nombre}</h4>
-                        <span className="text-[10px] text-sky-400 font-semibold">{ej.grupo_muscular}</span>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[10px] text-sky-400 font-semibold">{ej.grupo_muscular}</span>
+                          {ej.equipo && <span className="text-[10px] text-slate-500">• {ej.equipo}</span>}
+                        </div>
                       </div>
-                      <Plus className="w-4 h-4 text-slate-400" />
+
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedVisualExercise(ej)}
+                          className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-400 border border-slate-800"
+                          title="Ver técnica"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => handleDeleteCatalogExercise(e, ej.id)}
+                          className="p-2 rounded-xl bg-slate-900 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 border border-slate-800 transition-colors"
+                          title="Eliminar del catálogo"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleAddExerciseFromCatalog(ej)}
+                          className="p-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold"
+                          title="Seleccionar este ejercicio"
+                        >
+                          <Plus className="w-4 h-4 stroke-[3]" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>

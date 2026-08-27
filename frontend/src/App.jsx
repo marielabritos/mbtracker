@@ -5,6 +5,7 @@ import Rutinas from './pages/Rutinas';
 import Entrenar from './pages/Entrenar';
 import Historial from './pages/Historial';
 import Progreso from './pages/Progreso';
+import Perfil from './pages/Perfil';
 
 const STORAGE_KEY = 'mbtracker_active_workout';
 
@@ -78,6 +79,10 @@ export default function App() {
 
         {activeTab === 'progreso' && (
           <Progreso />
+        )}
+
+        {activeTab === 'perfil' && (
+          <Perfil />
         )}
       </main>
     </div>
