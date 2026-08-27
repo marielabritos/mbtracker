@@ -331,7 +331,7 @@ export default function Rutinas({ onStartWorkout }) {
     }
   };
 
-  const muscleGroups = ['Todos', 'Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core'];
+  const muscleGroups = ['Todos', 'Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core', 'Calentamiento', 'Rehabilitación', 'Estiramientos'];
 
   const filteredEjercicios = catalogEjercicios.filter(e => {
     const matchesGroup = selectedMuscle === 'Todos' || e.grupo_muscular === selectedMuscle;

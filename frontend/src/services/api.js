@@ -28,6 +28,31 @@ const DEFAULT_EJERCICIOS = [
   { id: 25, nombre: "Plancha Abdominal", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
   { id: 26, nombre: "Elevación de Piernas Colgado", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
   { id: 27, nombre: "Crunch en Polea Alta", grupo_muscular: "Core", equipo: "Polea", es_personalizado: false },
+
+  // --- CALENTAMIENTO Y MOVILIDAD ---
+  { id: 28, nombre: "Dislocaciones de Hombro con Banda / Pica", grupo_muscular: "Calentamiento", equipo: "Banda Elástica", es_personalizado: false },
+  { id: 29, nombre: "Gato-Camello (Cat-Cow) Columna", grupo_muscular: "Calentamiento", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 30, nombre: "Rotación Torácica en Cuadrupedia", grupo_muscular: "Calentamiento", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 31, nombre: "Apertura de Cadera en 90/90", grupo_muscular: "Calentamiento", equipo: "Peso Corporal", es_personalizado: false },
+
+  // --- REHABILITACIÓN DE RODILLA ---
+  { id: 32, nombre: "Sentadilla Isométrica en Pared (Wall Sit)", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 33, nombre: "Extensiones Terminales de Rodilla con Banda (TKE)", grupo_muscular: "Rehabilitación", equipo: "Banda Elástica", es_personalizado: false },
+  { id: 34, nombre: "Puente de Glúteo Unipodal", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 35, nombre: "Clamshells / Almejas con Banda", grupo_muscular: "Rehabilitación", equipo: "Banda Elástica", es_personalizado: false },
+  { id: 36, nombre: "Monster Walk / Pasos con Banda", grupo_muscular: "Rehabilitación", equipo: "Banda Elástica", es_personalizado: false },
+
+  // --- REHABILITACIÓN DE TOBILLO Y PIE ---
+  { id: 37, nombre: "Dorsiflexión de Tobillo en Pared", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 38, nombre: "Elevación de Gemelos Excéntrica a 1 Pierna", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 39, nombre: "Caminata en Talones y Puntas", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
+
+  // --- ESTIRAMIENTOS Y FLEXIBILIDAD ---
+  { id: 40, nombre: "Estiramiento de Isquiosurales en Suelo", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 41, nombre: "Estiramiento de Cuádriceps y Psoas", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 42, nombre: "Posición del Niño (Child's Pose)", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 43, nombre: "Cobra / Extensión Lumbar Suave", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 44, nombre: "Estiramiento Pectoral en Pared", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
 ];
 
 const DEFAULT_RUTINAS = [

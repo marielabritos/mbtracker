@@ -53,6 +53,18 @@ export default function AnimatedExercisePlayer({ exerciseName, muscleGroup, anim
     if (name.includes('plancha') || name.includes('crunch') || name.includes('abdominal') || name.includes('core') || group.includes('core')) {
       return 'core_crunch';
     }
+    // 11. CALENTAMIENTO Y MOVILIDAD
+    if (name.includes('gato') || name.includes('movilidad') || name.includes('rotación') || name.includes('dislocaci') || group.includes('calentamiento')) {
+      return 'lat_pulldown';
+    }
+    // 12. REHABILITACIÓN (RODILLA / TOBILLO)
+    if (name.includes('rodilla') || name.includes('wall sit') || name.includes('tke') || name.includes('almeja') || name.includes('tobillo') || name.includes('dorsiflexi') || group.includes('rehabilitación')) {
+      return 'squat';
+    }
+    // 13. ESTIRAMIENTOS Y FLEXIBILIDAD
+    if (name.includes('estiramiento') || name.includes('niño') || name.includes('cobra') || group.includes('estiramientos')) {
+      return 'hip_hinge';
+    }
 
     // Fallback por grupo muscular
     if (group.includes('espalda')) return 'lat_pulldown';
@@ -60,6 +72,9 @@ export default function AnimatedExercisePlayer({ exerciseName, muscleGroup, anim
     if (group.includes('brazo')) return 'bicep_curl';
     if (group.includes('pierna')) return 'squat';
     if (group.includes('pecho')) return 'bench_press';
+    if (group.includes('calentamiento')) return 'lat_pulldown';
+    if (group.includes('rehabilitación')) return 'squat';
+    if (group.includes('estiramiento')) return 'hip_hinge';
     return 'bench_press';
   };
 

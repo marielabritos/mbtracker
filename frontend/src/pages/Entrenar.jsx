@@ -231,14 +231,15 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
     const completedSeries = [];
     exercises.forEach((ex) => {
       ex.series.forEach((s) => {
-        const hasWeight = parseFloat(s.peso_kg) > 0;
-        const hasReps = parseInt(s.repeticiones) > 0;
-        if (s.completada || hasWeight || hasReps) {
+        const peso = parseFloat(s.peso_kg) || 0;
+        const reps = parseInt(s.repeticiones) || 0;
+        // Tomar cualquier serie marcada o con datos, o incluir series de ejercicios presentes
+        if (s.completada || peso > 0 || reps > 0 || ex.series.length > 0) {
           completedSeries.push({
-            ejercicio_id: ex.ejercicio_id,
-            numero_serie: s.numero_serie,
-            peso_kg: parseFloat(s.peso_kg) || 0,
-            repeticiones: parseInt(s.repeticiones) || (hasWeight ? 10 : 0),
+            ejercicio_id: ex.ejercicio_id || 1,
+            numero_serie: s.numero_serie || 1,
+            peso_kg: peso,
+            repeticiones: reps > 0 ? reps : 10,
             rpe: parseFloat(s.rpe) || null,
             completada: true,
             notas: s.notas || null,
@@ -247,49 +248,42 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
       });
     });
 
-    if (completedSeries.length === 0 && exercises.length > 0) {
-      // Si no marcó ninguna, marcar automáticamente las series del primer ejercicio
-      exercises.forEach((ex) => {
-        ex.series.forEach((s) => {
-          completedSeries.push({
-            ejercicio_id: ex.ejercicio_id,
-            numero_serie: s.numero_serie,
-            peso_kg: parseFloat(s.peso_kg) || 0,
-            repeticiones: parseInt(s.repeticiones) || 10,
-            rpe: null,
-            completada: true,
-            notas: null
-          });
-        });
-      });
-    }
-
+    // Si aún no hay series (sesión libre vacía o cardio/movilidad)
     if (completedSeries.length === 0) {
-      alert("Por favor añade al menos un ejercicio o completa una serie.");
-      return;
+      completedSeries.push({
+        ejercicio_id: 1,
+        numero_serie: 1,
+        peso_kg: 0,
+        repeticiones: 1,
+        rpe: null,
+        completada: true,
+        notas: "Sesión Libre / Movilidad"
+      });
     }
 
     try {
       setSaving(true);
       const payload = {
-        nombre: sessionName,
+        nombre: sessionName || 'Entrenamiento Libre',
         dia_rutina_id: workoutData?.dia_rutina_id || null,
-        duracion_segundos: elapsedSeconds,
+        duracion_segundos: elapsedSeconds || 60,
         series: completedSeries,
       };
 
       const result = await api.createSesion(payload);
       
       const totalVolumen = completedSeries.reduce((acc, s) => acc + (s.peso_kg * s.repeticiones), 0);
-      const prCount = result.series?.filter((s) => s.es_pr).length || 0;
+      const prCount = result?.series?.filter((s) => s.es_pr)?.length || 0;
 
       if (prCount > 0) {
         sound.playPRCelebration();
+      } else {
+        sound.playTimerEnd();
       }
 
       // Mostrar modal de éxito
       setCompletedModalData({
-        nombre: sessionName,
+        nombre: sessionName || 'Entrenamiento Libre',
         duracion: formatDuration(elapsedSeconds),
         totalSeries: completedSeries.length,
         volumen: Math.round(totalVolumen),
@@ -644,7 +638,7 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
                 </div>
 
                 <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                  {['Todos', 'Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core'].map((group) => (
+                  {['Todos', 'Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core', 'Calentamiento', 'Rehabilitación', 'Estiramientos'].map((group) => (
                     <button
                       key={group}
                       onClick={() => setMuscleFilter(group)}

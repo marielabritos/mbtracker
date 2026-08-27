@@ -1,9 +1,8 @@
-// Base de datos de Demostraciones Visuales con GIFs animados reales y técnica de ejercicios
+// Base de datos de Demostraciones Visuales con técnica y activación biomecánica para todos los ejercicios
 
 export const EXERCISE_VISUALS = {
   // --- PECHO ---
   "Press de Banca Plano con Barra": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bench-Press.gif",
     animacion_tipo: "bench_press",
     musculo_principal: "Pectoral Mayor (Medio e Inferior)",
     musculos_secundarios: ["Deltoides Anterior", "Tríceps Braquial"],
@@ -14,21 +13,29 @@ export const EXERCISE_VISUALS = {
     ],
     respiracion: "Inhala al bajar la barra; exhala al empujar hacia arriba."
   },
+  "Press de Banca Plano con Mancuernas": {
+    animacion_tipo: "bench_press",
+    musculo_principal: "Pectoral Mayor (Mayor rango de movimiento)",
+    musculos_secundarios: ["Deltoides Anterior", "Tríceps"],
+    tips: [
+      "Baja las mancuernas sintiendo el estiramiento en el pecho.",
+      "Empuja hacia arriba en trayectoria ligeramente convergente sin chocar las pesas."
+    ],
+    respiracion: "Inhala al descender; exhala al empujar arriba."
+  },
   "Press Inclinado con Mancuernas": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Press.gif",
-    animacion_tipo: "incline_press",
+    animacion_tipo: "bench_press",
     musculo_principal: "Pectoral Superior (Clavicular)",
     musculos_secundarios: ["Deltoides Anterior", "Tríceps"],
     tips: [
       "Banco inclinado a 30° - 45°.",
       "Baja las mancuernas con los codos a unos 45° del torso para proteger hombros.",
-      "Presiona hacia arriba en una ligera trayectoria convergente."
+      "Presiona hacia arriba con control continuo."
     ],
     respiracion: "Inhala al bajar; exhala al empujar arriba."
   },
   "Aperturas en Polea (Cruces)": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Crossover.gif",
-    animacion_tipo: "cable_fly",
+    animacion_tipo: "bench_press",
     musculo_principal: "Pectoral Mayor (Aislamiento)",
     musculos_secundarios: ["Deltoides Anterior"],
     tips: [
@@ -37,9 +44,18 @@ export const EXERCISE_VISUALS = {
     ],
     respiracion: "Inhala al abrir; exhala al juntar las manos."
   },
+  "Flexiones de pecho (Push-ups)": {
+    animacion_tipo: "bench_press",
+    musculo_principal: "Pectoral y Tríceps",
+    musculos_secundarios: ["Core", "Deltoides Anterior"],
+    tips: [
+      "Cuerpo alineado como una tabla recta desde la cabeza hasta los talones.",
+      "Baja hasta que el pecho quede a 2 cm del suelo con codos a 45°."
+    ],
+    respiracion: "Inhala al bajar; exhala al empujar el suelo."
+  },
   "Fondos en Paralelas (Dips)": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Chest-Dips.gif",
-    animacion_tipo: "dips",
+    animacion_tipo: "tricep_pushdown",
     musculo_principal: "Pectoral Inferior y Tríceps",
     musculos_secundarios: ["Deltoides Anterior", "Core"],
     tips: [
@@ -51,32 +67,39 @@ export const EXERCISE_VISUALS = {
 
   // --- ESPALDA ---
   "Jalón al Pecho en Polea": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Lat-Pulldown.gif",
     animacion_tipo: "lat_pulldown",
     musculo_principal: "Dorsal Ancho (Amplitud de Espalda)",
     musculos_secundarios: ["Bíceps", "Redondo Mayor", "Trapecio"],
     tips: [
       "Pecho erguido mirando ligeramente hacia arriba.",
-      "Tira con los codos hacia abajo y adentro hasta la altura de la clavícula/pecho alto.",
+      "Tira con los codos hacia abajo y adentro hasta la altura de la clavícula.",
       "Controla la subida sintiendo el estiramiento dorsal completo."
     ],
     respiracion: "Exhala al bajar la barra al pecho; inhala al subir."
   },
+  "Dominadas (Pull-ups)": {
+    animacion_tipo: "lat_pulldown",
+    musculo_principal: "Dorsales y Espalda Alta",
+    musculos_secundarios: ["Bíceps", "Antebrazos", "Core"],
+    tips: [
+      "Agarre pronado ancho. Sube hasta pasar la barbilla por encima de la barra.",
+      "Baja de forma controlada sin balanceos bruscos."
+    ],
+    respiracion: "Exhala al subir; inhala al bajar."
+  },
   "Remo con Barra": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bent-Over-Row.gif",
     animacion_tipo: "barbell_row",
     musculo_principal: "Dorsal Ancho y Espalda Media (Grosor)",
     musculos_secundarios: ["Bíceps", "Trapecio", "Erectores Espinales"],
     tips: [
       "Espalda completamente recta e inclinada a unos 45°.",
       "Tracciona la barra hacia el ombligo apretando las escápulas atrás.",
-      "No utilices impulso con las piernas ni redondees la zona lumbar."
+      "No redondees la zona lumbar."
     ],
     respiracion: "Exhala al tirar hacia el torso; inhala al bajar controladamente."
   },
   "Remo Unilateral con Mancuerna (Serrucho)": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Row.gif",
-    animacion_tipo: "dumbbell_row",
+    animacion_tipo: "barbell_row",
     musculo_principal: "Dorsal Ancho (Unilateral)",
     musculos_secundarios: ["Bíceps", "Deltoides Posterior"],
     tips: [
@@ -86,8 +109,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al subir; inhala al bajar estirando el dorsal."
   },
   "Remo en Polea Baja (Gironda)": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Cable-Row.gif",
-    animacion_tipo: "cable_row",
+    animacion_tipo: "barbell_row",
     musculo_principal: "Espalda Media y Romboides",
     musculos_secundarios: ["Bíceps", "Trapecio"],
     tips: [
@@ -99,20 +121,18 @@ export const EXERCISE_VISUALS = {
 
   // --- PIERNAS & GLÚTEOS ---
   "Sentadilla con Barra (Back Squat)": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/BARBELL-SQUAT.gif",
     animacion_tipo: "squat",
     musculo_principal: "Cuádriceps, Glúteos e Isquios",
     musculos_secundarios: ["Core", "Erectores Espinales"],
     tips: [
       "Pies al ancho de hombros con puntas ligeramente abiertas.",
       "Desciende quebrando cadera y rodillas al mismo tiempo hasta romper el paralelo.",
-      "Mantén el pecho alto y empuja el suelo con toda la planta del pie."
+      "Empuja el suelo con toda la planta del pie."
     ],
     respiracion: "Inhala y compacta el abdomen al bajar; exhala al subir."
   },
   "Prensa de Piernas 45°": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Press.gif",
-    animacion_tipo: "leg_press",
+    animacion_tipo: "squat",
     musculo_principal: "Cuádriceps y Glúteos",
     musculos_secundarios: ["Isquiosurales"],
     tips: [
@@ -123,8 +143,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al bajar el carro; exhala al empujar."
   },
   "Peso Muerto Rumano (RDL)": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Romanian-Deadlift.gif",
-    animacion_tipo: "rdl",
+    animacion_tipo: "hip_hinge",
     musculo_principal: "Isquiosurales y Glúteos",
     musculos_secundarios: ["Erectores Espinales"],
     tips: [
@@ -134,8 +153,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al bajar; exhala al subir apretando glúteos."
   },
   "Hip Thrust con Barra": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Hip-Thrust.gif",
-    animacion_tipo: "hip_thrust",
+    animacion_tipo: "hip_hinge",
     musculo_principal: "Glúteo Mayor",
     musculos_secundarios: ["Isquiosurales", "Cuádriceps"],
     tips: [
@@ -147,7 +165,6 @@ export const EXERCISE_VISUALS = {
 
   // --- HOMBROS ---
   "Press Militar con Barra / Mancuernas": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Overhead-Press.gif",
     animacion_tipo: "overhead_press",
     musculo_principal: "Deltoides Anterior y Medio",
     musculos_secundarios: ["Tríceps", "Trapecio", "Core"],
@@ -158,7 +175,6 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala abajo; exhala al empujar sobre la cabeza."
   },
   "Elevaciones Laterales": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif",
     animacion_tipo: "lateral_raise",
     musculo_principal: "Deltoides Lateral (Hombros Redondos)",
     musculos_secundarios: ["Trapecio Superior"],
@@ -169,8 +185,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al subir; inhala al bajar en 2 segundos."
   },
   "Pájaros / Face Pull en Polea": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Face-Pull.gif",
-    animacion_tipo: "face_pull",
+    animacion_tipo: "lateral_raise",
     musculo_principal: "Deltoides Posterior y Manguito Rotador",
     musculos_secundarios: ["Romboides", "Trapecio"],
     tips: [
@@ -182,7 +197,6 @@ export const EXERCISE_VISUALS = {
 
   // --- BRAZOS ---
   "Curl de Bíceps con Barra Z": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/EZ-Barbell-Curl.gif",
     animacion_tipo: "bicep_curl",
     musculo_principal: "Bíceps Braquial",
     musculos_secundarios: ["Braquial Anterior", "Antebrazos"],
@@ -193,8 +207,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al subir la barra; inhala al descender."
   },
   "Curl Martillo con Mancuernas": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Hammer-Curl.gif",
-    animacion_tipo: "hammer_curl",
+    animacion_tipo: "bicep_curl",
     musculo_principal: "Braquial y Braquiorradial (Grosor del Brazo)",
     musculos_secundarios: ["Bíceps"],
     tips: [
@@ -204,7 +217,6 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al subir; inhala al bajar."
   },
   "Extensiones de Tríceps en Polea (Cuerda)": {
-    gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Tricep-Rope-Pushdown.gif",
     animacion_tipo: "tricep_pushdown",
     musculo_principal: "Tríceps Braquial",
     musculos_secundarios: ["Antebrazos"],
@@ -213,69 +225,228 @@ export const EXERCISE_VISUALS = {
       "Empuja la cuerda hacia abajo y ábrela al final para máxima contracción."
     ],
     respiracion: "Exhala al extender los brazos; inhala al flexionar."
+  },
+  "Press Francés con Barra Z": {
+    animacion_tipo: "tricep_pushdown",
+    musculo_principal: "Tríceps (Cabeza Larga)",
+    musculos_secundarios: ["Antebrazos"],
+    tips: [
+      "Acostado en banco, baja la barra hacia la frente flexionando solo los codos.",
+      "Extiende los brazos manteniendo los codos apuntando al techo."
+    ],
+    respiracion: "Inhala al bajar; exhala al extender."
+  },
+
+  // --- 🔥 CALENTAMIENTO Y MOVILIDAD ---
+  "Dislocaciones de Hombro con Banda / Pica": {
+    animacion_tipo: "lateral_raise",
+    musculo_principal: "Movilidad de Hombros y Pectoral",
+    musculos_secundarios: ["Manguito Rotador", "Trapecio"],
+    tips: [
+      "Toma una banda elástica con agarre amplio.",
+      "Pasa los brazos rectos por encima de la cabeza hacia atrás y regresa de forma fluida."
+    ],
+    respiracion: "Inhala al subir los brazos; exhala al llevarlos atrás."
+  },
+  "Gato-Camello (Cat-Cow) Columna": {
+    animacion_tipo: "core_crunch",
+    musculo_principal: "Movilidad de Columna y Lumbar",
+    musculos_secundarios: ["Core", "Erectores Espinales"],
+    tips: [
+      "En cuatro apoyos, arquea la espalda hacia arriba metiendo la cabeza.",
+      "Luego arquea hacia abajo mirando al frente abriendo el pecho."
+    ],
+    respiracion: "Exhala al arquear hacia arriba; inhala al descender el abdomen."
+  },
+  "Rotación Torácica en Cuadrupedia": {
+    animacion_tipo: "barbell_row",
+    musculo_principal: "Movilidad Torácica y Dorsal",
+    musculos_secundarios: ["Deltoides Posterior", "Romboides"],
+    tips: [
+      "Mano detrás de la cabeza en cuatro apoyos.",
+      "Gira el codo hacia el techo abriendo el torso al máximo."
+    ],
+    respiracion: "Exhala al rotar hacia arriba; inhala al bajar el codo."
+  },
+  "Apertura de Cadera en 90/90": {
+    animacion_tipo: "squat",
+    musculo_principal: "Cápsula Articular de la Cadera",
+    musculos_secundarios: ["Glúteo Medio", "Aductores"],
+    tips: [
+      "Sentada en el suelo con ambas piernas formando ángulos de 90°.",
+      "Gira las rodillas de un lado a otro manteniendo el torso erguido."
+    ],
+    respiracion: "Respira hondo y relajada en cada cambio."
+  },
+
+  // --- 🦵 REHABILITACIÓN Y FORTALECIMIENTO DE RODILLA ---
+  "Sentadilla Isométrica en Pared (Wall Sit)": {
+    animacion_tipo: "squat",
+    musculo_principal: "Cuádriceps y Tendón Rotuliano",
+    musculos_secundarios: ["Glúteos", "Core"],
+    tips: [
+      "Espalda apoyada en la pared y muslos paralelos al suelo a 90°.",
+      "Mantén la posición sin balancearte activando los cuádriceps."
+    ],
+    respiracion: "Respiraciones diafragmáticas lentas y continuas."
+  },
+  "Extensiones Terminales de Rodilla con Banda (TKE)": {
+    animacion_tipo: "squat",
+    musculo_principal: "Vasto Medial del Cuádriceps (Estabilidad de Rodilla)",
+    musculos_secundarios: ["Isquiosurales"],
+    tips: [
+      "Banda elástica detrás de la corva de la rodilla anclada al frente.",
+      "Extiende la rodilla hacia atrás apretando el cuádriceps 2 segundos."
+    ],
+    respiracion: "Exhala al extender la pierna; inhala al flexionar."
+  },
+  "Puente de Glúteo Unipodal": {
+    animacion_tipo: "hip_hinge",
+    musculo_principal: "Glúteo Mayor y Cadena Posterior",
+    musculos_secundarios: ["Isquiotibiales", "Core"],
+    tips: [
+      "Una pierna apoyada y la otra elevada.",
+      "Eleva la pelvis hasta alinear la rodilla y el torso apretando el glúteo."
+    ],
+    respiracion: "Exhala al elevar la pelvis; inhala al descender."
+  },
+  "Clamshells / Almejas con Banda": {
+    animacion_tipo: "hip_hinge",
+    musculo_principal: "Glúteo Medio (Prevención de Valgo de Rodilla)",
+    musculos_secundarios: ["Rotadores de Cadera"],
+    tips: [
+      "Recostada de lado con rodillas flexionadas a 90°.",
+      "Abre la rodilla superior manteniendo los talones juntos sin girar la pelvis."
+    ],
+    respiracion: "Exhala al abrir la rodilla; inhala al cerrar."
+  },
+  "Monster Walk / Pasos con Banda": {
+    animacion_tipo: "squat",
+    musculo_principal: "Glúteo Medio y Abductores",
+    musculos_secundarios: ["Cuádriceps", "Tobillos"],
+    tips: [
+      "Banda en los tobillos o rodillas en posición de media sentadilla.",
+      "Da pasos laterales manteniendo la tensión constante en la banda."
+    ],
+    respiracion: "Respiración constante y controlada."
+  },
+
+  // --- 🦶 REHABILITACIÓN DE TOBILLO Y PIE ---
+  "Dorsiflexión de Tobillo en Pared": {
+    animacion_tipo: "squat",
+    musculo_principal: "Tendón de Aquiles y Movilidad de Tobillo",
+    musculos_secundarios: ["Sóleo", "Gemelos"],
+    tips: [
+      "Pie a 8-10 cm de la pared.",
+      "Lleva la rodilla hacia la pared sin despegar el talón del piso."
+    ],
+    respiracion: "Exhala al adelantar la rodilla; inhala al regresar."
+  },
+  "Elevación de Gemelos Excéntrica a 1 Pierna": {
+    animacion_tipo: "squat",
+    musculo_principal: "Gemelos y Tendón de Aquiles",
+    musculos_secundarios: ["Planta del pie"],
+    tips: [
+      "Sube con ambos pies sobre un escalón.",
+      "Quita un pie y baja con una sola pierna muy lentamente en 4 segundos."
+    ],
+    respiracion: "Exhala al subir; inhala durante los 4 segundos de bajada."
+  },
+  "Caminata en Talones y Puntas": {
+    animacion_tipo: "squat",
+    musculo_principal: "Tibial Anterior y Estabilidad de Tobillo",
+    musculos_secundarios: ["Gemelos", "Fascia Plantar"],
+    tips: [
+      "Camina 20 pasos sobre los talones levantando las puntas de los pies.",
+      "Luego camina 20 pasos sobre las puntas de los pies con talones altos."
+    ],
+    respiracion: "Respiración fluida."
+  },
+
+  // --- 🧘 ESTIRAMIENTOS Y VUELTA A LA CALMA ---
+  "Estiramiento de Isquiosurales en Suelo": {
+    animacion_tipo: "hip_hinge",
+    musculo_principal: "Isquiosurales y Cadena Posterior",
+    musculos_secundarios: ["Lumbar", "Gemelos"],
+    tips: [
+      "Pierna extendida al frente con espalda recta.",
+      "Inclínate desde la cadera hacia la punta del pie sin curvar la columna."
+    ],
+    respiracion: "Inhala profundo; exhala relajando y profundizando el estiramiento."
+  },
+  "Estiramiento de Cuádriceps y Psoas": {
+    animacion_tipo: "squat",
+    musculo_principal: "Cuádriceps y Flexores de Cadera",
+    musculos_secundarios: ["Abdomen"],
+    tips: [
+      "Toma el empeine por detrás llevando el talón al glúteo.",
+      "Mantén las rodillas juntas y empuja ligeramente la pelvis hacia adelante."
+    ],
+    respiracion: "Sostén 30 segundos respirando con calma."
+  },
+  "Posición del Niño (Child's Pose)": {
+    animacion_tipo: "core_crunch",
+    musculo_principal: "Espalda Completa, Dorsales y Cadera",
+    musculos_secundarios: ["Hombros", "Columna"],
+    tips: [
+      "De rodillas, siéntate sobre los talones y estira los brazos al frente en el suelo.",
+      "Deja caer el pecho hacia el piso relajando cuello y hombros."
+    ],
+    respiracion: "Respiraciones profundas y lentas sintiendo la apertura dorsal."
+  },
+  "Cobra / Extensión Lumbar Suave": {
+    animacion_tipo: "core_crunch",
+    musculo_principal: "Pared Abdominal y Descompresión Lumbar",
+    musculos_secundarios: ["Pectorales", "Flexores"],
+    tips: [
+      "Tumbada boca abajo, apoya las palmas al lado de los hombros.",
+      "Extiende los brazos suavemente levantando el pecho sin despegar la pelvis."
+    ],
+    respiracion: "Inhala al elevar el pecho; exhala relajando la tensión."
+  },
+  "Estiramiento Pectoral en Pared": {
+    animacion_tipo: "bench_press",
+    musculo_principal: "Pectoral Mayor y Menor",
+    musculos_secundarios: ["Deltoides Anterior", "Bíceps"],
+    tips: [
+      "Apoya el antebrazo en una pared o marco de puerta a 90°.",
+      "Gira el torso en dirección contraria sintiendo la apertura en el pecho."
+    ],
+    respiracion: "Mantén 20-30 segundos por lado de forma relajada."
   }
 };
 
 // Obtener datos visuales por nombre o grupo
 export function getExerciseVisual(nombre, grupoMuscular = "General") {
-  // Coincidencia exacta
+  if (!nombre) return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
+
+  // Coincidencia directa
   if (EXERCISE_VISUALS[nombre]) {
     return EXERCISE_VISUALS[nombre];
   }
 
-  // Coincidencia parcial (por si el usuario renombra a "Remo con Barra supino", etc.)
+  // Coincidencia parcial
+  const nombreLow = nombre.toLowerCase();
   const matchedKey = Object.keys(EXERCISE_VISUALS).find(k => 
-    nombre.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(nombre.toLowerCase())
+    nombreLow.includes(k.toLowerCase()) || k.toLowerCase().includes(nombreLow)
   );
   if (matchedKey) {
     return EXERCISE_VISUALS[matchedKey];
   }
 
-  // Fallbacks animados por grupo muscular
-  const grupoDefaults = {
-    Pecho: {
-      gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bench-Press.gif",
-      musculo_principal: "Pectoral Mayor y Menor",
-      musculos_secundarios: ["Tríceps", "Deltoides"],
-      tips: ["Mantén el pecho erguido y las escápulas retraídas.", "Controla la fase de bajada y empuja con potencia."],
-      respiracion: "Inhala al bajar el peso; exhala al empujar."
-    },
-    Espalda: {
-      gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bent-Over-Row.gif",
-      musculo_principal: "Dorsales y Espalda Media",
-      musculos_secundarios: ["Bíceps", "Trapecio"],
-      tips: ["Tracciona con los codos y junta las escápulas atrás.", "Mantén la columna firme sin tirones lumbares."],
-      respiracion: "Exhala al traccionar; inhala al extender."
-    },
-    Piernas: {
-      gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/BARBELL-SQUAT.gif",
-      musculo_principal: "Cuádriceps, Isquios y Glúteos",
-      musculos_secundarios: ["Core", "Gemelos"],
-      tips: ["Pies bien plantados. Controla la bajada y empuja desde los talones."],
-      respiracion: "Inhala al descender; exhala al subir."
-    },
-    Hombros: {
-      gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif",
-      musculo_principal: "Deltoides (Hombros)",
-      musculos_secundarios: ["Trapecio", "Tríceps"],
-      tips: ["Trabaja con trayectoria fluida sin balancear el torso."],
-      respiracion: "Exhala en el esfuerzo; inhala al regresar."
-    },
-    Brazos: {
-      gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/EZ-Barbell-Curl.gif",
-      musculo_principal: "Bíceps y Tríceps",
-      musculos_secundarios: ["Antebrazos"],
-      tips: ["Mantén los codos pegados al cuerpo y aísla la contracción."],
-      respiracion: "Exhala al contraer; inhala al extender."
-    },
-    Core: {
-      gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Crunch.gif",
-      musculo_principal: "Abdomen y Core",
-      musculos_secundarios: ["Oblicuos"],
-      tips: ["Contrae el abdomen en todo el rango sin forzar el cuello."],
-      respiracion: "Exhala al flexionar el torso; inhala al extender."
-    }
-  };
+  // Detección inteligente por palabras clave
+  if (nombreLow.includes('jalón') || nombreLow.includes('pulldown') || nombreLow.includes('dominada')) return EXERCISE_VISUALS["Jalón al Pecho en Polea"];
+  if (nombreLow.includes('serrucho') || nombreLow.includes('remo')) return EXERCISE_VISUALS["Remo con Barra"];
+  if (nombreLow.includes('militar') || nombreLow.includes('overhead')) return EXERCISE_VISUALS["Press Militar con Barra / Mancuernas"];
+  if (nombreLow.includes('lateral') || nombreLow.includes('pájaro') || nombreLow.includes('face pull')) return EXERCISE_VISUALS["Elevaciones Laterales"];
+  if (nombreLow.includes('bíceps') || nombreLow.includes('curl')) return EXERCISE_VISUALS["Curl de Bíceps con Barra Z"];
+  if (nombreLow.includes('tríceps') || nombreLow.includes('francés') || nombreLow.includes('dips')) return EXERCISE_VISUALS["Extensiones de Tríceps en Polea (Cuerda)"];
+  if (nombreLow.includes('sentadilla') || nombreLow.includes('squat') || nombreLow.includes('prensa')) return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
+  if (nombreLow.includes('rumano') || nombreLow.includes('peso muerto') || nombreLow.includes('thrust')) return EXERCISE_VISUALS["Peso Muerto Rumano (RDL)"];
+  if (nombreLow.includes('rodilla') || nombreLow.includes('wall sit') || nombreLow.includes('almeja')) return EXERCISE_VISUALS["Sentadilla Isométrica en Pared (Wall Sit)"];
+  if (nombreLow.includes('tobillo') || nombreLow.includes('dorsiflexi')) return EXERCISE_VISUALS["Dorsiflexión de Tobillo en Pared"];
+  if (nombreLow.includes('estiramiento') || nombreLow.includes('niño') || nombreLow.includes('cobra')) return EXERCISE_VISUALS["Posición del Niño (Child's Pose)"];
+  if (nombreLow.includes('gato') || nombreLow.includes('movilidad') || nombreLow.includes('dislocaci')) return EXERCISE_VISUALS["Dislocaciones de Hombro con Banda / Pica"];
 
-  return grupoDefaults[grupoMuscular] || grupoDefaults["Pecho"];
+  return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
 }
