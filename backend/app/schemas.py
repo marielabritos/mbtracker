@@ -8,6 +8,7 @@ class EjercicioBase(BaseModel):
     grupo_muscular: str
     equipo: Optional[str] = None
     descripcion: Optional[str] = None
+    gif_url: Optional[str] = None
 
 class EjercicioCreate(EjercicioBase):
     es_personalizado: Optional[bool] = True

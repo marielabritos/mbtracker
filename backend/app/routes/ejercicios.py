@@ -39,12 +39,32 @@ def crear_ejercicio(ej_in: EjercicioCreate, db: Session = Depends(get_db)):
         grupo_muscular=ej_in.grupo_muscular,
         equipo=ej_in.equipo,
         descripcion=ej_in.descripcion,
+        gif_url=ej_in.gif_url,
         es_personalizado=True
     )
     db.add(nuevo_ej)
     db.commit()
     db.refresh(nuevo_ej)
     return nuevo_ej
+
+@router.put("/{ejercicio_id}", response_model=EjercicioResponse)
+def actualizar_ejercicio(ejercicio_id: int, ej_in: EjercicioCreate, db: Session = Depends(get_db)):
+    ej = db.query(Ejercicio).filter(Ejercicio.id == ejercicio_id).first()
+    if not ej:
+        raise HTTPException(status_code=404, detail="Ejercicio no encontrado")
+    
+    ej.nombre = ej_in.nombre
+    ej.grupo_muscular = ej_in.grupo_muscular
+    if ej_in.equipo is not None:
+        ej.equipo = ej_in.equipo
+    if ej_in.descripcion is not None:
+        ej.descripcion = ej_in.descripcion
+    if ej_in.gif_url is not None:
+        ej.gif_url = ej_in.gif_url
+        
+    db.commit()
+    db.refresh(ej)
+    return ej
 
 @router.delete("/{ejercicio_id}")
 def eliminar_ejercicio(ejercicio_id: int, db: Session = Depends(get_db)):

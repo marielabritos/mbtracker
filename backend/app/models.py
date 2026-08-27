@@ -11,6 +11,7 @@ class Ejercicio(Base):
     grupo_muscular = Column(String(50), nullable=False, index=True) # Pecho, Espalda, Piernas, Hombros, Brazos, Core, Cardio
     equipo = Column(String(50), nullable=True) # Barra, Mancuerna, Máquina, Polea, Peso Corporal
     descripcion = Column(Text, nullable=True)
+    gif_url = Column(String(500), nullable=True)
     es_personalizado = Column(Boolean, default=False)
     fecha_creacion = Column(DateTime, default=datetime.utcnow)
 

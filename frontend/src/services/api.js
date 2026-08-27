@@ -256,6 +256,34 @@ export const api = {
     }
   },
 
+  updateEjercicio: async (id, data) => {
+    const current = getStored('ejercicios', DEFAULT_EJERCICIOS);
+    const updated = current.map(e => e.id === parseInt(id) ? { ...e, ...data } : e);
+    setStored('ejercicios', updated);
+
+    // Actualizar también en rutinas locales que contengan este ejercicio
+    const rutinas = getStored('rutinas', DEFAULT_RUTINAS);
+    const updatedRutinas = rutinas.map(r => ({
+      ...r,
+      dias: (r.dias || []).map(d => ({
+        ...d,
+        ejercicios: (d.ejercicios || []).map(ej => {
+          if (ej.ejercicio_id === parseInt(id)) {
+            return { ...ej, ejercicio: { ...ej.ejercicio, ...data } };
+          }
+          return ej;
+        })
+      }))
+    }));
+    setStored('rutinas', updatedRutinas);
+
+    try {
+      return await request(`/api/ejercicios/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+    } catch (e) {
+      return { ...data, id };
+    }
+  },
+
   deleteEjercicio: async (id) => {
     try {
       await request(`/api/ejercicios/${id}`, { method: 'DELETE' });

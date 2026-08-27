@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Check, Plus, Trash2, Timer, Flame, Trophy, 
-  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown, Award, Sparkles, CheckCircle2 
+  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown, Award, Sparkles, CheckCircle2, Eye, Edit3 
 } from 'lucide-react';
 import { api } from '../services/api';
 import { sound } from '../utils/sound';
 import RestTimer from '../components/RestTimer';
+import ExerciseModal from '../components/ExerciseModal';
 
 export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout }) {
   const [sessionName, setSessionName] = useState(workoutData?.nombre || 'Entrenamiento del Día');
@@ -21,13 +22,15 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
   const [searchFilter, setSearchFilter] = useState('');
   const [saving, setSaving] = useState(false);
   const [completedModalData, setCompletedModalData] = useState(null);
+  const [selectedVisualExercise, setSelectedVisualExercise] = useState(null);
 
   // Formulario nuevo ejercicio personalizado
   const [newCustomEx, setNewCustomEx] = useState({
     nombre: '',
     grupo_muscular: 'Pecho',
     equipo: 'Mancuerna',
-    descripcion: ''
+    descripcion: '',
+    gif_url: ''
   });
 
   // Inicializar ejercicios de la rutina seleccionada o sesión libre
@@ -372,7 +375,18 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
                         Objetivo: {ex.reps_objetivo} reps
                       </span>
                     </div>
-                    <h3 className="font-black text-white text-base sm:text-lg mt-1">{ex.nombre}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <h3 className="font-black text-white text-base sm:text-lg">{ex.nombre}</h3>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedVisualExercise({ id: ex.ejercicio_id, nombre: ex.nombre, grupo_muscular: ex.grupo_muscular })}
+                        className="p-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/25 flex items-center gap-1 text-[10px] font-bold transition-colors"
+                        title="Ver GIF y técnica correcta"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Técnica</span>
+                      </button>
+                    </div>
 
                     {/* Referencia Anterior */}
                     {lastLog && lastLog.length > 0 && (
@@ -742,6 +756,23 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
         <RestTimer
           initialSeconds={timerSeconds}
           onClose={() => setIsTimerOpen(false)}
+        />
+      )}
+
+      {/* Modal de Demostración Visual / GIF & Técnica */}
+      {selectedVisualExercise && (
+        <ExerciseModal
+          exercise={selectedVisualExercise}
+          onClose={() => setSelectedVisualExercise(null)}
+          onUpdateExercise={async (updated) => {
+            await api.updateEjercicio(updated.id, updated);
+            setExercises((prev) =>
+              prev.map((e) =>
+                e.ejercicio_id === updated.id ? { ...e, nombre: updated.nombre } : e
+              )
+            );
+            setSelectedVisualExercise(null);
+          }}
         />
       )}
     </div>

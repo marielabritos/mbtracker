@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, Trash2, Edit3, ChevronDown, ChevronUp, Dumbbell, 
-  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, Calendar, CheckCircle2, Save, Sparkles 
+  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, Calendar, CheckCircle2, Save, Sparkles, Eye, Info 
 } from 'lucide-react';
 import { api } from '../services/api';
+import ExerciseModal from '../components/ExerciseModal';
 
 export default function Rutinas({ onStartWorkout }) {
   const [rutinas, setRutinas] = useState([]);
@@ -16,13 +17,15 @@ export default function Rutinas({ onStartWorkout }) {
   const [searchEj, setSearchEj] = useState('');
   const [showCreateCustomExercise, setShowCreateCustomExercise] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [selectedVisualExercise, setSelectedVisualExercise] = useState(null);
 
   // Formulario nuevo ejercicio personalizado
   const [newCustomEx, setNewCustomEx] = useState({
     nombre: '',
     grupo_muscular: 'Pecho',
     equipo: 'Mancuerna',
-    descripcion: ''
+    descripcion: '',
+    gif_url: ''
   });
 
   // Estado del formulario de creación / edición de rutina
@@ -197,15 +200,54 @@ export default function Rutinas({ onStartWorkout }) {
       setCatalogEjercicios(prev => [created, ...prev]);
       handleAddExerciseToDay(created);
       setShowCreateCustomExercise(false);
-      setNewCustomEx({ nombre: '', grupo_muscular: 'Pecho', equipo: 'Mancuerna', descripcion: '' });
+      setNewCustomEx({ nombre: '', grupo_muscular: 'Pecho', equipo: 'Mancuerna', descripcion: '', gif_url: '' });
     } catch (err) {
       alert("Error al crear ejercicio: " + err.message);
+    }
+  };
+
+  const handleUpdateExerciseFromModal = async (updatedExercise) => {
+    try {
+      await api.updateEjercicio(updatedExercise.id, updatedExercise);
+      setCatalogEjercicios(prev => prev.map(e => e.id === updatedExercise.id ? updatedExercise : e));
+      
+      // Actualizar en el formulario de la rutina
+      setFormRutina(prev => ({
+        ...prev,
+        dias: prev.dias.map(d => ({
+          ...d,
+          ejercicios: d.ejercicios.map(ej => {
+            if (ej.ejercicio_id === updatedExercise.id) {
+              return { ...ej, ejercicio: updatedExercise };
+            }
+            return ej;
+          })
+        }))
+      }));
+
+      setSelectedVisualExercise(updatedExercise);
+      showToast("✓ Ejercicio actualizado correctamente");
+      loadData();
+    } catch (err) {
+      alert("Error al actualizar ejercicio");
     }
   };
 
   const handleSaveRutina = async (e) => {
     if (e) e.preventDefault();
     if (!formRutina.nombre.trim()) return alert("Por favor ingresa un nombre para la rutina");
+
+    // Guardar cambios en nombres de ejercicios si fueron editados inline
+    for (const dia of formRutina.dias) {
+      for (const ej of dia.ejercicios) {
+        if (ej.ejercicio?.nombre && ej.ejercicio_id) {
+          api.updateEjercicio(ej.ejercicio_id, {
+            nombre: ej.ejercicio.nombre,
+            grupo_muscular: ej.ejercicio.grupo_muscular || 'General'
+          }).catch(() => {});
+        }
+      }
+    }
 
     const payload = {
       nombre: formRutina.nombre,
@@ -415,25 +457,34 @@ export default function Rutinas({ onStartWorkout }) {
                           {dia.ejercicios?.map((ej, index) => (
                             <div
                               key={ej.id}
-                              className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/50 border border-slate-800/60 text-xs"
+                              className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/50 border border-slate-800/60 text-xs gap-2"
                             >
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 min-w-0">
                                 <span className="font-mono text-slate-500 font-bold w-4">
                                   {index + 1}.
                                 </span>
-                                <span className="font-semibold text-slate-200">
+                                <span className="font-semibold text-slate-200 truncate">
                                   {ej.ejercicio?.nombre}
                                 </span>
-                                <span className="px-2 py-0.5 rounded-md bg-slate-800 text-[10px] text-sky-400 font-medium">
+                                <span className="px-2 py-0.5 rounded-md bg-slate-800 text-[10px] text-sky-400 font-medium shrink-0">
                                   {ej.ejercicio?.grupo_muscular}
                                 </span>
+                                
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedVisualExercise(ej.ejercicio)}
+                                  className="p-1 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20 shrink-0"
+                                  title="Ver animación / GIF y técnica"
+                                >
+                                  <Eye className="w-3 h-3" />
+                                </button>
                               </div>
-                              <div className="flex items-center gap-3 text-slate-400 font-mono">
+                              <div className="flex items-center gap-2 sm:gap-3 text-slate-400 font-mono shrink-0">
                                 <span>{ej.series_objetivo} series</span>
                                 <span>•</span>
                                 <span>{ej.reps_objetivo} reps</span>
                                 <span>•</span>
-                                <span>{ej.descanso_segundos}s desc.</span>
+                                <span>{ej.descanso_segundos}s</span>
                               </div>
                             </div>
                           ))}
@@ -458,7 +509,7 @@ export default function Rutinas({ onStartWorkout }) {
                 <h3 className="font-black text-xl text-white">
                   {editingRutinaId ? 'Editar Rutina' : 'Crear Nueva Rutina'}
                 </h3>
-                <p className="text-xs text-slate-400">Ajusta los días, reordena ejercicios y define su duración</p>
+                <p className="text-xs text-slate-400">Edita nombres de ejercicios, reordena y define la duración</p>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -592,11 +643,11 @@ export default function Rutinas({ onStartWorkout }) {
                       {dia.ejercicios.map((ej, ejIdx) => (
                         <div 
                           key={ejIdx} 
-                          className="bg-slate-900 border border-slate-800/80 p-3 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                          className="bg-slate-900 border border-slate-800/80 p-3 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs shadow-md"
                         >
-                          {/* Reordenar Flechas & Nombre */}
-                          <div className="flex items-center gap-2">
-                            <div className="flex flex-col gap-0.5">
+                          {/* Reordenar, Input Nombre Editable y Botón GIF */}
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <div className="flex flex-col gap-0.5 shrink-0">
                               <button
                                 type="button"
                                 disabled={ejIdx === 0}
@@ -617,21 +668,45 @@ export default function Rutinas({ onStartWorkout }) {
                               </button>
                             </div>
 
-                            <span className="font-mono text-slate-500 font-bold text-xs">{ejIdx + 1}.</span>
+                            <span className="font-mono text-slate-500 font-bold text-xs shrink-0">{ejIdx + 1}.</span>
 
-                            <div>
-                              <span className="font-bold text-slate-200 block text-sm">
-                                {ej.ejercicio?.nombre || 'Ejercicio'}
-                              </span>
-                              <span className="text-[10px] text-sky-400">
-                                {ej.ejercicio?.grupo_muscular || ''}
-                              </span>
+                            {/* Campo de Nombre Editable directamente */}
+                            <div className="flex-1 min-w-0 flex items-center gap-1.5">
+                              <div className="flex-1 min-w-0">
+                                <input
+                                  type="text"
+                                  value={ej.ejercicio?.nombre || ''}
+                                  onChange={(e) => {
+                                    const newDias = [...formRutina.dias];
+                                    newDias[diaIdx].ejercicios[ejIdx].ejercicio = {
+                                      ...newDias[diaIdx].ejercicios[ejIdx].ejercicio,
+                                      nombre: e.target.value
+                                    };
+                                    setFormRutina({ ...formRutina, dias: newDias });
+                                  }}
+                                  placeholder="Nombre del ejercicio"
+                                  className="bg-slate-950/80 border border-slate-700/70 focus:border-sky-400 rounded-xl px-2.5 py-1.5 font-bold text-white text-xs sm:text-sm w-full focus:outline-none truncate"
+                                />
+                                <span className="text-[10px] text-sky-400 px-1 block mt-0.5">
+                                  {ej.ejercicio?.grupo_muscular || 'General'}
+                                </span>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => setSelectedVisualExercise(ej.ejercicio)}
+                                className="p-2 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20 flex items-center gap-1 text-[11px] font-bold shrink-0 transition-colors"
+                                title="Ver demostración GIF y técnica"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span className="hidden sm:inline">GIF / Técnica</span>
+                              </button>
                             </div>
                           </div>
 
                           {/* Ajustes de Series, Reps y Descanso */}
-                          <div className="flex items-center gap-2 self-end sm:self-auto">
-                            <div className="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">
+                          <div className="flex items-center gap-2 self-end md:self-auto shrink-0">
+                            <div className="flex items-center gap-1 bg-slate-950 px-2.5 py-1.5 rounded-xl border border-slate-800">
                               <span className="text-slate-500 text-[10px]">Series:</span>
                               <input
                                 type="number"
@@ -643,11 +718,11 @@ export default function Rutinas({ onStartWorkout }) {
                                   newDias[diaIdx].ejercicios[ejIdx].series_objetivo = parseInt(e.target.value) || 1;
                                   setFormRutina({ ...formRutina, dias: newDias });
                                 }}
-                                className="w-8 bg-transparent text-center text-white font-mono font-bold focus:outline-none"
+                                className="w-8 bg-transparent text-center text-white font-mono font-bold focus:outline-none text-xs"
                               />
                             </div>
 
-                            <div className="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">
+                            <div className="flex items-center gap-1 bg-slate-950 px-2.5 py-1.5 rounded-xl border border-slate-800">
                               <span className="text-slate-500 text-[10px]">Reps:</span>
                               <input
                                 type="text"
@@ -657,11 +732,11 @@ export default function Rutinas({ onStartWorkout }) {
                                   newDias[diaIdx].ejercicios[ejIdx].reps_objetivo = e.target.value;
                                   setFormRutina({ ...formRutina, dias: newDias });
                                 }}
-                                className="w-14 bg-transparent text-center text-white font-mono font-bold focus:outline-none"
+                                className="w-14 bg-transparent text-center text-white font-mono font-bold focus:outline-none text-xs"
                               />
                             </div>
 
-                            <div className="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">
+                            <div className="flex items-center gap-1 bg-slate-950 px-2.5 py-1.5 rounded-xl border border-slate-800">
                               <span className="text-slate-500 text-[10px]">Desc:</span>
                               <input
                                 type="number"
@@ -672,7 +747,7 @@ export default function Rutinas({ onStartWorkout }) {
                                   newDias[diaIdx].ejercicios[ejIdx].descanso_segundos = parseInt(e.target.value) || 60;
                                   setFormRutina({ ...formRutina, dias: newDias });
                                 }}
-                                className="w-10 bg-transparent text-center text-white font-mono font-bold focus:outline-none"
+                                className="w-10 bg-transparent text-center text-white font-mono font-bold focus:outline-none text-xs"
                               />
                               <span className="text-slate-500 text-[10px]">s</span>
                             </div>
@@ -685,10 +760,10 @@ export default function Rutinas({ onStartWorkout }) {
                                 newDias[diaIdx].ejercicios.forEach((e, i) => { e.orden = i + 1; });
                                 setFormRutina({ ...formRutina, dias: newDias });
                               }}
-                              className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                              className="p-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                               title="Quitar ejercicio"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         </div>
@@ -789,17 +864,37 @@ export default function Rutinas({ onStartWorkout }) {
                   {filteredEjercicios.map((ej) => (
                     <div
                       key={ej.id}
-                      onClick={() => handleAddExerciseToDay(ej)}
-                      className="p-3 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800/80 hover:border-sky-500/40 flex items-center justify-between cursor-pointer transition-all"
+                      className="p-3 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800/80 hover:border-sky-500/40 flex items-center justify-between transition-all"
                     >
-                      <div>
+                      <div 
+                        onClick={() => handleAddExerciseToDay(ej)}
+                        className="flex-1 cursor-pointer"
+                      >
                         <h4 className="font-bold text-white text-sm">{ej.nombre}</h4>
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-[10px] text-sky-400 font-semibold">{ej.grupo_muscular}</span>
                           {ej.equipo && <span className="text-[10px] text-slate-500">• {ej.equipo}</span>}
                         </div>
                       </div>
-                      <Plus className="w-4 h-4 text-slate-400" />
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedVisualExercise(ej)}
+                          className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-400 border border-slate-800"
+                          title="Ver demostración GIF"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleAddExerciseToDay(ej)}
+                          className="p-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold"
+                          title="Añadir a la rutina"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -847,6 +942,17 @@ export default function Rutinas({ onStartWorkout }) {
                 </div>
 
                 <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">URL de GIF o Animación (Opcional)</label>
+                  <input
+                    type="url"
+                    placeholder="https://ejemplo.com/demostracion.gif"
+                    value={newCustomEx.gif_url}
+                    onChange={(e) => setNewCustomEx({ ...newCustomEx, gif_url: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
+                  />
+                </div>
+
+                <div>
                   <label className="text-xs font-bold text-slate-300 block mb-1">Notas (Opcional)</label>
                   <input
                     type="text"
@@ -876,6 +982,15 @@ export default function Rutinas({ onStartWorkout }) {
             )}
           </div>
         </div>
+      )}
+
+      {/* Modal de Demostración Visual / GIF & Técnica */}
+      {selectedVisualExercise && (
+        <ExerciseModal
+          exercise={selectedVisualExercise}
+          onClose={() => setSelectedVisualExercise(null)}
+          onUpdateExercise={handleUpdateExerciseFromModal}
+        />
       )}
     </div>
   );
