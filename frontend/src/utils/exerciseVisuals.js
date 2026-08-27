@@ -1,4 +1,4 @@
-// Base de datos de Demostraciones Visuales con Atletas Reales en Bucle y Fotogramas Biomecánicos
+// Base de datos de Demostraciones Visuales con Atletas Reales y Gráficos Anatómicos de Rehabilitación
 
 export const EXERCISE_VISUALS = {
   // --- PECHO ---
@@ -305,10 +305,7 @@ export const EXERCISE_VISUALS = {
 
   // --- 🔥 CALENTAMIENTO Y MOVILIDAD ---
   "Dislocaciones de Hombro con Banda / Pica": {
-    frames: [
-      "Alternating_Cable_Shoulder_Press/0.jpg",
-      "Alternating_Cable_Shoulder_Press/1.jpg"
-    ],
+    specialized_type: "shoulder_dislocations",
     musculo_principal: "Movilidad de Hombros y Pectoral",
     musculos_secundarios: ["Manguito Rotador", "Trapecio"],
     tips: [
@@ -318,10 +315,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al subir los brazos; exhala al llevarlos atrás."
   },
   "Gato-Camello (Cat-Cow) Columna": {
-    frames: [
-      "Cat_Stretch/0.jpg",
-      "Cat_Stretch/1.jpg"
-    ],
+    specialized_type: "cat_cow",
     musculo_principal: "Movilidad de Columna y Lumbar",
     musculos_secundarios: ["Core", "Erectores Espinales"],
     tips: [
@@ -331,23 +325,17 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al arquear hacia arriba; inhala al descender el abdomen."
   },
   "Rotación Torácica en Cuadrupedia": {
-    frames: [
-      "Cat_Stretch/0.jpg",
-      "Cat_Stretch/1.jpg"
-    ],
+    specialized_type: "thoracic_rotation",
     musculo_principal: "Movilidad Torácica y Dorsal",
     musculos_secundarios: ["Deltoides Posterior", "Romboides"],
     tips: [
       "Mano detrás de la cabeza en cuatro apoyos.",
-      "Gira el codo hacia el techo abriendo el torso al máximo."
+      "Gira el codo hacia el techo abriendo el torso al máximo (90°)."
     ],
     respiracion: "Exhala al rotar hacia arriba; inhala al bajar el codo."
   },
   "Apertura de Cadera en 90/90": {
-    frames: [
-      "Barbell_Side_Split_Squat/0.jpg",
-      "Barbell_Side_Split_Squat/1.jpg"
-    ],
+    specialized_type: "hip_90_90",
     musculo_principal: "Cápsula Articular de la Cadera",
     musculos_secundarios: ["Glúteo Medio", "Aductores"],
     tips: [
@@ -359,10 +347,7 @@ export const EXERCISE_VISUALS = {
 
   // --- 🦵 REHABILITACIÓN Y FORTALECIMIENTO DE RODILLA ---
   "Sentadilla Isométrica en Pared (Wall Sit)": {
-    frames: [
-      "Barbell_Full_Squat/1.jpg",
-      "Barbell_Full_Squat/0.jpg"
-    ],
+    specialized_type: "wall_sit",
     musculo_principal: "Cuádriceps y Tendón Rotuliano",
     musculos_secundarios: ["Glúteos", "Core"],
     tips: [
@@ -372,10 +357,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Respiraciones diafragmáticas lentas y continuas."
   },
   "Extensiones Terminales de Rodilla con Banda (TKE)": {
-    frames: [
-      "Calf_Press_On_The_Leg_Press_Machine/0.jpg",
-      "Calf_Press_On_The_Leg_Press_Machine/1.jpg"
-    ],
+    specialized_type: "tke",
     musculo_principal: "Vasto Medial del Cuádriceps (Estabilidad de Rodilla)",
     musculos_secundarios: ["Isquiosurales"],
     tips: [
@@ -385,36 +367,27 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al extender la pierna; inhala al flexionar."
   },
   "Puente de Glúteo Unipodal": {
-    frames: [
-      "Single_Leg_Glute_Bridge/0.jpg",
-      "Single_Leg_Glute_Bridge/1.jpg"
-    ],
+    specialized_type: "glute_bridge_unipodal",
     musculo_principal: "Glúteo Mayor y Cadena Posterior",
     musculos_secundarios: ["Isquiotibiales", "Core"],
     tips: [
-      "Una pierna apoyada y la otra elevada.",
+      "Una pierna apoyada y la otra elevada al aire.",
       "Eleva la pelvis hasta alinear la rodilla y el torso apretando el glúteo."
     ],
     respiracion: "Exhala al elevar la pelvis; inhala al descender."
   },
   "Clamshells / Almejas con Banda": {
-    frames: [
-      "Single_Leg_Glute_Bridge/0.jpg",
-      "Single_Leg_Glute_Bridge/1.jpg"
-    ],
+    specialized_type: "clamshell",
     musculo_principal: "Glúteo Medio (Prevención de Valgo de Rodilla)",
     musculos_secundarios: ["Rotadores de Cadera"],
     tips: [
-      "Recostada de lado con rodillas flexionadas a 90°.",
+      "Recostada de lado con rodillas flexionadas a 90° y banda en los muslos.",
       "Abre la rodilla superior manteniendo los talones juntos sin girar la pelvis."
     ],
     respiracion: "Exhala al abrir la rodilla; inhala al cerrar."
   },
   "Monster Walk / Pasos con Banda": {
-    frames: [
-      "Barbell_Side_Split_Squat/0.jpg",
-      "Barbell_Side_Split_Squat/1.jpg"
-    ],
+    specialized_type: "clamshell",
     musculo_principal: "Glúteo Medio y Abductores",
     musculos_secundarios: ["Cuádriceps", "Tobillos"],
     tips: [
@@ -426,36 +399,27 @@ export const EXERCISE_VISUALS = {
 
   // --- 🦶 REHABILITACIÓN DE TOBILLO Y PIE ---
   "Dorsiflexión de Tobillo en Pared": {
-    frames: [
-      "Standing_Calf_Raises/0.jpg",
-      "Standing_Calf_Raises/1.jpg"
-    ],
+    specialized_type: "ankle_wall_dorsiflexion",
     musculo_principal: "Tendón de Aquiles y Movilidad de Tobillo",
     musculos_secundarios: ["Sóleo", "Gemelos"],
     tips: [
-      "Pie a 8-10 cm de la pared.",
+      "Pie a 8-10 cm de la pared en posición de estocada.",
       "Lleva la rodilla hacia la pared sin despegar el talón del piso."
     ],
     respiracion: "Exhala al adelantar la rodilla; inhala al regresar."
   },
   "Elevación de Gemelos Excéntrica a 1 Pierna": {
-    frames: [
-      "Standing_Calf_Raises/0.jpg",
-      "Standing_Calf_Raises/1.jpg"
-    ],
+    specialized_type: "eccentric_calf_raise",
     musculo_principal: "Gemelos y Tendón de Aquiles",
     musculos_secundarios: ["Planta del pie"],
     tips: [
       "Sube con ambos pies sobre un escalón.",
-      "Quita un pie y baja con una sola pierna muy lentamente en 4 segundos."
+      "Quita un pie y baja con una sola pierna muy lentamente en 4 segundos por debajo del escalón."
     ],
     respiracion: "Exhala al subir; inhala durante los 4 segundos de bajada."
   },
   "Caminata en Talones y Puntas": {
-    frames: [
-      "Standing_Calf_Raises/0.jpg",
-      "Standing_Calf_Raises/1.jpg"
-    ],
+    specialized_type: "heel_toe_walk",
     musculo_principal: "Tibial Anterior y Estabilidad de Tobillo",
     musculos_secundarios: ["Gemelos", "Fascia Plantar"],
     tips: [
@@ -467,10 +431,7 @@ export const EXERCISE_VISUALS = {
 
   // --- 🧘 ESTIRAMIENTOS Y VUELTA A LA CALMA ---
   "Estiramiento de Isquiosurales en Suelo": {
-    frames: [
-      "Cat_Stretch/0.jpg",
-      "Cat_Stretch/1.jpg"
-    ],
+    specialized_type: "seated_hamstring_stretch",
     musculo_principal: "Isquiosurales y Cadena Posterior",
     musculos_secundarios: ["Lumbar", "Gemelos"],
     tips: [
@@ -480,10 +441,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala profundo; exhala relajando y profundizando el estiramiento."
   },
   "Estiramiento de Cuádriceps y Psoas": {
-    frames: [
-      "Barbell_Full_Squat/0.jpg",
-      "Barbell_Full_Squat/1.jpg"
-    ],
+    specialized_type: "standing_quad_stretch",
     musculo_principal: "Cuádriceps y Flexores de Cadera",
     musculos_secundarios: ["Abdomen"],
     tips: [
@@ -493,10 +451,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Sostén 30 segundos respirando con calma."
   },
   "Posición del Niño (Child's Pose)": {
-    frames: [
-      "Cat_Stretch/0.jpg",
-      "Cat_Stretch/1.jpg"
-    ],
+    specialized_type: "child_pose",
     musculo_principal: "Espalda Completa, Dorsales y Cadera",
     musculos_secundarios: ["Hombros", "Columna"],
     tips: [
@@ -506,10 +461,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Respiraciones profundas y lentas sintiendo la apertura dorsal."
   },
   "Cobra / Extensión Lumbar Suave": {
-    frames: [
-      "Cat_Stretch/1.jpg",
-      "Cat_Stretch/0.jpg"
-    ],
+    specialized_type: "cobra_pose",
     musculo_principal: "Pared Abdominal y Descompresión Lumbar",
     musculos_secundarios: ["Pectorales", "Flexores"],
     tips: [
@@ -519,10 +471,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al elevar el pecho; exhala relajando la tensión."
   },
   "Estiramiento Pectoral en Pared": {
-    frames: [
-      "Pushups/0.jpg",
-      "Pushups/1.jpg"
-    ],
+    specialized_type: "wall_pec_stretch",
     musculo_principal: "Pectoral Mayor y Menor",
     musculos_secundarios: ["Deltoides Anterior", "Bíceps"],
     tips: [
@@ -533,7 +482,6 @@ export const EXERCISE_VISUALS = {
   }
 };
 
-// Obtener datos visuales por nombre o grupo
 export function getExerciseVisual(nombre, grupoMuscular = "General") {
   if (!nombre) return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
 
@@ -549,18 +497,22 @@ export function getExerciseVisual(nombre, grupoMuscular = "General") {
     return EXERCISE_VISUALS[matchedKey];
   }
 
-  // Detección inteligente por palabras clave
-  if (nombreLow.includes('jalón') || nombreLow.includes('pulldown') || nombreLow.includes('dominada')) return EXERCISE_VISUALS["Jalón al Pecho en Polea"];
-  if (nombreLow.includes('serrucho') || nombreLow.includes('remo')) return EXERCISE_VISUALS["Remo con Barra"];
-  if (nombreLow.includes('militar') || nombreLow.includes('overhead')) return EXERCISE_VISUALS["Press Militar con Barra / Mancuernas"];
-  if (nombreLow.includes('lateral') || nombreLow.includes('pájaro') || nombreLow.includes('face pull')) return EXERCISE_VISUALS["Elevaciones Laterales"];
-  if (nombreLow.includes('bíceps') || nombreLow.includes('curl')) return EXERCISE_VISUALS["Curl de Bíceps con Barra Z"];
-  if (nombreLow.includes('tríceps') || nombreLow.includes('francés') || nombreLow.includes('dips')) return EXERCISE_VISUALS["Extensiones de Tríceps en Polea (Cuerda)"];
-  if (nombreLow.includes('sentadilla') || nombreLow.includes('squat') || nombreLow.includes('prensa')) return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
-  if (nombreLow.includes('rumano') || nombreLow.includes('peso muerto') || nombreLow.includes('thrust')) return EXERCISE_VISUALS["Peso Muerto Rumano (RDL)"];
-  if (nombreLow.includes('rodilla') || nombreLow.includes('wall sit') || nombreLow.includes('almeja')) return EXERCISE_VISUALS["Sentadilla Isométrica en Pared (Wall Sit)"];
-  if (nombreLow.includes('tobillo') || nombreLow.includes('gemelo') || nombreLow.includes('dorsiflexi')) return EXERCISE_VISUALS["Dorsiflexión de Tobillo en Pared"];
-  if (nombreLow.includes('gato') || nombreLow.includes('movilidad') || nombreLow.includes('dislocaci')) return EXERCISE_VISUALS["Dislocaciones de Hombro con Banda / Pica"];
+  // Detección inteligente
+  if (nombreLow.includes('wall sit') || (nombreLow.includes('sentadilla') && nombreLow.includes('pared'))) return EXERCISE_VISUALS["Sentadilla Isométrica en Pared (Wall Sit)"];
+  if (nombreLow.includes('clamshell') || nombreLow.includes('almeja')) return EXERCISE_VISUALS["Clamshells / Almejas con Banda"];
+  if (nombreLow.includes('tke') || (nombreLow.includes('extensi') && nombreLow.includes('rodilla'))) return EXERCISE_VISUALS["Extensiones Terminales de Rodilla con Banda (TKE)"];
+  if (nombreLow.includes('torácica') || nombreLow.includes('toracica')) return EXERCISE_VISUALS["Rotación Torácica en Cuadrupedia"];
+  if (nombreLow.includes('gato') || nombreLow.includes('camello')) return EXERCISE_VISUALS["Gato-Camello (Cat-Cow) Columna"];
+  if (nombreLow.includes('dislocaci')) return EXERCISE_VISUALS["Dislocaciones de Hombro con Banda / Pica"];
+  if (nombreLow.includes('dorsiflexi') || (nombreLow.includes('tobillo') && nombreLow.includes('pared'))) return EXERCISE_VISUALS["Dorsiflexión de Tobillo en Pared"];
+  if (nombreLow.includes('gemelo') || nombreLow.includes('pantorrilla')) return EXERCISE_VISUALS["Elevación de Gemelos Excéntrica a 1 Pierna"];
+  if (nombreLow.includes('talones') && nombreLow.includes('puntas')) return EXERCISE_VISUALS["Caminata en Talones y Puntas"];
+  if (nombreLow.includes('niño') || nombreLow.includes('child')) return EXERCISE_VISUALS["Posición del Niño (Child's Pose)"];
+  if (nombreLow.includes('cobra')) return EXERCISE_VISUALS["Cobra / Extensión Lumbar Suave"];
+  if (nombreLow.includes('cuádriceps') || nombreLow.includes('cuadriceps')) return EXERCISE_VISUALS["Estiramiento de Cuádriceps y Psoas"];
+  if (nombreLow.includes('isquio')) return EXERCISE_VISUALS["Estiramiento de Isquiosurales en Suelo"];
+  if (nombreLow.includes('pectoral') && nombreLow.includes('pared')) return EXERCISE_VISUALS["Estiramiento Pectoral en Pared"];
+  if (nombreLow.includes('90/90')) return EXERCISE_VISUALS["Apertura de Cadera en 90/90"];
 
   return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
 }

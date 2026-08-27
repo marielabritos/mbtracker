@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { X, Info, Dumbbell, Sparkles, Check, Edit3, Activity, Play, RefreshCw, Zap } from 'lucide-react';
 import { getExerciseVisual } from '../utils/exerciseVisuals';
 import RealHumanExercisePlayer from './RealHumanExercisePlayer';
+import SpecializedExerciseGraphic from './SpecializedExerciseGraphic';
 
 export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
   const [isEditing, setIsEditing] = useState(false);
   const [customName, setCustomName] = useState(exercise?.nombre || '');
-  const [customGif, setCustomGif] = useState(exercise?.gif_url || '');
   const [customDesc, setCustomDesc] = useState(exercise?.descripcion || '');
   const [saving, setSaving] = useState(false);
 
   if (!exercise) return null;
 
   const visualData = getExerciseVisual(exercise.nombre, exercise.grupo_muscular);
-  const displayGif = customGif || exercise.gif_url || visualData.gif;
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -25,7 +24,6 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
         await onUpdateExercise({
           ...exercise,
           nombre: customName,
-          gif_url: customGif,
           descripcion: customDesc
         });
       }
@@ -80,7 +78,7 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
           </div>
         </div>
 
-        {/* Modo Edición de Nombre / GIF */}
+        {/* Modo Edición de Nombre / Notas */}
         {isEditing ? (
           <form onSubmit={handleSave} className="space-y-3 bg-slate-950 p-4 rounded-2xl border border-slate-800">
             <div>
@@ -91,17 +89,6 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
                 onChange={(e) => setCustomName(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 font-bold"
                 required
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1">URL de GIF Personalizado (Opcional)</label>
-              <input
-                type="url"
-                placeholder="https://.../exercise.gif"
-                value={customGif}
-                onChange={(e) => setCustomGif(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
               />
             </div>
 
@@ -135,14 +122,21 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
           </form>
         ) : (
           <>
-            {/* Demostración Real con Atleta en Vivo */}
+            {/* Reproductor Visual Exacto del Ejercicio */}
             <div className="space-y-3">
-              <RealHumanExercisePlayer
-                exerciseName={exercise.nombre}
-                muscleGroup={exercise.grupo_muscular}
-                frames={visualData.frames}
-                gifUrl={displayGif}
-              />
+              {visualData.specialized_type ? (
+                <SpecializedExerciseGraphic
+                  type={visualData.specialized_type}
+                  exerciseName={exercise.nombre}
+                  muscleGroup={exercise.grupo_muscular}
+                />
+              ) : (
+                <RealHumanExercisePlayer
+                  exerciseName={exercise.nombre}
+                  muscleGroup={exercise.grupo_muscular}
+                  frames={visualData.frames}
+                />
+              )}
 
               {/* Botón de Videos Reales en YouTube (Búsqueda Directa en Vivo) */}
               <a
