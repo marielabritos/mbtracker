@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { X, Info, Dumbbell, Sparkles, Check, Edit3, Activity, Play, RefreshCw } from 'lucide-react';
+import { X, Info, Dumbbell, Sparkles, Check, Edit3, Activity, Play, RefreshCw, Zap } from 'lucide-react';
 import { getExerciseVisual } from '../utils/exerciseVisuals';
+import AnimatedExercisePlayer from './AnimatedExercisePlayer';
 
 export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [viewMode, setViewMode] = useState('animation'); // 'animation' | 'gif'
   const [customName, setCustomName] = useState(exercise?.nombre || '');
   const [customGif, setCustomGif] = useState(exercise?.gif_url || '');
   const [customDesc, setCustomDesc] = useState(exercise?.descripcion || '');
@@ -38,8 +40,8 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl space-y-4 my-6 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 w-full max-w-lg shadow-2xl space-y-4 my-6 max-h-[92vh] overflow-y-auto">
         {/* Header Modal */}
         <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-3">
           <div>
@@ -66,7 +68,7 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
                   ? 'bg-sky-500 text-slate-950 border-sky-400'
                   : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
               }`}
-              title="Editar nombre y detalles del ejercicio"
+              title="Editar nombre y notas del ejercicio"
             >
               <Edit3 className="w-4 h-4" />
             </button>
@@ -95,10 +97,10 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1">URL de GIF o Animación (Opcional)</label>
+              <label className="text-xs font-bold text-slate-300 block mb-1">URL de GIF o Video Personalizado (Opcional)</label>
               <input
                 type="url"
-                placeholder="https://ejemplo.com/ejercicio.gif"
+                placeholder="https://media.giphy.com/media/.../giphy.gif"
                 value={customGif}
                 onChange={(e) => {
                   setCustomGif(e.target.value);
@@ -138,37 +140,63 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
           </form>
         ) : (
           <>
-            {/* Visual GIF Animado en Movimiento */}
-            <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner group">
-              {displayGif && !imgError ? (
-                <div className="relative aspect-video w-full flex items-center justify-center bg-black overflow-hidden">
-                  <img
-                    key={displayGif}
-                    src={displayGif}
-                    alt={exercise.nombre}
-                    referrerPolicy="no-referrer"
-                    crossOrigin="anonymous"
-                    onError={() => setImgError(true)}
-                    className="w-full h-full object-contain object-center"
-                  />
-                  <div className="absolute bottom-2 left-3 flex items-center gap-1.5 text-[11px] font-bold text-sky-300 bg-slate-950/85 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-700 shadow-md">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>Animación en Movimiento</span>
-                  </div>
-                </div>
-              ) : (
-                /* Animación / Esquema Biomecánico Dinámico */
-                <div className="aspect-video flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-slate-900 to-slate-950 text-slate-300 space-y-2">
-                  <div className="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/25 flex items-center justify-center text-sky-400 animate-bounce">
-                    <Dumbbell className="w-7 h-7" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-white">{exercise.nombre}</h4>
-                    <span className="text-xs text-sky-400">{visualData.musculo_principal}</span>
-                  </div>
-                </div>
-              )}
+            {/* Selector de Modo de Animación (Animación 60FPS vs GIF Web) */}
+            <div className="flex items-center justify-center gap-1 p-1 bg-slate-950 rounded-2xl border border-slate-800">
+              <button
+                type="button"
+                onClick={() => setViewMode('animation')}
+                className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  viewMode === 'animation'
+                    ? 'bg-sky-500 text-slate-950 shadow-md'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>Animación Biomecánica 60 FPS</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewMode('gif')}
+                className={`py-1.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  viewMode === 'gif'
+                    ? 'bg-sky-500 text-slate-950 shadow-md'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5" />
+                <span>GIF Web</span>
+              </button>
             </div>
+
+            {/* Render según modo */}
+            {viewMode === 'animation' ? (
+              <AnimatedExercisePlayer
+                exerciseName={exercise.nombre}
+                muscleGroup={exercise.grupo_muscular}
+                animationType={visualData.animacion_tipo}
+              />
+            ) : (
+              <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner">
+                {displayGif && !imgError ? (
+                  <div className="relative aspect-video w-full flex items-center justify-center bg-black overflow-hidden">
+                    <img
+                      key={displayGif}
+                      src={displayGif}
+                      alt={exercise.nombre}
+                      referrerPolicy="no-referrer"
+                      onError={() => setImgError(true)}
+                      className="w-full h-full object-contain object-center"
+                    />
+                  </div>
+                ) : (
+                  <div className="aspect-video flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2">
+                    <Dumbbell className="w-10 h-10 text-sky-400" />
+                    <p className="text-xs font-semibold">Usa la pestaña "Animación Biomecánica" para ver el movimiento en 60 FPS continuo.</p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Músculos Involucrados */}
             <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-3.5 space-y-2">
