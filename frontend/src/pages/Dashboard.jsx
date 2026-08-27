@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Flame, Trophy, Dumbbell, Clock, ChevronRight, TrendingUp, CalendarCheck } from 'lucide-react';
+import { Play, Flame, Trophy, Dumbbell, Clock, ChevronRight, TrendingUp, CalendarCheck, Calendar } from 'lucide-react';
 import { api } from '../services/api';
 
 export default function Dashboard({ onStartWorkout, onNavigateTab }) {
