@@ -177,25 +177,32 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
                 animationType={visualData.animacion_tipo}
               />
             ) : (
-              <div className="space-y-2">
-                <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner aspect-video w-full flex flex-col items-center justify-center">
-                  <iframe
-                    title={`Video ${exercise.nombre}`}
-                    src={`https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(exercise.nombre + ' como hacer tecnica correcta gym')}`}
-                    className="w-full h-full border-0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+              <div className="space-y-2.5">
+                <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl aspect-video w-full flex flex-col items-center justify-center">
+                  {visualData.youtube_id ? (
+                    <iframe
+                      title={`Video ${exercise.nombre}`}
+                      src={`https://www.youtube-nocookie.com/embed/${visualData.youtube_id}?autoplay=1&mute=1&loop=1&playlist=${visualData.youtube_id}&controls=1&modestbranding=1&rel=0&playsinline=1`}
+                      className="w-full h-full border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <div className="aspect-video flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2">
+                      <Play className="w-10 h-10 text-rose-500 fill-rose-500" />
+                      <p className="text-xs font-semibold">Toca el botón inferior para abrir la técnica completa en YouTube.</p>
+                    </div>
+                  )}
                 </div>
 
                 <a
-                  href={`https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.nombre + ' tecnica gym')}`}
+                  href={`https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.nombre + ' como hacer tecnica correcta gym')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2 px-3 rounded-xl bg-rose-600/15 hover:bg-rose-600/25 border border-rose-500/30 text-rose-300 hover:text-rose-200 text-xs font-bold flex items-center justify-center gap-2 transition-colors"
+                  className="w-full py-2.5 px-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-rose-600/20 active:scale-98"
                 >
-                  <Play className="w-3.5 h-3.5 fill-current text-rose-500" />
-                  <span>Abrir búsqueda de videos en YouTube HD</span>
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>Ver más tutoriales y videos en YouTube HD</span>
                 </a>
               </div>
             )}
