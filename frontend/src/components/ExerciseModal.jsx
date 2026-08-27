@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Info, Dumbbell, Sparkles, Check, Edit3, Link2, ExternalLink, Activity } from 'lucide-react';
+import { X, Info, Dumbbell, Sparkles, Check, Edit3, Activity, Play, RefreshCw } from 'lucide-react';
 import { getExerciseVisual } from '../utils/exerciseVisuals';
 
 export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
@@ -7,6 +7,7 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
   const [customName, setCustomName] = useState(exercise?.nombre || '');
   const [customGif, setCustomGif] = useState(exercise?.gif_url || '');
   const [customDesc, setCustomDesc] = useState(exercise?.descripcion || '');
+  const [imgError, setImgError] = useState(false);
   const [saving, setSaving] = useState(false);
 
   if (!exercise) return null;
@@ -88,29 +89,30 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
                 type="text"
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500"
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 font-bold"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1">URL de Imagen / GIF de Demostración (Opcional)</label>
-              <div className="flex gap-2">
-                <input
-                  type="url"
-                  placeholder="https://ejemplo.com/ejercicio.gif"
-                  value={customGif}
-                  onChange={(e) => setCustomGif(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
-                />
-              </div>
+              <label className="text-xs font-bold text-slate-300 block mb-1">URL de GIF o Animación (Opcional)</label>
+              <input
+                type="url"
+                placeholder="https://ejemplo.com/ejercicio.gif"
+                value={customGif}
+                onChange={(e) => {
+                  setCustomGif(e.target.value);
+                  setImgError(false);
+                }}
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
+              />
             </div>
 
             <div>
               <label className="text-xs font-bold text-slate-300 block mb-1">Notas o Consejos Personales</label>
               <textarea
                 rows="2"
-                placeholder="Ej. Realizar con agarre neutro o con banco a 45°"
+                placeholder="Ej. Agarre supino ancho, pausa 1s abajo"
                 value={customDesc}
                 onChange={(e) => setCustomDesc(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 resize-none"
@@ -136,26 +138,34 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
           </form>
         ) : (
           <>
-            {/* Visual GIF / Demostración */}
+            {/* Visual GIF Animado en Movimiento */}
             <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner group">
-              {displayGif ? (
-                <div className="relative aspect-video w-full flex items-center justify-center bg-slate-950 overflow-hidden">
+              {displayGif && !imgError ? (
+                <div className="relative aspect-video w-full flex items-center justify-center bg-black overflow-hidden">
                   <img
+                    key={displayGif}
                     src={displayGif}
                     alt={exercise.nombre}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    crossOrigin="anonymous"
+                    onError={() => setImgError(true)}
+                    className="w-full h-full object-contain object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
-                  <div className="absolute bottom-2 left-3 flex items-center gap-1.5 text-[11px] font-bold text-sky-300 bg-slate-900/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-700">
-                    <Activity className="w-3.5 h-3.5" />
-                    <span>Demostración Visual</span>
+                  <div className="absolute bottom-2 left-3 flex items-center gap-1.5 text-[11px] font-bold text-sky-300 bg-slate-950/85 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-700 shadow-md">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Animación en Movimiento</span>
                   </div>
                 </div>
               ) : (
-                <div className="aspect-video flex flex-col items-center justify-center p-6 text-center text-slate-500">
-                  <Dumbbell className="w-10 h-10 mb-2 text-slate-600" />
-                  <span className="text-xs">Sin animación disponible</span>
+                /* Animación / Esquema Biomecánico Dinámico */
+                <div className="aspect-video flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-slate-900 to-slate-950 text-slate-300 space-y-2">
+                  <div className="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/25 flex items-center justify-center text-sky-400 animate-bounce">
+                    <Dumbbell className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-white">{exercise.nombre}</h4>
+                    <span className="text-xs text-sky-400">{visualData.musculo_principal}</span>
+                  </div>
                 </div>
               )}
             </div>
@@ -185,7 +195,7 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
                 </h4>
                 <ul className="space-y-1.5 text-xs text-slate-300">
                   {visualData.tips.map((tip, idx) => (
-                    <li key={idx} className="flex items-start gap-2 bg-slate-950/40 p-2 rounded-xl border border-slate-800/50">
+                    <li key={idx} className="flex items-start gap-2 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/50">
                       <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
                         {idx + 1}
                       </span>
