@@ -470,12 +470,25 @@ export const api = {
 
   // --- SESIONES DE ENTRENAMIENTO (FINALIZAR & GUARDAR) ---
   getSesiones: async () => {
+    const local = getStored('sesiones', []);
     try {
       const data = await request('/api/sesiones');
-      setStored('sesiones', data);
-      return data;
+      if (Array.isArray(data)) {
+        // Combinar sesiones locales y de backend evitando duplicados
+        const map = new Map();
+        local.forEach(s => map.set(s.id, s));
+        data.forEach(s => map.set(s.id, { ...map.get(s.id), ...s }));
+        const merged = Array.from(map.values()).sort((a, b) => {
+          const tA = new Date(a.fecha_inicio || a.fecha || 0).getTime();
+          const tB = new Date(b.fecha_inicio || b.fecha || 0).getTime();
+          return tB - tA;
+        });
+        setStored('sesiones', merged);
+        return merged;
+      }
+      return local;
     } catch (e) {
-      return getStored('sesiones', []);
+      return local;
     }
   },
 
