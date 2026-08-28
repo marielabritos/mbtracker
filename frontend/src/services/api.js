@@ -331,20 +331,31 @@ export const api = {
   // --- RUTINAS ---
   getRutinas: async () => {
     const deletedIds = getStored('deleted_rutina_ids', []);
+    const localRutinas = getStored('rutinas', null);
+    const hasCustom = getStored('has_custom_rutinas', false);
+
+    // Si el usuario ya tiene rutinas en su dispositivo, PRESERVARLAS SIEMPRE (Prioridad 1)
+    if (localRutinas && Array.isArray(localRutinas) && localRutinas.length > 0) {
+      const cleanLocal = localRutinas.filter(r => !deletedIds.includes(r.id));
+      
+      // Sincronizar en segundo plano hacia el backend (sin sobreescribir local)
+      request('/api/rutinas').catch(() => {});
+      return cleanLocal;
+    }
+
+    // Primera vez abriendo la app: intentar cargar desde backend
     try {
       const data = await request('/api/rutinas');
       if (Array.isArray(data) && data.length > 0) {
-        // Filtrar cualquier rutina que el usuario haya borrado explícitamente
         const cleanData = data.filter(r => !deletedIds.includes(r.id));
         setStored('rutinas', cleanData);
         return cleanData;
       }
-      const local = getStored('rutinas', DEFAULT_RUTINAS);
-      return local.filter(r => !deletedIds.includes(r.id));
-    } catch (e) {
-      const local = getStored('rutinas', DEFAULT_RUTINAS);
-      return local.filter(r => !deletedIds.includes(r.id));
-    }
+    } catch (e) {}
+
+    // Fallback con rutinas oficiales
+    setStored('rutinas', DEFAULT_RUTINAS);
+    return DEFAULT_RUTINAS.filter(r => !deletedIds.includes(r.id));
   },
 
   resetRutinasToOfficial: async () => {
@@ -352,6 +363,7 @@ export const api = {
       localStorage.removeItem('mbtracker_rutinas');
       localStorage.removeItem('mbtracker_ejercicios');
       localStorage.removeItem('mbtracker_deleted_rutina_ids');
+      localStorage.removeItem('mbtracker_has_custom_rutinas');
     } catch (e) {}
     setStored('rutinas', DEFAULT_RUTINAS);
     setStored('ejercicios', DEFAULT_EJERCICIOS);
@@ -362,6 +374,7 @@ export const api = {
     const newId = Date.now();
     const deletedIds = getStored('deleted_rutina_ids', []);
     setStored('deleted_rutina_ids', deletedIds.filter(x => x !== newId));
+    setStored('has_custom_rutinas', true);
 
     const catalog = getStored('ejercicios', DEFAULT_EJERCICIOS);
     const current = getStored('rutinas', DEFAULT_RUTINAS);
@@ -385,19 +398,20 @@ export const api = {
       }))
     };
 
-    setStored('rutinas', [nuevaLocal, ...current]);
+    const updated = [nuevaLocal, ...current];
+    setStored('rutinas', updated);
 
     try {
-      const res = await request('/api/rutinas', { method: 'POST', body: JSON.stringify(data) });
-      return res;
-    } catch (e) {
-      return nuevaLocal;
-    }
+      await request('/api/rutinas', { method: 'POST', body: JSON.stringify(data) });
+    } catch (e) {}
+
+    return nuevaLocal;
   },
 
   updateRutina: async (id, data) => {
     const deletedIds = getStored('deleted_rutina_ids', []);
     setStored('deleted_rutina_ids', deletedIds.filter(x => x !== parseInt(id)));
+    setStored('has_custom_rutinas', true);
 
     const catalog = getStored('ejercicios', DEFAULT_EJERCICIOS);
     const current = getStored('rutinas', DEFAULT_RUTINAS);
@@ -428,13 +442,14 @@ export const api = {
     setStored('rutinas', updatedList);
 
     try {
-      return await request(`/api/rutinas/${id}`, { method: 'PUT', body: JSON.stringify(data) });
-    } catch (e) {
-      return updatedList.find(r => r.id === parseInt(id));
-    }
+      await request(`/api/rutinas/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+    } catch (e) {}
+
+    return updatedList.find(r => r.id === parseInt(id));
   },
 
   deleteRutina: async (id) => {
+    setStored('has_custom_rutinas', true);
     // 1. Guardar id en la lista negra de rutinas eliminadas
     const deletedIds = getStored('deleted_rutina_ids', []);
     if (!deletedIds.includes(parseInt(id))) {
@@ -449,9 +464,7 @@ export const api = {
     // 3. Enviar borrado al backend
     try {
       await request(`/api/rutinas/${id}`, { method: 'DELETE' });
-    } catch (e) {
-      console.warn("Backend delete request caught:", e);
-    }
+    } catch (e) {}
     return { success: true };
   },
 
