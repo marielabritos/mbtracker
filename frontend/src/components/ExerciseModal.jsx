@@ -124,7 +124,7 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
           <>
             {/* Reproductor Visual Exacto del Ejercicio */}
             <div className="space-y-3">
-              {visualData.specialized_type ? (
+              {visualData.specialized_type && !visualData.gif ? (
                 <SpecializedExerciseGraphic
                   type={visualData.specialized_type}
                   exerciseName={exercise.nombre}
@@ -135,6 +135,8 @@ export default function ExerciseModal({ exercise, onClose, onUpdateExercise }) {
                   exerciseName={exercise.nombre}
                   muscleGroup={exercise.grupo_muscular}
                   frames={visualData.frames}
+                  gifUrl={visualData.gif}
+                  imgUrl={visualData.img}
                 />
               )}
 
