@@ -1,7 +1,7 @@
 import React from 'react';
-import { Home, Dumbbell, Calendar, History, TrendingUp, Play, User } from 'lucide-react';
+import { Home, Dumbbell, Calendar, History, TrendingUp, Play, User, LogOut, Lock } from 'lucide-react';
 
-export default function Navbar({ activeTab, setActiveTab, isWorkoutActive }) {
+export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLogout }) {
   const navItems = [
     { id: 'dashboard', label: 'Inicio', icon: Home },
     { id: 'entrenar', label: 'Entrenar', icon: isWorkoutActive ? Play : Dumbbell, highlight: isWorkoutActive },
@@ -25,15 +25,27 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive }) {
           </div>
         </div>
 
-        {isWorkoutActive && (
-          <button
-            onClick={() => setActiveTab('entrenar')}
-            className="px-2.5 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[11px] font-black flex items-center gap-1.5 animate-pulse"
-          >
-            <Play className="w-3 h-3 fill-current" />
-            <span>En vivo</span>
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {isWorkoutActive && (
+            <button
+              onClick={() => setActiveTab('entrenar')}
+              className="px-2.5 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[11px] font-black flex items-center gap-1.5 animate-pulse"
+            >
+              <Play className="w-3 h-3 fill-current" />
+              <span>En vivo</span>
+            </button>
+          )}
+
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-rose-400 transition-colors"
+              title="Cerrar sesión / Bloquear"
+            >
+              <Lock className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </header>
 
       {/* Desktop Header Topbar */}
@@ -44,7 +56,7 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive }) {
           </div>
           <div>
             <h1 className="font-bold text-lg text-white tracking-tight leading-none">MBTracker</h1>
-            <span className="text-xs text-sky-400 font-medium">Entrenamiento Personal</span>
+            <span className="text-xs text-sky-400 font-medium">Entrenamiento Personal • Mariela Britos</span>
           </div>
         </div>
 
@@ -70,6 +82,17 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive }) {
               </button>
             );
           })}
+
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="ml-2 p-2 rounded-xl bg-slate-800 hover:bg-rose-500/15 hover:border-rose-500/30 border border-transparent text-slate-400 hover:text-rose-400 text-xs font-bold flex items-center gap-1.5 transition-all"
+              title="Cerrar sesión / Bloquear app"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Bloquear</span>
+            </button>
+          )}
         </nav>
       </header>
 

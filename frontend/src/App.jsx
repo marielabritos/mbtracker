@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
+import AuthScreen from './components/AuthScreen';
 import Dashboard from './pages/Dashboard';
 import Rutinas from './pages/Rutinas';
 import Entrenar from './pages/Entrenar';
@@ -8,8 +9,18 @@ import Progreso from './pages/Progreso';
 import Perfil from './pages/Perfil';
 
 const STORAGE_KEY = 'mbtracker_active_workout';
+const AUTH_KEY = 'mbtracker_auth_user';
 
 export default function App() {
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem(AUTH_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
   const [activeTab, setActiveTab] = useState('dashboard');
   const [activeWorkout, setActiveWorkout] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -23,6 +34,17 @@ export default function App() {
       localStorage.removeItem(STORAGE_KEY);
     }
   }, [activeWorkout]);
+
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    if (confirm("¿Deseas cerrar sesión en este dispositivo?")) {
+      localStorage.removeItem(AUTH_KEY);
+      setUser(null);
+    }
+  };
 
   const handleStartWorkout = (workoutConfig) => {
     setActiveWorkout(workoutConfig);
@@ -41,6 +63,11 @@ export default function App() {
     }
   };
 
+  // Si no está autenticado, mostrar pantalla de bloqueo / login
+  if (!user || !user.authenticated) {
+    return <AuthScreen onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
       {/* Barra de navegación superior (Desktop) y fija inferior (Móvil) */}
@@ -48,6 +75,7 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isWorkoutActive={!!activeWorkout}
+        onLogout={handleLogout}
       />
 
       {/* Contenido Principal */}
@@ -64,6 +92,7 @@ export default function App() {
             workoutData={activeWorkout}
             onFinishWorkout={handleFinishWorkout}
             onCancelWorkout={handleCancelWorkout}
+            onNavigateTab={setActiveTab}
           />
         )}
 
@@ -82,7 +111,7 @@ export default function App() {
         )}
 
         {activeTab === 'perfil' && (
-          <Perfil />
+          <Perfil onLogout={handleLogout} />
         )}
       </main>
     </div>

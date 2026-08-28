@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, Trophy, Dumbbell, Award, Calendar, Activity } from 'lucide-react';
+import { TrendingUp, Trophy, Dumbbell, Award, Calendar, Activity, MapPin, Mountain, Flame, Compass } from 'lucide-react';
 import { api } from '../services/api';
 
 export default function Progreso() {
@@ -7,6 +7,15 @@ export default function Progreso() {
   const [ejercicios, setEjercicios] = useState([]);
   const [selectedEjercicioId, setSelectedEjercicioId] = useState('');
   const [progresoData, setProgresoData] = useState([]);
+  const [outdoorStats, setOutdoorStats] = useState({
+    runningKm: 0,
+    runningSecs: 0,
+    ciclismoKm: 0,
+    ciclismoSecs: 0,
+    montanismoDesnivel: 0,
+    montanismoKm: 0,
+    totalCalories: 0
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,12 +25,45 @@ export default function Progreso() {
   const loadInitial = async () => {
     try {
       setLoading(true);
-      const [statsData, ejsData] = await Promise.all([
+      const [statsData, ejsData, sesionesData] = await Promise.all([
         api.getDashboardStats().catch(() => null),
-        api.getEjercicios().catch(() => [])
+        api.getEjercicios().catch(() => []),
+        api.getSesiones(100).catch(() => [])
       ]);
       setStats(statsData);
       setEjercicios(ejsData);
+
+      // Calcular acumulados de deportes al aire libre
+      let rKm = 0, rSecs = 0, cKm = 0, cSecs = 0, mDesn = 0, mKm = 0, totCal = 0;
+      (sesionesData || []).forEach(s => {
+        const d = s.deporte;
+        const km = parseFloat(s.distancia_km) || 0;
+        const dur = parseInt(s.duracion_segundos) || 0;
+        const desn = parseFloat(s.desnivel_positivo_m) || 0;
+        const cal = parseInt(s.calorias_quemadas) || 0;
+
+        totCal += cal;
+        if (d === 'running') {
+          rKm += km;
+          rSecs += dur;
+        } else if (d === 'ciclismo') {
+          cKm += km;
+          cSecs += dur;
+        } else if (d === 'montanismo') {
+          mDesn += desn;
+          mKm += km;
+        }
+      });
+
+      setOutdoorStats({
+        runningKm: rKm.toFixed(1),
+        runningSecs: rSecs,
+        ciclismoKm: cKm.toFixed(1),
+        ciclismoSecs: cSecs,
+        montanismoDesnivel: mDesn,
+        montanismoKm: mKm.toFixed(1),
+        totalCalories: totCal
+      });
 
       if (ejsData.length > 0) {
         setSelectedEjercicioId(ejsData[0].id);
@@ -211,6 +253,66 @@ export default function Progreso() {
 
         {/* Gráfico */}
         {renderChart()}
+      </div>
+
+      {/* SECCIÓN NUEVA: 🏃 PROGRESO EN DEPORTES Y AIRE LIBRE */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🏃</span>
+            <h3 className="font-bold text-lg text-white">Deportes al Aire Libre & Cardio</h3>
+          </div>
+          <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+            Acumulados Históricos
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Running */}
+          <div className="bg-slate-900/90 border border-sky-500/30 rounded-3xl p-5 space-y-2 shadow-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase text-sky-400">🏃 Running / Carrera</span>
+              <MapPin className="w-4 h-4 text-sky-400" />
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-3xl font-black text-white font-mono">{outdoorStats.runningKm}</span>
+              <span className="text-xs text-slate-400 font-bold">km totales</span>
+            </div>
+            <span className="text-[11px] text-slate-400 block font-mono">
+              Tiempo: {Math.round(outdoorStats.runningSecs / 60)} min acumulados
+            </span>
+          </div>
+
+          {/* Ciclismo */}
+          <div className="bg-slate-900/90 border border-emerald-500/30 rounded-3xl p-5 space-y-2 shadow-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase text-emerald-400">🚴 Bicicleta / Ciclismo</span>
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-3xl font-black text-white font-mono">{outdoorStats.ciclismoKm}</span>
+              <span className="text-xs text-slate-400 font-bold">km pedaleados</span>
+            </div>
+            <span className="text-[11px] text-slate-400 block font-mono">
+              Tiempo: {Math.round(outdoorStats.ciclismoSecs / 60)} min acumulados
+            </span>
+          </div>
+
+          {/* Montañismo */}
+          <div className="bg-slate-900/90 border border-amber-500/30 rounded-3xl p-5 space-y-2 shadow-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase text-amber-400">⛰️ Montañismo & Trekking</span>
+              <Mountain className="w-4 h-4 text-amber-400" />
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-3xl font-black text-amber-400 font-mono">+{outdoorStats.montanismoDesnivel}</span>
+              <span className="text-xs text-slate-400 font-bold">m desnivel (+D)</span>
+            </div>
+            <span className="text-[11px] text-slate-400 block font-mono">
+              Distancia recorrida: {outdoorStats.montanismoKm} km
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Galería de Récords Personales (PRs) */}

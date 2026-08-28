@@ -53,6 +53,14 @@ const DEFAULT_EJERCICIOS = [
   { id: 42, nombre: "Posición del Niño (Child's Pose)", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
   { id: 43, nombre: "Cobra / Extensión Lumbar Suave", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
   { id: 44, nombre: "Estiramiento Pectoral en Pared", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+
+  // --- CARDIO, RUNNING, BICICLETA & MONTAÑISMO ---
+  { id: 45, nombre: "Carrera / Running Continuo", grupo_muscular: "Cardio", equipo: "Aire Libre / Cinta", es_personalizado: false },
+  { id: 46, nombre: "Series de Velocidad / Intervalos Running", grupo_muscular: "Cardio", equipo: "Aire Libre", es_personalizado: false },
+  { id: 47, nombre: "Ciclismo en Ruta / Bicicleta", grupo_muscular: "Cardio", equipo: "Bicicleta", es_personalizado: false },
+  { id: 48, nombre: "Spinning / Bici Estática", grupo_muscular: "Cardio", equipo: "Bicicleta Estática", es_personalizado: false },
+  { id: 49, nombre: "Trekking / Senderismo con Desnivel", grupo_muscular: "Montañismo", equipo: "Montaña / Bastones", es_personalizado: false },
+  { id: 50, nombre: "Montañismo con Mochila (Rucking)", grupo_muscular: "Montañismo", equipo: "Mochila con Peso", es_personalizado: false },
 ];
 
 const DEFAULT_RUTINAS = [
@@ -489,10 +497,21 @@ export const api = {
     const nuevaSesion = {
       id: Date.now(),
       nombre: data.nombre,
+      tipo: data.tipo || 'gimnasio',
+      deporte: data.deporte || null,
+      distancia_km: data.distancia_km || 0,
+      velocidad_kmh: data.velocidad_kmh || 0,
+      ritmo_min_km: data.ritmo_min_km || null,
+      desnivel_positivo_m: data.desnivel_positivo_m || 0,
+      peso_mochila_kg: data.peso_mochila_kg || 0,
+      frecuencia_cardiaca_media: data.frecuencia_cardiaca_media || null,
+      calorias_quemadas: data.calorias_quemadas || 0,
+      vueltas_laps: data.vueltas_laps || [],
       dia_rutina_id: data.dia_rutina_id || null,
       fecha_inicio: data.fecha_inicio || new Date().toISOString(),
       fecha_fin: new Date().toISOString(),
       duracion_segundos: data.duracion_segundos || 0,
+      duracion_minutos: data.duracion_minutos || Math.max(Math.round((data.duracion_segundos || 0) / 60), 1),
       notas: data.notas || '',
       completado: true,
       series: seriesProcessed
@@ -508,8 +527,8 @@ export const api = {
       const idx = updatedPRs.findIndex(p => p.ejercicio_id === s.ejercicio_id);
       const prObj = {
         ejercicio_id: s.ejercicio_id,
-        ejercicio_nombre: s.ejercicio?.nombre || 'Ejercicio',
-        grupo_muscular: s.ejercicio?.grupo_muscular || 'General',
+        nombre_ejercicio: s.ejercicio.nombre,
+        grupo_muscular: s.ejercicio.grupo_muscular,
         peso_maximo_kg: s.peso_kg,
         repeticiones: s.repeticiones,
         fecha: new Date().toISOString(),

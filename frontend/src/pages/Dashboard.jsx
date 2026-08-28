@@ -352,6 +352,90 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
         </div>
       </div>
 
+      {/* SECCIÓN NUEVA: 🏃 DEPORTES Y AIRE LIBRE */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🏃</span>
+            <h3 className="font-bold text-base sm:text-lg text-white">Deportes & Aire Libre</h3>
+          </div>
+          <span className="text-xs font-bold text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-full border border-sky-500/20">
+            GPS • KM • Ritmo • Desnivel
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Running */}
+          <div
+            onClick={() => onStartWorkout({ tipo: 'outdoor_cardio', deporte: 'running', nombre: 'Sesión de Running' })}
+            className="p-5 rounded-3xl bg-slate-900/90 border border-sky-500/30 hover:border-sky-400 hover:bg-slate-800/90 transition-all cursor-pointer group shadow-xl flex flex-col justify-between active:scale-98"
+          >
+            <div className="space-y-2">
+              <div className="w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md shadow-sky-500/20">
+                🏃
+              </div>
+              <h4 className="font-black text-base text-white group-hover:text-sky-400">Running / Carrera</h4>
+              <p className="text-xs text-slate-400 leading-snug">
+                Seguimiento de distancia (km), ritmo (min/km), calorías, parciales por vuelta y pulsaciones.
+              </p>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-black text-sky-400">
+              <span>Iniciar Carrera</span>
+              <div className="w-6 h-6 rounded-full bg-sky-500 text-slate-950 flex items-center justify-center shadow-md">
+                <ChevronRight className="w-4 h-4 stroke-[3]" />
+              </div>
+            </div>
+          </div>
+
+          {/* Bicicleta */}
+          <div
+            onClick={() => onStartWorkout({ tipo: 'outdoor_cardio', deporte: 'ciclismo', nombre: 'Ruta en Bicicleta' })}
+            className="p-5 rounded-3xl bg-slate-900/90 border border-emerald-500/30 hover:border-emerald-400 hover:bg-slate-800/90 transition-all cursor-pointer group shadow-xl flex flex-col justify-between active:scale-98"
+          >
+            <div className="space-y-2">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md shadow-emerald-500/20">
+                🚴
+              </div>
+              <h4 className="font-black text-base text-white group-hover:text-emerald-400">Bicicleta / Ciclismo</h4>
+              <p className="text-xs text-slate-400 leading-snug">
+                Ruta, montaña o spinning con velocidad media (km/h), tiempo de pedaleo y desnivel.
+              </p>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-black text-emerald-400">
+              <span>Iniciar Pedaleo</span>
+              <div className="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center shadow-md">
+                <ChevronRight className="w-4 h-4 stroke-[3]" />
+              </div>
+            </div>
+          </div>
+
+          {/* Montañismo */}
+          <div
+            onClick={() => onStartWorkout({ tipo: 'outdoor_cardio', deporte: 'montanismo', nombre: 'Ascenso & Montañismo' })}
+            className="p-5 rounded-3xl bg-slate-900/90 border border-amber-500/30 hover:border-amber-400 hover:bg-slate-800/90 transition-all cursor-pointer group shadow-xl flex flex-col justify-between active:scale-98"
+          >
+            <div className="space-y-2">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md shadow-amber-500/20">
+                ⛰️
+              </div>
+              <h4 className="font-black text-base text-white group-hover:text-amber-400">Montañismo & Trekking</h4>
+              <p className="text-xs text-slate-400 leading-snug">
+                Ascensos y senderismo con desnivel positivo acumulado (+D m), peso de mochila (kg) y terreno.
+              </p>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-black text-amber-400">
+              <span>Iniciar Trekking</span>
+              <div className="w-6 h-6 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center shadow-md">
+                <ChevronRight className="w-4 h-4 stroke-[3]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Métricas / Estadísticas Rápidas */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-5 flex flex-col justify-between">

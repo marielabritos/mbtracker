@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Check, Plus, Trash2, Timer, Flame, Trophy, 
-  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown, Award, Sparkles, CheckCircle2, Eye, Edit3, RefreshCw 
+  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown, Award, Sparkles, CheckCircle2, Eye, Edit3, RefreshCw, Compass 
 } from 'lucide-react';
 import { api } from '../services/api';
 import { sound } from '../utils/sound';
 import RestTimer from '../components/RestTimer';
 import ExerciseModal from '../components/ExerciseModal';
+import OutdoorWorkoutTracker from '../components/OutdoorWorkoutTracker';
 
 export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout }) {
+  const [workoutMode, setWorkoutMode] = useState(() => {
+    if (workoutData?.tipo === 'outdoor_cardio') return workoutData?.deporte || 'running';
+    return 'gimnasio';
+  });
   const [sessionName, setSessionName] = useState(workoutData?.nombre || 'Entrenamiento del Día');
   const [exercises, setExercises] = useState([]);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -359,8 +364,65 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
     return matchesGroup && matchesSearch;
   });
 
+  // Si el modo activo es Running, Ciclismo o Montañismo, renderizar el rastreador al aire libre
+  if (workoutMode === 'running' || workoutMode === 'ciclismo' || workoutMode === 'montanismo') {
+    return (
+      <OutdoorWorkoutTracker
+        defaultActivity={workoutMode}
+        onFinish={async (outdoorData) => {
+          try {
+            const res = await api.createSesion(outdoorData);
+            onFinishWorkout(res || outdoorData);
+          } catch (e) {
+            onFinishWorkout(outdoorData);
+          }
+        }}
+        onCancel={onCancelWorkout}
+      />
+    );
+  }
+
   return (
     <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 space-y-5 pb-36">
+      {/* Selector de Modo de Entrenamiento (Fuerza vs Deportes Outdoor) */}
+      <div className="flex items-center justify-between gap-1 p-1 bg-slate-900 rounded-2xl border border-slate-800">
+        <button
+          type="button"
+          onClick={() => setWorkoutMode('gimnasio')}
+          className="flex-1 py-1.5 px-2 rounded-xl text-xs font-black bg-sky-500 text-slate-950 shadow-md flex items-center justify-center gap-1.5"
+        >
+          <span>🏋️</span>
+          <span>Gimnasio & Fuerza</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setWorkoutMode('running')}
+          className="flex-1 py-1.5 px-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center justify-center gap-1.5"
+        >
+          <span>🏃</span>
+          <span>Running</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setWorkoutMode('ciclismo')}
+          className="flex-1 py-1.5 px-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center justify-center gap-1.5"
+        >
+          <span>🚴</span>
+          <span>Bicicleta</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setWorkoutMode('montanismo')}
+          className="flex-1 py-1.5 px-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center justify-center gap-1.5"
+        >
+          <span>⛰️</span>
+          <span>Montañismo</span>
+        </button>
+      </div>
+
       {/* Top Bar Entrenamiento */}
       <div className="sticky top-0 z-30 bg-slate-950/95 backdrop-blur-md -mx-3 px-3 py-3 border-b border-slate-800/90 flex items-center justify-between gap-2 shadow-lg">
         <button
