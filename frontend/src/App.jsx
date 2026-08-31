@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import AuthScreen from './components/AuthScreen';
+import ChatbotCoach from './components/ChatbotCoach';
 import Dashboard from './pages/Dashboard';
 import Rutinas from './pages/Rutinas';
 import Entrenar from './pages/Entrenar';
@@ -9,6 +10,7 @@ import Progreso from './pages/Progreso';
 import Perfil from './pages/Perfil';
 import Calculadora1RM from './pages/Calculadora1RM';
 import Calendario from './pages/Calendario';
+import { Bot, MessageSquare, Sparkles } from 'lucide-react';
 
 const STORAGE_KEY = 'mbtracker_active_workout';
 const AUTH_KEY = 'mbtracker_auth_user';
@@ -24,6 +26,7 @@ export default function App() {
   });
 
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [isCoachOpen, setIsCoachOpen] = useState(false);
   const [activeWorkout, setActiveWorkout] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : null;
@@ -71,13 +74,14 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans relative">
       {/* Barra de navegación superior (Desktop) y fija inferior (Móvil) */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isWorkoutActive={!!activeWorkout}
         onLogout={handleLogout}
+        onOpenCoach={() => setIsCoachOpen(true)}
       />
 
       {/* Contenido Principal */}
@@ -86,6 +90,7 @@ export default function App() {
           <Dashboard
             onStartWorkout={handleStartWorkout}
             onNavigateTab={setActiveTab}
+            onOpenCoach={() => setIsCoachOpen(true)}
           />
         )}
 
@@ -124,6 +129,30 @@ export default function App() {
           <Perfil onLogout={handleLogout} />
         )}
       </main>
+
+      {/* Botón Flotante Global de Coach MB / Asistente IA */}
+      <button
+        onClick={() => setIsCoachOpen(true)}
+        className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 p-3 sm:px-4 sm:py-3 rounded-2xl bg-gradient-to-r from-sky-500 via-sky-400 to-emerald-400 text-slate-950 font-black shadow-2xl shadow-sky-500/30 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all border border-white/20 group"
+        title="Abrir Coach Virtual MB: Check-in Diario & Ánimo"
+      >
+        <div className="relative">
+          <img 
+            src="/logo.png" 
+            alt="MB" 
+            className="w-6 h-6 rounded-lg object-contain bg-black p-0.5" 
+          />
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-950 absolute -top-1 -right-1 animate-pulse" />
+        </div>
+        <span className="hidden sm:inline text-xs font-black tracking-tight">Coach MB • Ánimo</span>
+      </button>
+
+      {/* Modal / Drawer del Chatbot Coach */}
+      <ChatbotCoach
+        isOpen={isCoachOpen}
+        onClose={() => setIsCoachOpen(false)}
+        onStartWorkout={handleStartWorkout}
+      />
     </div>
   );
 }

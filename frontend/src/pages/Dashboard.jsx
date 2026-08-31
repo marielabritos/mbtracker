@@ -66,7 +66,7 @@ const PROTOCOLS = {
   }
 };
 
-export default function Dashboard({ onStartWorkout, onNavigateTab }) {
+export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach }) {
   const [stats, setStats] = useState(null);
   const [rutinas, setRutinas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -188,6 +188,44 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
           <Dumbbell className="w-4 h-4 text-sky-400" />
           Sesión Libre
         </button>
+      </div>
+
+      {/* TARJETA INTERACTIVA: 🤖 COACH VIRTUAL MB & CHECK-IN DE ÁNIMO */}
+      <div 
+        onClick={onOpenCoach}
+        className="p-5 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/80 border border-sky-500/40 hover:border-sky-400/90 transition-all cursor-pointer shadow-xl relative overflow-hidden group active:scale-98"
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="relative shrink-0">
+              <img 
+                src="/logo.png" 
+                alt="Coach MB" 
+                className="w-12 h-12 rounded-2xl object-contain bg-black border border-slate-700 p-0.5 shadow-lg group-hover:scale-105 transition-transform" 
+              />
+              <span className="w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-900 absolute -bottom-0.5 -right-0.5 animate-pulse" />
+            </div>
+
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-black text-sm sm:text-base text-white group-hover:text-sky-300 truncate">
+                  Coach Virtual MB • Check-in Diario
+                </h3>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black border border-emerald-500/30">
+                  Ánimo & Registro
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 mt-1 leading-snug">
+                ¿Qué vas a entrenar hoy? Registra tu ánimo y molestias para medirlas en el historial.
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-sky-500 to-emerald-400 text-slate-950 font-black text-xs shadow-lg shadow-sky-500/20 group-hover:brightness-110 transition-all">
+            <span>Check-in</span>
+            <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
+          </div>
+        </div>
       </div>
 
       {/* Hero: Empezar Entrenamiento */}

@@ -314,6 +314,10 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
         nombre: sessionName || 'Entrenamiento Libre',
         dia_rutina_id: workoutData?.dia_rutina_id || null,
         duracion_segundos: elapsedSeconds || 60,
+        animo: workoutData?.animo || null,
+        energia: workoutData?.energia || 5,
+        molestia: workoutData?.molestia || null,
+        checkin_notas: workoutData?.checkin_notas || null,
         series: completedSeries,
       };
 
@@ -475,6 +479,24 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
           </button>
         </div>
       </div>
+
+      {/* Badge de Check-in y Estado de Ánimo */}
+      {workoutData?.animo && (
+        <div className="bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl px-4 py-2.5 flex items-center justify-between flex-wrap gap-2 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">{workoutData.animo.emoji || '🔥'}</span>
+            <div>
+              <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">Check-in de Ánimo</span>
+              <strong className="text-white">{workoutData.animo.label || 'Excelente'}</strong>
+            </div>
+          </div>
+          {workoutData.molestia && workoutData.molestia !== 'Ninguna' && (
+            <span className="px-2.5 py-1 rounded-xl bg-slate-950 text-[11px] text-amber-300 font-bold border border-amber-500/30">
+              ⚠️ Cuidar: {workoutData.molestia}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Lista de Ejercicios */}
       {exercises.length === 0 ? (

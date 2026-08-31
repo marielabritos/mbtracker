@@ -611,6 +611,10 @@ export const api = {
       fecha_fin: new Date().toISOString(),
       duracion_segundos: data.duracion_segundos || 0,
       duracion_minutos: data.duracion_minutos || Math.max(Math.round((data.duracion_segundos || 0) / 60), 1),
+      animo: data.animo || null,
+      energia: data.energia || null,
+      molestia: data.molestia || null,
+      checkin_notas: data.checkin_notas || '',
       notas: data.notas || '',
       completado: true,
       series: seriesProcessed

@@ -66,6 +66,42 @@ export default function Historial() {
         <p className="text-sm text-slate-400">Revisa todas tus sesiones de fuerza, running, bicicleta y montañismo</p>
       </div>
 
+      {/* PANEL DE MONITOREO DE ÁNIMO & BIENESTAR */}
+      {sesiones.some(s => s.animo) && (
+        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-950/30 via-slate-900 to-indigo-950/40 border border-amber-500/30 shadow-xl space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">✨</span>
+              <h3 className="font-black text-sm sm:text-base text-white">Monitoreo de Ánimo & Bienestar</h3>
+            </div>
+            <span className="text-xs text-amber-400 font-bold">Registro de Check-ins</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-center">
+              <span className="text-[10px] uppercase font-bold text-slate-400 block">Energía Promedio</span>
+              <div className="text-base sm:text-lg font-black text-amber-400 mt-0.5">
+                {(sesiones.filter(s => s.energia).reduce((acc, s) => acc + s.energia, 0) / Math.max(sesiones.filter(s => s.energia).length, 1)).toFixed(1)} / 5.0 ⭐
+              </div>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-center">
+              <span className="text-[10px] uppercase font-bold text-slate-400 block">Días Ánimo Positivo</span>
+              <div className="text-base sm:text-lg font-black text-emerald-400 mt-0.5">
+                {sesiones.filter(s => (s.energia || 3) >= 3).length} sesiones 🔥
+              </div>
+            </div>
+
+            <div className="col-span-2 sm:col-span-1 p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-center flex flex-col justify-center">
+              <span className="text-[10px] uppercase font-bold text-slate-400 block">Efecto Terapia</span>
+              <span className="text-xs font-bold text-sky-300 mt-0.5">
+                Entrenar eleva tu estado de ánimo
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {sesiones.length === 0 ? (
         <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 text-center space-y-3">
           <History className="w-12 h-12 text-slate-600 mx-auto" />
@@ -113,6 +149,12 @@ export default function Historial() {
                       {hasPR && (
                         <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-[10px] font-bold text-amber-400">
                           <Trophy className="w-3 h-3" /> Nuevo PR
+                        </span>
+                      )}
+                      {sesion.animo && (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-[11px] font-bold text-amber-300">
+                          <span>{sesion.animo.emoji || '🔥'}</span>
+                          <span>Ánimo: {sesion.animo.label || sesion.animo}</span>
                         </span>
                       )}
                     </div>
@@ -295,6 +337,17 @@ export default function Historial() {
                           </div>
                         );
                       })
+                    )}
+
+                    {/* Notas de Check-in y Ánimo del Coach */}
+                    {sesion.checkin_notas && (
+                      <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-slate-200 flex items-center gap-2.5">
+                        <span className="text-xl">🤖</span>
+                        <div className="min-w-0">
+                          <strong className="text-amber-400 block text-[11px] uppercase tracking-wider">Check-in de Ánimo & Salud</strong>
+                          <span className="text-slate-300 leading-relaxed">{sesion.checkin_notas}</span>
+                        </div>
+                      </div>
                     )}
 
                     {sesion.notas && (

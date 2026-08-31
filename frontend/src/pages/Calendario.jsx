@@ -367,7 +367,15 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
                         {getSportIcon(sesion)}
                       </div>
                       <div>
-                        <h4 className="font-black text-white text-base">{sesion.nombre}</h4>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="font-black text-white text-base">{sesion.nombre}</h4>
+                          {sesion.animo && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-[10px] font-bold text-amber-300">
+                              <span>{sesion.animo.emoji || '🔥'}</span>
+                              <span>{sesion.animo.label || sesion.animo}</span>
+                            </span>
+                          )}
+                        </div>
                         <div className="flex items-center gap-3 text-xs text-slate-400 font-mono mt-0.5">
                           <span className="flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5 text-sky-400" />
