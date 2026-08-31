@@ -168,11 +168,18 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6 pb-28">
-      {/* Header Saludo */}
-      <div className="flex items-center justify-between">
-        <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-sky-400">Bienvenido de nuevo</span>
-          <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">¿Listo para entrenar hoy?</h2>
+      {/* Header Saludo con Logo MB */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <img 
+            src="/logo.png" 
+            alt="MB" 
+            className="w-12 h-12 rounded-2xl object-contain bg-black border border-slate-800 shadow-xl p-0.5" 
+          />
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-sky-400">MB Training Fitness • Mariela Britos</span>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">¿Listo para entrenar hoy?</h2>
+          </div>
         </div>
         <button
           onClick={handleStartQuickEmpty}

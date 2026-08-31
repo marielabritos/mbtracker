@@ -57,7 +57,7 @@ export default function Calculadora1RM() {
 
   // Fórmulas de cálculo de 1RM
   const calculate1RM = (weight, reps) => {
-    const w = parseFloat(weight) || 0;
+    const w = parseFloat(String(weight).replace(',', '.')) || 0;
     const r = parseInt(reps) || 1;
     if (w <= 0 || r <= 0) return { epley: 0, brzycki: 0, lombardi: 0, promedio: 0 };
     if (r === 1) return { epley: w, brzycki: w, lombardi: w, promedio: w };
@@ -112,7 +112,7 @@ export default function Calculadora1RM() {
       id: Date.now(),
       fecha: new Date().toISOString(),
       ejercicio: selectedExName,
-      peso: parseFloat(pesoInput),
+      peso: parseFloat(String(pesoInput).replace(',', '.')) || 0,
       reps: parseInt(repsInput),
       rm_estimado: estimated1RM,
       nivel: strengthLevel.level
@@ -190,12 +190,10 @@ export default function Calculadora1RM() {
             </div>
             <div className="flex items-center gap-2">
               <input
-                type="number"
-                step="0.5"
-                min="1"
-                max="500"
+                type="text"
+                inputMode="decimal"
                 value={pesoInput}
-                onChange={(e) => setPesoInput(e.target.value)}
+                onChange={(e) => setPesoInput(e.target.value.replace(',', '.'))}
                 className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-lg text-white font-black font-mono focus:outline-none focus:border-sky-500"
               />
               <div className="flex gap-1">

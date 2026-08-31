@@ -509,13 +509,13 @@ export default function Rutinas({ onStartWorkout }) {
                             >
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 min-w-0 flex-wrap">
-                                  <span className="font-mono text-slate-500 font-bold w-4">
-                                    {index + 1}.
+                                  <span className="font-mono text-sky-400 font-bold text-xs">
+                                    #{index + 1}
                                   </span>
-                                  <span className="font-semibold text-slate-200 truncate">
+                                  <span className="font-bold text-white text-xs sm:text-sm">
                                     {ej.ejercicio?.nombre}
                                   </span>
-                                  <span className="px-2 py-0.5 rounded-md bg-slate-800 text-[10px] text-sky-400 font-medium shrink-0">
+                                  <span className="px-2 py-0.5 rounded-md bg-slate-900 text-[10px] text-sky-300 font-semibold border border-slate-800 shrink-0">
                                     {ej.ejercicio?.grupo_muscular}
                                   </span>
                                   
@@ -700,16 +700,46 @@ export default function Rutinas({ onStartWorkout }) {
                       {dia.ejercicios.map((ej, ejIdx) => (
                         <div 
                           key={ejIdx} 
-                          className="bg-slate-900 border border-slate-800/90 p-3.5 sm:p-4 rounded-2xl space-y-2.5 shadow-lg transition-all"
+                          className="bg-slate-900 border border-slate-800/90 p-3.5 sm:p-4 rounded-3xl space-y-3 shadow-lg transition-all"
                         >
-                          {/* Fila 1: Flechas + Nombre Amplio + Ver GIF + Eliminar */}
-                          <div className="flex items-center gap-2">
-                            <div className="flex flex-col gap-0.5 shrink-0">
+                          {/* Fila 1: Header de Tarjeta (Número, Músculo y Botones de Acción) */}
+                          <div className="flex items-center justify-between gap-2 border-b border-slate-800/60 pb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs font-black text-sky-400 bg-sky-500/15 border border-sky-500/30 px-2.5 py-1 rounded-xl">
+                                #{ejIdx + 1}
+                              </span>
+                              <span className="px-2.5 py-1 rounded-xl bg-slate-950 text-[11px] text-sky-300 font-bold border border-slate-800">
+                                {ej.ejercicio?.grupo_muscular || 'General'}
+                              </span>
+                            </div>
+
+                            {/* Botones de Acción */}
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedVisualExercise(ej.ejercicio)}
+                                className="px-2.5 py-1.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 border border-sky-500/30 flex items-center gap-1 text-xs font-bold transition-colors"
+                                title="Ver demostración GIF y técnica"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span className="text-[11px]">GIF</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => setExerciseSelectorTarget({ diaIndex: diaIdx, replaceIndex: ejIdx })}
+                                className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 flex items-center gap-1 text-xs font-bold transition-colors"
+                                title="Cambiar este ejercicio por otro del catálogo"
+                              >
+                                <RefreshCw className="w-3.5 h-3.5" />
+                                <span className="text-[11px]">Cambiar</span>
+                              </button>
+
                               <button
                                 type="button"
                                 disabled={ejIdx === 0}
                                 onClick={() => handleMoveExercise(diaIdx, ejIdx, -1)}
-                                className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-20 transition-colors"
+                                className="p-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 disabled:opacity-20 border border-slate-800 transition-colors"
                                 title="Mover arriba"
                               >
                                 <ArrowUp className="w-3.5 h-3.5" />
@@ -718,108 +748,81 @@ export default function Rutinas({ onStartWorkout }) {
                                 type="button"
                                 disabled={ejIdx === dia.ejercicios.length - 1}
                                 onClick={() => handleMoveExercise(diaIdx, ejIdx, 1)}
-                                className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-20 transition-colors"
+                                className="p-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 disabled:opacity-20 border border-slate-800 transition-colors"
                                 title="Mover abajo"
                               >
                                 <ArrowDown className="w-3.5 h-3.5" />
                               </button>
-                            </div>
 
-                            <span className="font-mono text-slate-400 font-black text-sm shrink-0">{ejIdx + 1}.</span>
-
-                            {/* Input de Nombre Completo y Legible */}
-                            <div className="flex-1 min-w-0">
-                              <input
-                                type="text"
-                                value={ej.ejercicio?.nombre || ''}
-                                onChange={(e) => {
+                              <button
+                                type="button"
+                                onClick={() => {
                                   const newDias = [...formRutina.dias];
-                                  newDias[diaIdx].ejercicios[ejIdx].ejercicio = {
-                                    ...newDias[diaIdx].ejercicios[ejIdx].ejercicio,
-                                    nombre: e.target.value
-                                  };
+                                  newDias[diaIdx].ejercicios = newDias[diaIdx].ejercicios.filter((_, idx) => idx !== ejIdx);
+                                  newDias[diaIdx].ejercicios.forEach((e, i) => { e.orden = i + 1; });
                                   setFormRutina({ ...formRutina, dias: newDias });
                                 }}
-                                placeholder="Nombre del ejercicio..."
-                                className="w-full bg-slate-950 border border-slate-700/90 focus:border-sky-400 rounded-xl px-3 py-2 font-bold text-white text-sm focus:outline-none shadow-inner"
+                                className="p-1.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-colors ml-0.5"
+                                title="Quitar ejercicio"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Fila 2: Nombre Completo y Amplio al 100% de Ancho */}
+                          <div>
+                            <input
+                              type="text"
+                              value={ej.ejercicio?.nombre || ''}
+                              onChange={(e) => {
+                                const newDias = [...formRutina.dias];
+                                newDias[diaIdx].ejercicios[ejIdx].ejercicio = {
+                                  ...newDias[diaIdx].ejercicios[ejIdx].ejercicio,
+                                  nombre: e.target.value
+                                };
+                                setFormRutina({ ...formRutina, dias: newDias });
+                              }}
+                              placeholder="Nombre del ejercicio..."
+                              className="w-full bg-slate-950 border border-slate-700/90 focus:border-sky-400 rounded-2xl px-3.5 py-2.5 font-bold text-white text-sm sm:text-base focus:outline-none shadow-inner"
+                            />
+                          </div>
+
+                          {/* Fila 3: Parámetros en Cuadrícula de 3 Columnas Espaciosas */}
+                          <div className="grid grid-cols-3 gap-2">
+                            <div className="bg-slate-950 p-2 rounded-2xl border border-slate-800 text-center">
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Series</span>
+                              <input
+                                type="number"
+                                min="1"
+                                max="20"
+                                value={ej.series_objetivo}
+                                onChange={(e) => {
+                                  const newDias = [...formRutina.dias];
+                                  newDias[diaIdx].ejercicios[ejIdx].series_objetivo = parseInt(e.target.value) || 1;
+                                  setFormRutina({ ...formRutina, dias: newDias });
+                                }}
+                                className="w-full bg-transparent text-center text-white font-mono font-black text-sm focus:outline-none"
                               />
                             </div>
 
-                            {/* Botón GIF, Cambiar y Eliminar */}
-                            <button
-                              type="button"
-                              onClick={() => setSelectedVisualExercise(ej.ejercicio)}
-                              className="p-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 border border-sky-500/30 flex items-center gap-1 text-xs font-bold shrink-0 transition-colors"
-                              title="Ver demostración GIF y técnica"
-                            >
-                              <Eye className="w-4 h-4" />
-                              <span className="hidden sm:inline">Ver GIF</span>
-                            </button>
+                            <div className="bg-slate-950 p-2 rounded-2xl border border-slate-800 text-center">
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Reps</span>
+                              <input
+                                type="text"
+                                value={ej.reps_objetivo}
+                                onChange={(e) => {
+                                  const newDias = [...formRutina.dias];
+                                  newDias[diaIdx].ejercicios[ejIdx].reps_objetivo = e.target.value;
+                                  setFormRutina({ ...formRutina, dias: newDias });
+                                }}
+                                className="w-full bg-transparent text-center text-white font-mono font-black text-sm focus:outline-none"
+                              />
+                            </div>
 
-                            <button
-                              type="button"
-                              onClick={() => setExerciseSelectorTarget({ diaIndex: diaIdx, replaceIndex: ejIdx })}
-                              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 flex items-center gap-1 text-xs font-bold shrink-0 transition-colors"
-                              title="Cambiar este ejercicio por otro del catálogo"
-                            >
-                              <RefreshCw className="w-3.5 h-3.5" />
-                              <span className="hidden sm:inline">Cambiar</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const newDias = [...formRutina.dias];
-                                newDias[diaIdx].ejercicios = newDias[diaIdx].ejercicios.filter((_, idx) => idx !== ejIdx);
-                                newDias[diaIdx].ejercicios.forEach((e, i) => { e.orden = i + 1; });
-                                setFormRutina({ ...formRutina, dias: newDias });
-                              }}
-                              className="p-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors shrink-0"
-                              title="Quitar ejercicio"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-
-                          {/* Fila 2: Músculo + Configuración de Series, Repeticiones y Descanso */}
-                          <div className="flex items-center justify-between flex-wrap gap-2 pt-1 border-t border-slate-800/60">
-                            <span className="px-2.5 py-1 rounded-lg bg-slate-950 text-[11px] text-sky-400 font-bold border border-slate-800">
-                              {ej.ejercicio?.grupo_muscular || 'General'}
-                            </span>
-
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center gap-1 bg-slate-950 px-2.5 py-1.5 rounded-xl border border-slate-800">
-                                <span className="text-slate-400 text-xs font-semibold">Series:</span>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  max="20"
-                                  value={ej.series_objetivo}
-                                  onChange={(e) => {
-                                    const newDias = [...formRutina.dias];
-                                    newDias[diaIdx].ejercicios[ejIdx].series_objetivo = parseInt(e.target.value) || 1;
-                                    setFormRutina({ ...formRutina, dias: newDias });
-                                  }}
-                                  className="w-10 bg-transparent text-center text-white font-mono font-bold focus:outline-none text-xs"
-                                />
-                              </div>
-
-                              <div className="flex items-center gap-1 bg-slate-950 px-2.5 py-1.5 rounded-xl border border-slate-800">
-                                <span className="text-slate-400 text-xs font-semibold">Reps:</span>
-                                <input
-                                  type="text"
-                                  value={ej.reps_objetivo}
-                                  onChange={(e) => {
-                                    const newDias = [...formRutina.dias];
-                                    newDias[diaIdx].ejercicios[ejIdx].reps_objetivo = e.target.value;
-                                    setFormRutina({ ...formRutina, dias: newDias });
-                                  }}
-                                  className="w-14 bg-transparent text-center text-white font-mono font-bold focus:outline-none text-xs"
-                                />
-                              </div>
-
-                              <div className="flex items-center gap-1 bg-slate-950 px-2.5 py-1.5 rounded-xl border border-slate-800">
-                                <span className="text-slate-400 text-xs font-semibold">Desc:</span>
+                            <div className="bg-slate-950 p-2 rounded-2xl border border-slate-800 text-center">
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Descanso</span>
+                              <div className="flex items-center justify-center gap-0.5">
                                 <input
                                   type="number"
                                   step="15"
@@ -829,20 +832,20 @@ export default function Rutinas({ onStartWorkout }) {
                                     newDias[diaIdx].ejercicios[ejIdx].descanso_segundos = parseInt(e.target.value) || 60;
                                     setFormRutina({ ...formRutina, dias: newDias });
                                   }}
-                                  className="w-12 bg-transparent text-center text-white font-mono font-bold focus:outline-none text-xs"
+                                  className="w-12 bg-transparent text-center text-white font-mono font-black text-sm focus:outline-none"
                                 />
-                                <span className="text-slate-500 text-[10px]">s</span>
+                                <span className="text-slate-500 text-xs font-mono">s</span>
                               </div>
                             </div>
                           </div>
 
-                          {/* Fila 3: Cajón de Observaciones & Ejercicio Alternativo */}
+                          {/* Fila 4: Cajón de Observaciones & Ejercicio Alternativo */}
                           <div className="pt-2 border-t border-slate-800/60">
                             <div className="flex items-center gap-2">
                               <FileText className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                               <input
                                 type="text"
-                                placeholder="Observaciones / Alternativa (Ej: Si la máquina está ocupada, cambiar por Sentadilla Búlgara)"
+                                placeholder="Observaciones / Alternativa (Ej: Si está ocupada, cambiar por...)"
                                 value={ej.notas || ''}
                                 onChange={(e) => {
                                   const newDias = [...formRutina.dias];

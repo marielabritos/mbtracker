@@ -18,9 +18,11 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
       {/* Mobile Top Header */}
       <header className="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 shadow-md">
         <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-emerald-400 flex items-center justify-center shadow-md shadow-sky-500/20">
-            <Dumbbell className="w-4 h-4 text-slate-950 stroke-[2.5]" />
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="MB Training" 
+            className="w-9 h-9 rounded-xl object-contain shadow-md border border-slate-700/80 bg-black p-0.5" 
+          />
           <div>
             <h1 className="font-black text-sm text-white tracking-tight leading-none">MBTracker</h1>
             <span className="text-[10px] text-sky-400 font-bold">Mariela Britos</span>
@@ -53,12 +55,14 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
       {/* Desktop Header Topbar */}
       <header className="hidden md:flex items-center justify-between px-8 py-4 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-sky-500/20">
-            <Dumbbell className="w-6 h-6 text-slate-950 stroke-[2.5]" />
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="MB Training" 
+            className="w-11 h-11 rounded-2xl object-contain shadow-lg shadow-sky-500/20 border border-slate-700/80 bg-black p-0.5" 
+          />
           <div>
             <h1 className="font-bold text-lg text-white tracking-tight leading-none">MBTracker</h1>
-            <span className="text-xs text-sky-400 font-medium">Entrenamiento Personal • Mariela Britos</span>
+            <span className="text-xs text-sky-400 font-medium">Training Fitness • Mariela Britos</span>
           </div>
         </div>
 

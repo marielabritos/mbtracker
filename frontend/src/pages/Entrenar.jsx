@@ -124,7 +124,12 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
 
   const handleUpdateSetField = (exIdx, setIdx, field, value) => {
     const updated = [...exercises];
-    updated[exIdx].series[setIdx][field] = value;
+    let sanitized = value;
+    if (field === 'peso_kg') {
+      // Normalizar coma a punto (ej. 7,5 -> 7.5)
+      sanitized = String(value).replace(',', '.');
+    }
+    updated[exIdx].series[setIdx][field] = sanitized;
     setExercises(updated);
   };
 
@@ -273,7 +278,7 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
     const completedSeries = [];
     exercises.forEach((ex) => {
       ex.series.forEach((s) => {
-        const peso = parseFloat(s.peso_kg) || 0;
+        const peso = parseFloat(String(s.peso_kg).replace(',', '.')) || 0;
         const reps = parseInt(s.repeticiones) || 0;
         // Tomar cualquier serie marcada o con datos, o incluir series de ejercicios presentes
         if (s.completada || peso > 0 || reps > 0 || ex.series.length > 0) {
@@ -668,8 +673,7 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
                         {/* Input Peso */}
                         <div className="col-span-3">
                           <input
-                            type="number"
-                            step="0.5"
+                            type="text"
                             inputMode="decimal"
                             placeholder="0"
                             value={set.peso_kg}

@@ -73,9 +73,11 @@ export default function AuthScreen({ onLoginSuccess }) {
       <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative z-10 space-y-6 animate-in fade-in zoom-in-95 duration-300">
         {/* Header con Logo */}
         <div className="text-center space-y-3">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-500 via-sky-400 to-emerald-400 flex items-center justify-center mx-auto shadow-xl shadow-sky-500/25">
-            <Dumbbell className="w-9 h-9 text-slate-950 stroke-[2.5]" />
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="MB Training Fitness" 
+            className="w-24 h-24 rounded-3xl object-contain mx-auto shadow-2xl border-2 border-slate-700/80 bg-black p-1" 
+          />
 
           <div>
             <h1 className="font-black text-2xl text-white tracking-tight">MBTracker</h1>

@@ -205,9 +205,11 @@ export default function Perfil({ onLogout }) {
           <span className="text-xs font-bold uppercase tracking-wider text-sky-400">Nutrición & Biometría</span>
           <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Mi Perfil Fitness</h2>
         </div>
-        <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
-          <User className="w-5 h-5" />
-        </div>
+        <img 
+          src="/logo.png" 
+          alt="MB Training" 
+          className="w-11 h-11 rounded-2xl object-contain bg-black border border-slate-700/80 shadow-md p-0.5" 
+        />
       </div>
 
       {/* Tarjeta de Resumen Calórico y Macronutrientes */}
