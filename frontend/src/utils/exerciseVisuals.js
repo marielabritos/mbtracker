@@ -212,24 +212,25 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al bajar profundo; exhala al empujar desde el talón."
   },
   "Patada de Glúteo en Polea (Cable Kickback)": {
-    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0860-HEJ6DIX.gif",
-    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0860-HEJ6DIX.jpg",
-    musculo_principal: "Glúteo Mayor (Aislamiento)",
-    musculos_secundarios: ["Isquiosurales"],
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0228-Kpajagk.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0228-Kpajagk.jpg",
+    musculo_principal: "Glúteo Mayor (Aislamiento en Polea Baja)",
+    musculos_secundarios: ["Isquiosurales", "Glúteo Medio"],
     tips: [
-      "Tobillera en polea baja, torso ligeramente inclinado.",
-      "Patea hacia atrás y ligeramente en diagonal hacia afuera apretando el glúteo en el tope."
+      "Tobillera enganchada a la polea baja, torso inclinado a 45° apoyando las manos en la estructura.",
+      "Patea hacia atrás extendiendo la cadera y aprieta el glúteo 1 segundo en el punto más alto.",
+      "Regresa de forma lenta y controlada sintiendo la resistencia continua del cable."
     ],
     respiracion: "Exhala al patear atrás; inhala al regresar controlado."
   },
   "Patada de Glúteo en Máquina / Cuadrupedia": {
-    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0860-HEJ6DIX.gif",
-    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0860-HEJ6DIX.jpg",
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/2286-OPqShYN.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/2286-OPqShYN.jpg",
     musculo_principal: "Glúteo Mayor",
-    musculos_secundarios: ["Isquios"],
+    musculos_secundarios: ["Isquiosurales"],
     tips: [
       "Empuja con la planta del pie hacia arriba y atrás manteniendo la espalda neutra.",
-      "Pausa 1 segundo en máxima extensión."
+      "Pausa 1 segundo en máxima extensión apretando el glúteo."
     ],
     respiracion: "Exhala al empujar; inhala al flexionar."
   },

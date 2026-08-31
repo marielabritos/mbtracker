@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Check, Plus, Trash2, Timer, Flame, Trophy, 
-  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown, Award, Sparkles, CheckCircle2, Eye, Edit3, RefreshCw, Compass 
+  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown, Award, Sparkles, CheckCircle2, Eye, Edit3, RefreshCw, Compass, FileText 
 } from 'lucide-react';
 import { api } from '../services/api';
 import { sound } from '../utils/sound';
@@ -60,7 +60,7 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
           descanso_segundos: ej.descanso_segundos || 90,
           reps_objetivo: ej.reps_objetivo || '8-12',
           series: seriesList,
-          notas: '',
+          notas: ej.notas || '',
         };
       });
       setExercises(initialExercises);
@@ -284,7 +284,7 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
             repeticiones: reps > 0 ? reps : 10,
             rpe: parseFloat(s.rpe) || null,
             completada: true,
-            notas: s.notas || null,
+            notas: ex.notas || s.notas || null,
           });
         }
       });
@@ -728,6 +728,25 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
                       Quitar última
                     </button>
                   )}
+                </div>
+
+                {/* Cajón de Observaciones / Alternativas en vivo */}
+                <div className="pt-2.5 border-t border-slate-800/60 flex items-center gap-2">
+                  <FileText className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Observaciones / Alternativas (Ej: Reemplazado por mancuerna o máquina)"
+                    value={ex.notas || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setExercises((prev) => {
+                        const copy = [...prev];
+                        copy[exIdx] = { ...copy[exIdx], notas: val };
+                        return copy;
+                      });
+                    }}
+                    className="w-full bg-slate-950/80 border border-slate-800 focus:border-amber-400/80 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none"
+                  />
                 </div>
               </div>
             );

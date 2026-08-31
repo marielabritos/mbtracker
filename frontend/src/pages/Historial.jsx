@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   History, Calendar, Clock, Dumbbell, Trophy, Trash2, 
-  ChevronDown, ChevronUp, MapPin, TrendingUp, Flame, Mountain, Heart, Compass, Flag 
+  ChevronDown, ChevronUp, MapPin, TrendingUp, Flame, Mountain, Heart, Compass, Flag, FileText 
 } from 'lucide-react';
 import { api } from '../services/api';
 
@@ -257,14 +257,24 @@ export default function Historial() {
 
                     {/* Series de Fuerza (si no es outdoor o tiene ejercicios de gym) */}
                     {!isOutdoor && exercisesGrouped.length > 0 && (
-                      exercisesGrouped.map((item, idx) => (
-                        <div key={idx} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-bold text-white text-sm">{item.nombre}</h4>
-                            <span className="text-[10px] font-semibold text-sky-400 px-2 py-0.5 rounded-md bg-sky-500/10">
-                              {item.grupo_muscular}
-                            </span>
-                          </div>
+                      exercisesGrouped.map((item, idx) => {
+                        const note = item.series.find(s => s.notas)?.notas;
+                        return (
+                          <div key={idx} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h4 className="font-bold text-white text-sm">{item.nombre}</h4>
+                                {note && (
+                                  <div className="mt-1 flex items-center gap-1.5 text-[11px] text-amber-300 font-medium bg-amber-500/10 px-2.5 py-0.5 rounded-lg border border-amber-500/20 w-fit">
+                                    <FileText className="w-3 h-3 text-amber-400 shrink-0" />
+                                    <span>{note}</span>
+                                  </div>
+                                )}
+                              </div>
+                              <span className="text-[10px] font-semibold text-sky-400 px-2 py-0.5 rounded-md bg-sky-500/10">
+                                {item.grupo_muscular}
+                              </span>
+                            </div>
 
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
                             {item.series.map((s, sIdx) => (
@@ -281,9 +291,10 @@ export default function Historial() {
                                 {s.es_pr && <Trophy className="w-3 h-3 text-amber-400" />}
                               </div>
                             ))}
+                            </div>
                           </div>
-                        </div>
-                      ))
+                        );
+                      })
                     )}
 
                     {sesion.notas && (

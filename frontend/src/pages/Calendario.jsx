@@ -429,12 +429,19 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
                               className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/70 border border-slate-800/80 text-xs"
                             >
                               <div className="flex items-center gap-2">
-                                <span className="w-5 h-5 rounded-md bg-slate-800 text-slate-300 font-mono font-bold flex items-center justify-center text-[10px]">
+                                <span className="w-5 h-5 rounded-md bg-slate-800 text-slate-300 font-mono font-bold flex items-center justify-center text-[10px] shrink-0">
                                   {serie.numero_serie || sIdx + 1}
                                 </span>
-                                <span className="font-bold text-white">
-                                  {serie.ejercicio?.nombre || serie.nombre_ejercicio || 'Ejercicio'}
-                                </span>
+                                <div>
+                                  <span className="font-bold text-white block">
+                                    {serie.ejercicio?.nombre || serie.nombre_ejercicio || 'Ejercicio'}
+                                  </span>
+                                  {serie.notas && (
+                                    <span className="text-[10px] text-amber-300/90 font-medium block mt-0.5">
+                                      📝 {serie.notas}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
 
                               <div className="flex items-center gap-3 font-mono font-bold">

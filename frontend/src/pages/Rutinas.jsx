@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, Trash2, Edit3, ChevronDown, ChevronUp, Dumbbell, 
-  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, Calendar, CheckCircle2, Save, Sparkles, Eye, Info, RefreshCw, RotateCcw 
+  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, Calendar, CheckCircle2, Save, Sparkles, Eye, Info, RefreshCw, RotateCcw, FileText 
 } from 'lucide-react';
 import { api } from '../services/api';
 import ExerciseModal from '../components/ExerciseModal';
@@ -507,25 +507,34 @@ export default function Rutinas({ onStartWorkout }) {
                               key={ej.id}
                               className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/50 border border-slate-800/60 text-xs gap-2"
                             >
-                              <div className="flex items-center gap-2 min-w-0">
-                                <span className="font-mono text-slate-500 font-bold w-4">
-                                  {index + 1}.
-                                </span>
-                                <span className="font-semibold text-slate-200 truncate">
-                                  {ej.ejercicio?.nombre}
-                                </span>
-                                <span className="px-2 py-0.5 rounded-md bg-slate-800 text-[10px] text-sky-400 font-medium shrink-0">
-                                  {ej.ejercicio?.grupo_muscular}
-                                </span>
-                                
-                                <button
-                                  type="button"
-                                  onClick={() => setSelectedVisualExercise(ej.ejercicio)}
-                                  className="p-1 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20 shrink-0"
-                                  title="Ver animación / GIF y técnica"
-                                >
-                                  <Eye className="w-3 h-3" />
-                                </button>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 min-w-0 flex-wrap">
+                                  <span className="font-mono text-slate-500 font-bold w-4">
+                                    {index + 1}.
+                                  </span>
+                                  <span className="font-semibold text-slate-200 truncate">
+                                    {ej.ejercicio?.nombre}
+                                  </span>
+                                  <span className="px-2 py-0.5 rounded-md bg-slate-800 text-[10px] text-sky-400 font-medium shrink-0">
+                                    {ej.ejercicio?.grupo_muscular}
+                                  </span>
+                                  
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedVisualExercise(ej.ejercicio)}
+                                    className="p-1 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20 shrink-0"
+                                    title="Ver animación / GIF y técnica"
+                                  >
+                                    <Eye className="w-3 h-3" />
+                                  </button>
+                                </div>
+
+                                {ej.notas && (
+                                  <div className="mt-1 flex items-center gap-1.5 text-[11px] text-amber-300 font-medium bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20 w-fit">
+                                    <FileText className="w-3 h-3 text-amber-400 shrink-0" />
+                                    <span>{ej.notas}</span>
+                                  </div>
+                                )}
                               </div>
                               <div className="flex items-center gap-2 sm:gap-3 text-slate-400 font-mono shrink-0">
                                 <span>{ej.series_objetivo} series</span>
@@ -824,6 +833,24 @@ export default function Rutinas({ onStartWorkout }) {
                                 />
                                 <span className="text-slate-500 text-[10px]">s</span>
                               </div>
+                            </div>
+                          </div>
+
+                          {/* Fila 3: Cajón de Observaciones & Ejercicio Alternativo */}
+                          <div className="pt-2 border-t border-slate-800/60">
+                            <div className="flex items-center gap-2">
+                              <FileText className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                              <input
+                                type="text"
+                                placeholder="Observaciones / Alternativa (Ej: Si la máquina está ocupada, cambiar por Sentadilla Búlgara)"
+                                value={ej.notas || ''}
+                                onChange={(e) => {
+                                  const newDias = [...formRutina.dias];
+                                  newDias[diaIdx].ejercicios[ejIdx].notas = e.target.value;
+                                  setFormRutina({ ...formRutina, dias: newDias });
+                                }}
+                                className="w-full bg-slate-950/90 border border-slate-800 focus:border-amber-400/80 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none"
+                              />
                             </div>
                           </div>
                         </div>
