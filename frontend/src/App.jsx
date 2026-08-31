@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import AuthScreen from './components/AuthScreen';
 import ChatbotCoach from './components/ChatbotCoach';
+import PasosTrackerModal from './components/PasosTrackerModal';
 import Dashboard from './pages/Dashboard';
 import Rutinas from './pages/Rutinas';
 import Entrenar from './pages/Entrenar';
@@ -27,6 +28,7 @@ export default function App() {
 
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isCoachOpen, setIsCoachOpen] = useState(false);
+  const [isStepsModalOpen, setIsStepsModalOpen] = useState(false);
   const [activeWorkout, setActiveWorkout] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : null;
@@ -91,6 +93,7 @@ export default function App() {
             onStartWorkout={handleStartWorkout}
             onNavigateTab={setActiveTab}
             onOpenCoach={() => setIsCoachOpen(true)}
+            onOpenSteps={() => setIsStepsModalOpen(true)}
           />
         )}
 
@@ -152,6 +155,12 @@ export default function App() {
         isOpen={isCoachOpen}
         onClose={() => setIsCoachOpen(false)}
         onStartWorkout={handleStartWorkout}
+      />
+
+      {/* Modal del Podómetro & Pasos Diarios */}
+      <PasosTrackerModal
+        isOpen={isStepsModalOpen}
+        onClose={() => setIsStepsModalOpen(false)}
       />
     </div>
   );

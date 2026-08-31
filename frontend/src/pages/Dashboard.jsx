@@ -66,7 +66,7 @@ const PROTOCOLS = {
   }
 };
 
-export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach }) {
+export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach, onOpenSteps }) {
   const [stats, setStats] = useState(null);
   const [rutinas, setRutinas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -75,6 +75,20 @@ export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach }
   const [activeProtocolModal, setActiveProtocolModal] = useState(null);
   const [selectedExerciseIds, setSelectedExerciseIds] = useState(new Set());
   const [selectedVisualExercise, setSelectedVisualExercise] = useState(null);
+
+  // Leer datos de pasos de hoy
+  const todayStr = new Date().toISOString().split('T')[0];
+  const [todaySteps, setTodaySteps] = useState(0);
+  const [stepsGoal, setStepsGoal] = useState(10000);
+
+  useEffect(() => {
+    try {
+      const stepsData = JSON.parse(localStorage.getItem('mbtracker_steps_data') || '{}');
+      setTodaySteps(stepsData[todayStr] || 0);
+      const savedGoal = parseInt(localStorage.getItem('mbtracker_steps_goal') || '10000');
+      setStepsGoal(savedGoal);
+    } catch (e) {}
+  }, []);
 
   const handleOpenProtocolModal = (protoKey) => {
     const proto = PROTOCOLS[protoKey];
@@ -225,6 +239,53 @@ export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach }
             <span>Check-in</span>
             <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
           </div>
+        </div>
+      </div>
+
+      {/* WIDGET INTERACTIVO DE PASOS DIARIOS & PODÓMETRO */}
+      <div 
+        onClick={onOpenSteps}
+        className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-emerald-950/30 via-slate-900 to-slate-900 border border-emerald-500/40 hover:border-emerald-400 transition-all cursor-pointer group shadow-xl relative overflow-hidden active:scale-98"
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/20 shrink-0">
+              👟
+            </div>
+
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-black text-sm sm:text-base text-white group-hover:text-emerald-400 truncate">
+                  Pasos Diarios & Podómetro
+                </h3>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black border border-emerald-500/30">
+                  {todaySteps >= stepsGoal ? '¡META LOGRADA! 🎉' : `${Math.round((todaySteps / stepsGoal) * 100)}%`}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-3 text-xs text-slate-300 mt-0.5 font-mono flex-wrap">
+                <span className="font-bold text-white">
+                  {todaySteps.toLocaleString('es-ES')} <span className="text-slate-400 text-[11px] font-normal">/ {stepsGoal.toLocaleString('es-ES')}</span>
+                </span>
+                <span>•</span>
+                <span className="text-sky-400 font-bold">{(todaySteps * 0.00076).toFixed(1)} km</span>
+                <span>•</span>
+                <span className="text-amber-400 font-bold">{Math.round(todaySteps * 0.04)} kcal</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow-md">
+            <span>Contar</span>
+            <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
+          </div>
+        </div>
+
+        {/* Barra de progreso rápida */}
+        <div className="w-full bg-slate-800 rounded-full h-2 mt-3 overflow-hidden">
+          <div 
+            className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500 shadow-md shadow-emerald-500/30"
+            style={{ width: `${Math.min(100, Math.round((todaySteps / stepsGoal) * 100))}%` }}
+          />
         </div>
       </div>
 
