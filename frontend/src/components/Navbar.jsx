@@ -7,7 +7,7 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
     { id: 'entrenar', label: 'Entrenar', icon: isWorkoutActive ? Play : Dumbbell, highlight: isWorkoutActive },
     { id: 'rutinas', label: 'Rutinas', icon: Layers },
     { id: 'calendario', label: 'Calendario', icon: CalendarDays },
-    { id: 'fuerza_1rm', label: 'Fuerza 1RM', icon: Zap },
+    { id: 'fuerza_1rm', label: '1RM', icon: Zap },
     { id: 'progreso', label: 'Progreso', icon: TrendingUp },
     { id: 'historial', label: 'Historial', icon: History },
     { id: 'perfil', label: 'Perfil', icon: User },
@@ -103,8 +103,8 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
       </header>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800/80 px-2 py-1.5 pb-safe">
-        <div className="flex items-center justify-around max-w-md mx-auto">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800/80 px-1 py-1 pb-safe">
+        <div className="flex items-center justify-between min-w-full px-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -112,9 +112,9 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-2xl transition-all relative ${
+                className={`flex flex-col items-center justify-center py-1 px-1 rounded-2xl transition-all relative flex-1 min-w-0 ${
                   isActive
-                    ? 'text-sky-400 scale-105'
+                    ? 'text-sky-400 font-black'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -123,12 +123,14 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
                     isActive ? 'bg-sky-500/20 text-sky-400' : ''
                   } ${item.highlight ? 'bg-emerald-500/20 text-emerald-400' : ''}`}
                 >
-                  <Icon className={`w-5 h-5 ${item.highlight ? 'animate-pulse' : ''}`} />
+                  <Icon className={`w-4 h-4 ${item.highlight ? 'animate-pulse' : ''}`} />
                 </div>
-                <span className="text-[10px] font-medium mt-0.5 tracking-tight">{item.label}</span>
+                <span className="text-[9px] sm:text-[10px] font-bold mt-0.5 tracking-tight truncate max-w-full">
+                  {item.label}
+                </span>
 
                 {item.highlight && (
-                  <span className="absolute top-1.5 right-3 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                 )}
               </button>
             );

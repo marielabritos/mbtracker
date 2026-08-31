@@ -400,60 +400,68 @@ export default function Rutinas({ onStartWorkout }) {
                 key={rutina.id}
                 className="bg-slate-900/90 border border-slate-800 rounded-3xl overflow-hidden shadow-xl transition-all"
               >
-                {/* Header Rutina */}
+                {/* Header Rutina Responsivo Móvil & Desktop */}
                 <div
-                  className="p-4 sm:p-5 flex items-start sm:items-center justify-between cursor-pointer hover:bg-slate-800/40 transition-colors gap-3"
+                  className="p-4 sm:p-5 cursor-pointer hover:bg-slate-800/40 transition-colors"
                   onClick={() => setExpandedRutina(isExpanded ? null : rutina.id)}
                 >
-                  <div className="flex items-start sm:items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 font-black shrink-0">
-                      {rutina.dias?.length || 0}d
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-bold text-white text-base md:text-lg truncate">{rutina.nombre}</h3>
-                      
-                      {/* Badges de Duración y Tiempo */}
-                      <div className="flex flex-wrap items-center gap-2 mt-1">
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
-                          <Calendar className="w-3 h-3" /> {rutina.duracion_semanas || '4 semanas'}
-                        </span>
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">
-                          <Clock className="w-3 h-3" /> {rutina.duracion_estimada_minutos || 50} min / sesión
-                        </span>
+                  <div className="flex items-start justify-between gap-2.5">
+                    {/* Badge Días + Título Completo */}
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 font-black shrink-0 text-sm mt-0.5">
+                        {rutina.dias?.length || 0}d
                       </div>
+                      <div className="flex-1 min-w-0 space-y-1.5">
+                        <h3 className="font-bold text-white text-base md:text-lg leading-snug break-words">
+                          {rutina.nombre}
+                        </h3>
+                        
+                        {/* Badges de Duración y Tiempo */}
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20">
+                            <Calendar className="w-3 h-3" /> {rutina.duracion_semanas || '4 semanas'}
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-lg border border-sky-500/20">
+                            <Clock className="w-3 h-3" /> {rutina.duracion_estimada_minutos || 50} min / sesión
+                          </span>
+                        </div>
 
-                      {rutina.descripcion && (
-                        <p className="text-xs text-slate-400 mt-1 line-clamp-1">{rutina.descripcion}</p>
-                      )}
+                        {rutina.descripcion && (
+                          <p className="text-xs text-slate-400 leading-relaxed break-words pt-0.5">
+                            {rutina.descripcion}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenEditModal(rutina);
-                      }}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 hover:text-sky-300 text-xs font-bold border border-slate-700 transition-colors"
-                      title="Editar rutina y ejercicios"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">Editar</span>
-                    </button>
+                    {/* Botones de Acción */}
+                    <div className="flex items-center gap-1 shrink-0 pt-0.5">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenEditModal(rutina);
+                        }}
+                        className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 hover:text-sky-300 text-xs font-bold border border-slate-700 transition-colors"
+                        title="Editar rutina y ejercicios"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Editar</span>
+                      </button>
 
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteRutina(rutina.id);
-                      }}
-                      className="p-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-                      title="Eliminar rutina"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteRutina(rutina.id);
+                        }}
+                        className="p-1.5 sm:p-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                        title="Eliminar rutina"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
 
-                    <div className="p-2 text-slate-400">
-                      {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      <div className="p-1 sm:p-1.5 text-slate-400">
+                        {isExpanded ? <ChevronUp className="w-5 h-5 text-sky-400" /> : <ChevronDown className="w-5 h-5" />}
+                      </div>
                     </div>
                   </div>
                 </div>
