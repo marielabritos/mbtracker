@@ -146,6 +146,30 @@ export const DEFAULT_EJERCICIOS = [
 
 export const DEFAULT_RUTINAS = [
   {
+    id: 10,
+    nombre: "Tren Inferior - Glúteos, cuadriceps, pantorillas",
+    descripcion: "Hipertrofia y carga progresiva",
+    duracion_semanas: "4 semanas",
+    duracion_estimada_minutos: 50,
+    activa: true,
+    dias: [
+      {
+        id: 1001,
+        nombre: "Día 1",
+        orden: 1,
+        ejercicios: [
+          { id: 101, ejercicio_id: 48, series_objetivo: 3, reps_objetivo: "8-12", descanso_segundos: 90, orden: 1, ejercicio: { id: 48, nombre: "Prensa de Piernas 45°", grupo_muscular: "Piernas", equipo: "Máquina" } },
+          { id: 102, ejercicio_id: 120, series_objetivo: 3, reps_objetivo: "8-12", descanso_segundos: 90, orden: 2, ejercicio: { id: 120, nombre: "Pantorrilla en Prensa 45°", grupo_muscular: "Piernas", equipo: "Máquina" } },
+          { id: 103, ejercicio_id: 26, series_objetivo: 3, reps_objetivo: "8-12", descanso_segundos: 90, orden: 3, ejercicio: { id: 26, nombre: "Hip Thrust con Barra", grupo_muscular: "Glúteos", equipo: "Barra" } },
+          { id: 104, ejercicio_id: 33, series_objetivo: 3, reps_objetivo: "8-12", descanso_segundos: 90, orden: 4, ejercicio: { id: 33, nombre: "Abducciones de Cadera en Máquina", grupo_muscular: "Glúteos", equipo: "Máquina" } },
+          { id: 105, ejercicio_id: 58, series_objetivo: 3, reps_objetivo: "8-12", descanso_segundos: 90, orden: 5, ejercicio: { id: 58, nombre: "Elevación de Talones (Gemelos de Pie)", grupo_muscular: "Piernas", equipo: "Máquina" } },
+          { id: 106, ejercicio_id: 77, series_objetivo: 3, reps_objetivo: "8-12", descanso_segundos: 90, orden: 6, ejercicio: { id: 77, nombre: "Extensiones de Tríceps en Polea (Cuerda)", grupo_muscular: "Brazos", equipo: "Polea" } },
+          { id: 107, ejercicio_id: 81, series_objetivo: 3, reps_objetivo: "8-12", descanso_segundos: 90, orden: 7, ejercicio: { id: 81, nombre: "Fondos entre Bancos para Tríceps", grupo_muscular: "Brazos", equipo: "Peso Corporal" } }
+        ]
+      }
+    ]
+  },
+  {
     id: 1,
     nombre: "Rutina Push / Pull / Legs + Glúteos (PPL)",
     descripcion: "División de 3 días para fuerza, hipertrofia de tren superior y desarrollo de glúteos y piernas.",
@@ -376,7 +400,15 @@ export const api = {
     const localRutinas = getStored('rutinas', null);
 
     if (localRutinas && Array.isArray(localRutinas) && localRutinas.length > 0) {
-      const cleanLocal = localRutinas.filter(r => !deletedIds.includes(r.id));
+      let cleanLocal = localRutinas.filter(r => !deletedIds.includes(r.id));
+      
+      // Auto-sincronizar: Si falta la rutina oficial de Tren Inferior, la incorporamos
+      const hasTrenInferior = cleanLocal.some(r => r.nombre.includes('Tren Inferior') || r.id === 10);
+      if (!hasTrenInferior && !deletedIds.includes(10)) {
+        cleanLocal = [DEFAULT_RUTINAS[0], ...cleanLocal];
+        setStored('rutinas', cleanLocal);
+      }
+      
       request('/api/rutinas').catch(() => {});
       return cleanLocal;
     }
