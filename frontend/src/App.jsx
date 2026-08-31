@@ -3,6 +3,8 @@ import Navbar from './components/Navbar';
 import AuthScreen from './components/AuthScreen';
 import ChatbotCoach from './components/ChatbotCoach';
 import PasosTrackerModal from './components/PasosTrackerModal';
+import HIITTimerModal from './components/HIITTimerModal';
+import SpotifyPlayerModal from './components/SpotifyPlayerModal';
 import Dashboard from './pages/Dashboard';
 import Rutinas from './pages/Rutinas';
 import Entrenar from './pages/Entrenar';
@@ -29,6 +31,9 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isCoachOpen, setIsCoachOpen] = useState(false);
   const [isStepsModalOpen, setIsStepsModalOpen] = useState(false);
+  const [isHIITModalOpen, setIsHIITModalOpen] = useState(false);
+  const [isSpotifyModalOpen, setIsSpotifyModalOpen] = useState(false);
+
   const [activeWorkout, setActiveWorkout] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : null;
@@ -84,6 +89,8 @@ export default function App() {
         isWorkoutActive={!!activeWorkout}
         onLogout={handleLogout}
         onOpenCoach={() => setIsCoachOpen(true)}
+        onOpenSpotify={() => setIsSpotifyModalOpen(true)}
+        onOpenHIIT={() => setIsHIITModalOpen(true)}
       />
 
       {/* Contenido Principal */}
@@ -94,6 +101,8 @@ export default function App() {
             onNavigateTab={setActiveTab}
             onOpenCoach={() => setIsCoachOpen(true)}
             onOpenSteps={() => setIsStepsModalOpen(true)}
+            onOpenHIIT={() => setIsHIITModalOpen(true)}
+            onOpenSpotify={() => setIsSpotifyModalOpen(true)}
           />
         )}
 
@@ -103,6 +112,8 @@ export default function App() {
             onFinishWorkout={handleFinishWorkout}
             onCancelWorkout={handleCancelWorkout}
             onNavigateTab={setActiveTab}
+            onOpenSpotify={() => setIsSpotifyModalOpen(true)}
+            onOpenHIIT={() => setIsHIITModalOpen(true)}
           />
         )}
 
@@ -161,6 +172,19 @@ export default function App() {
       <PasosTrackerModal
         isOpen={isStepsModalOpen}
         onClose={() => setIsStepsModalOpen(false)}
+      />
+
+      {/* Modal del Temporizador HIIT & Tabata */}
+      <HIITTimerModal
+        isOpen={isHIITModalOpen}
+        onClose={() => setIsHIITModalOpen(false)}
+        onFinishWorkout={handleFinishWorkout}
+      />
+
+      {/* Modal de Spotify & Música Gym */}
+      <SpotifyPlayerModal
+        isOpen={isSpotifyModalOpen}
+        onClose={() => setIsSpotifyModalOpen(false)}
       />
     </div>
   );

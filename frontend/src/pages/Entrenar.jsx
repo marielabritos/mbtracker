@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Check, Plus, Trash2, Timer, Flame, Trophy, 
-  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown, Award, Sparkles, CheckCircle2, Eye, Edit3, RefreshCw, Compass, FileText 
+  ArrowLeft, Save, PlusCircle, Search, X, HelpCircle, ArrowUp, ArrowDown, Award, Sparkles, CheckCircle2, Eye, Edit3, RefreshCw, Compass, FileText, Music 
 } from 'lucide-react';
 import { api } from '../services/api';
 import { sound } from '../utils/sound';
@@ -9,7 +9,7 @@ import RestTimer from '../components/RestTimer';
 import ExerciseModal from '../components/ExerciseModal';
 import OutdoorWorkoutTracker from '../components/OutdoorWorkoutTracker';
 
-export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout }) {
+export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout, onOpenSpotify, onOpenHIIT }) {
   const [workoutMode, setWorkoutMode] = useState(() => {
     if (workoutData?.tipo === 'outdoor_cardio') return workoutData?.deporte || 'running';
     return 'gimnasio';
@@ -456,6 +456,17 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
         </div>
 
         <div className="flex items-center gap-1.5">
+          {onOpenSpotify && (
+            <button
+              onClick={onOpenSpotify}
+              className="flex items-center gap-1 p-2 sm:px-3 sm:py-1.5 rounded-xl bg-[#1DB954]/15 border border-[#1DB954]/30 text-[#1DB954] hover:bg-[#1DB954]/25 text-xs font-bold transition-all"
+              title="Spotify Gym & Música"
+            >
+              <Music className="w-4 h-4" />
+              <span className="hidden sm:inline">Música</span>
+            </button>
+          )}
+
           <button
             onClick={() => {
               setTimerSeconds(90);

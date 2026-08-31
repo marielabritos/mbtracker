@@ -66,7 +66,7 @@ const PROTOCOLS = {
   }
 };
 
-export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach, onOpenSteps }) {
+export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach, onOpenSteps, onOpenHIIT, onOpenSpotify }) {
   const [stats, setStats] = useState(null);
   const [rutinas, setRutinas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -513,6 +513,69 @@ export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach, 
 
           <div className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md">
             <span>Calcular</span>
+            <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
+          </div>
+        </div>
+      </div>
+
+      {/* SECCIÓN NUEVA: ⏱️ HIIT & TABATA / 🎵 SPOTIFY GYM */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* HIIT / Tabata Card */}
+        <div 
+          onClick={onOpenHIIT}
+          className="p-5 rounded-3xl bg-gradient-to-br from-rose-950/40 via-slate-900 to-slate-900 border border-rose-500/40 hover:border-rose-400 transition-all cursor-pointer group shadow-xl relative overflow-hidden active:scale-98 flex items-center justify-between gap-4"
+        >
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md shadow-rose-500/20 shrink-0">
+              ⏱️
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-black text-sm sm:text-base text-white group-hover:text-rose-400 truncate">
+                  Temporizador HIIT & Tabata
+                </h3>
+                <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-black border border-rose-500/30">
+                  INTERVALOS
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">
+                Tabata 4 min, HIIT 10 min, sprints y beeps de cuenta regresiva.
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 hover:brightness-110 text-slate-950 font-black text-xs shadow-md">
+            <span>Iniciar</span>
+            <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
+          </div>
+        </div>
+
+        {/* Spotify Music Card */}
+        <div 
+          onClick={onOpenSpotify}
+          className="p-5 rounded-3xl bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-900 border border-[#1DB954]/40 hover:border-[#1DB954] transition-all cursor-pointer group shadow-xl relative overflow-hidden active:scale-98 flex items-center justify-between gap-4"
+        >
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-12 h-12 rounded-2xl bg-[#1DB954]/15 border border-[#1DB954]/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md shadow-[#1DB954]/20 shrink-0">
+              🎵
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-black text-sm sm:text-base text-white group-hover:text-[#1DB954] truncate">
+                  Spotify Gym & Playlists
+                </h3>
+                <span className="px-2 py-0.5 rounded-full bg-[#1DB954]/20 text-[#1DB954] text-[10px] font-black border border-[#1DB954]/30">
+                  MÚSICA
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">
+                Phonk, reggaeton gym, cardio hits o pega tu playlist favorita.
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#1DB954] hover:bg-[#1ed760] text-slate-950 font-black text-xs shadow-md">
+            <span>Escuchar</span>
             <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
           </div>
         </div>
