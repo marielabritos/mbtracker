@@ -6,44 +6,44 @@ import {
 
 const DEFAULT_PLAYLISTS = [
   {
-    id: 'phonk',
-    nombre: '🎧 MB Heavy Workout & Phonk',
-    descripcion: 'Beats intensos, energía máxima para series pesadas de piernas y empuje.',
-    spotifyId: '37i9dQZF1DX76t638V6494', // Spotify Official Phonk Workout
+    id: 'beast_mode',
+    nombre: '🎧 Beast Mode • Entrenamiento Pesado',
+    descripcion: 'Beats intensos, hip hop y fuerza máxima para series pesadas.',
+    spotifyId: '37i9dQZF1DX76Wlfdnj7AP',
     icon: '⚡',
     color: 'from-amber-500/20 to-rose-500/20 border-amber-500/30'
   },
   {
+    id: 'power_workout',
+    nombre: '🔥 Power Workout • Gym Motivation',
+    descripcion: 'Poder, energía alta y ritmo constante para mantener la intensidad.',
+    spotifyId: '37i9dQZF1DX70RN3TfWWJh',
+    icon: '💥',
+    color: 'from-rose-500/20 to-orange-500/20 border-rose-500/30'
+  },
+  {
+    id: 'motivation_mix',
+    nombre: '🏆 Motivation Mix • Éxitos Fitness',
+    descripcion: 'Los temas más motivacionales para superarte en cada repetición.',
+    spotifyId: '37i9dQZF1DX83I5nvL90Pj',
+    icon: '🥇',
+    color: 'from-emerald-500/20 to-teal-500/20 border-emerald-500/30'
+  },
+  {
     id: 'cardio',
-    nombre: '🏃 Running & Cardio Hits',
-    descripcion: 'Ritmos rápidos de 150-170 BPM para correr, bici o circuitos HIIT.',
-    spotifyId: '37i9dQZF1DXadOVCgGhS7j', // Beast Mode
+    nombre: '🏃 Cardio & Running Hits',
+    descripcion: 'Ritmos rápidos y motivadores para correr, bicicleta o HIIT.',
+    spotifyId: '37i9dQZF1DX4eRPd9aC0XY',
     icon: '🔥',
     color: 'from-sky-500/20 to-cyan-500/20 border-sky-500/30'
   },
   {
-    id: 'latin',
-    nombre: '💃 Reggaeton & Latin Gym Motivación',
-    descripcion: 'Poder latino, energía positiva y ritmo para entrenar motivada.',
-    spotifyId: '37i9dQZF1DWYp57Q9147G0', // Reggaeton Workout
-    icon: '💥',
-    color: 'from-emerald-500/20 to-teal-500/20 border-emerald-500/30'
-  },
-  {
-    id: 'hiphop',
-    nombre: '🎤 Hip Hop & Gym Motivation',
-    descripcion: 'Fuerza, concentración y enfoque total para romper tus marcas.',
-    spotifyId: '37i9dQZF1DWTl4ym9csNA2', // Workout Motivation
-    icon: '🎧',
+    id: 'edm_workout',
+    nombre: '💃 Dance & EDM Workout',
+    descripcion: 'Electrónica y beats continuos para darlo todo en el gym.',
+    spotifyId: '37i9dQZF1DXa2PvU9nhGQP',
+    icon: '⚡',
     color: 'from-purple-500/20 to-indigo-500/20 border-purple-500/30'
-  },
-  {
-    id: 'chill',
-    nombre: '🧘 Estiramientos & Vuelta a la Calma',
-    descripcion: 'Melodías suaves para relajación muscular, movilidad y respiración.',
-    spotifyId: '37i9dQZF1DX3Ogo9pFvBkY', // Ambient Chill
-    icon: '🌿',
-    color: 'from-teal-500/20 to-emerald-500/20 border-teal-500/30'
   }
 ];
 
@@ -144,16 +144,28 @@ export default function SpotifyPlayerModal({ isOpen, onClose }) {
           {/* Reproductor Spotify Embed */}
           <div className="rounded-2xl overflow-hidden border border-slate-800 bg-black shadow-xl">
             <iframe
-              src={currentSpotifyEmbedUrl}
+              key={selectedPlaylistId}
+              src={`https://open.spotify.com/embed/playlist/${selectedPlaylistId}?utm_source=generator`}
               width="100%"
-              height="152"
+              height="280"
               frameBorder="0"
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
               loading="lazy"
               title="Spotify Gym Player"
-              className="rounded-2xl"
+              className="rounded-2xl w-full"
             />
           </div>
+
+          <a
+            href={currentSpotifyAppUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-3 px-4 rounded-2xl bg-[#1DB954] hover:bg-[#1ed760] text-black font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#1DB954]/20 transition-all active:scale-98"
+          >
+            <Play className="w-4 h-4 fill-current" />
+            <span>Reproducir / Abrir en Spotify</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
 
           {/* Selector de Playlists */}
           <div className="space-y-2">
