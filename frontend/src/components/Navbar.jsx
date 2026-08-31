@@ -1,11 +1,12 @@
 import React from 'react';
-import { Home, Dumbbell, Calendar, History, TrendingUp, Play, User, LogOut, Lock, Zap } from 'lucide-react';
+import { Home, Dumbbell, Calendar, History, TrendingUp, Play, User, LogOut, Lock, Zap, CalendarDays, Layers } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLogout }) {
   const navItems = [
     { id: 'dashboard', label: 'Inicio', icon: Home },
     { id: 'entrenar', label: 'Entrenar', icon: isWorkoutActive ? Play : Dumbbell, highlight: isWorkoutActive },
-    { id: 'rutinas', label: 'Rutinas', icon: Calendar },
+    { id: 'rutinas', label: 'Rutinas', icon: Layers },
+    { id: 'calendario', label: 'Calendario', icon: CalendarDays },
     { id: 'fuerza_1rm', label: 'Fuerza 1RM', icon: Zap },
     { id: 'progreso', label: 'Progreso', icon: TrendingUp },
     { id: 'historial', label: 'Historial', icon: History },

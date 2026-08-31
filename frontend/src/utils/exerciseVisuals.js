@@ -5,7 +5,6 @@ export const EXERCISE_VISUALS = {
   "Press de Banca Plano con Barra": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0025-EIeI8Vf.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0025-EIeI8Vf.jpg",
-    frames: ["Barbell_Bench_Press_-_Medium_Grip/0.jpg", "Barbell_Bench_Press_-_Medium_Grip/1.jpg"],
     musculo_principal: "Pectoral Mayor (Medio e Inferior)",
     musculos_secundarios: ["Deltoides Anterior", "Tríceps Braquial"],
     tips: [
@@ -18,7 +17,6 @@ export const EXERCISE_VISUALS = {
   "Press de Banca Plano con Mancuernas": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0289-XpTj7B7.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0289-XpTj7B7.jpg",
-    frames: ["Decline_Dumbbell_Bench_Press/0.jpg", "Decline_Dumbbell_Bench_Press/1.jpg"],
     musculo_principal: "Pectoral Mayor (Mayor rango de movimiento)",
     musculos_secundarios: ["Deltoides Anterior", "Tríceps"],
     tips: [
@@ -27,10 +25,21 @@ export const EXERCISE_VISUALS = {
     ],
     respiracion: "Inhala al descender; exhala al empujar arriba."
   },
+  "Press Inclinado con Barra": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0047-e16r95y.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0047-e16r95y.jpg",
+    musculo_principal: "Pectoral Superior (Clavicular)",
+    musculos_secundarios: ["Deltoides Anterior", "Tríceps"],
+    tips: [
+      "Banco inclinado a 30° - 45°.",
+      "Baja la barra a la parte superior del esternón con control.",
+      "Empuja verticalmente manteniendo las escápulas retraídas."
+    ],
+    respiracion: "Inhala al bajar; exhala al empujar."
+  },
   "Press Inclinado con Mancuernas": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0314-a9K07N2.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0314-a9K07N2.jpg",
-    frames: ["Incline_Dumbbell_Press/0.jpg", "Incline_Dumbbell_Press/1.jpg"],
     musculo_principal: "Pectoral Superior (Clavicular)",
     musculos_secundarios: ["Deltoides Anterior", "Tríceps"],
     tips: [
@@ -43,7 +52,6 @@ export const EXERCISE_VISUALS = {
   "Aperturas en Polea (Cruces)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0168-1p6f3F3.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0168-1p6f3F3.jpg",
-    frames: ["Cable_Crossover/0.jpg", "Cable_Crossover/1.jpg"],
     musculo_principal: "Pectoral Mayor (Aislamiento)",
     musculos_secundarios: ["Deltoides Anterior"],
     tips: [
@@ -55,7 +63,6 @@ export const EXERCISE_VISUALS = {
   "Flexiones de pecho (Push-ups)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/3216-7E06s6d.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/3216-7E06s6d.jpg",
-    frames: ["Pushups/0.jpg", "Pushups/1.jpg"],
     musculo_principal: "Pectoral y Tríceps",
     musculos_secundarios: ["Core", "Deltoides Anterior"],
     tips: [
@@ -67,7 +74,6 @@ export const EXERCISE_VISUALS = {
   "Fondos en Paralelas (Dips)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/3287-LkoAWAE.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/3287-LkoAWAE.jpg",
-    frames: ["Dips_-_Chest_Version/0.jpg", "Dips_-_Chest_Version/1.jpg"],
     musculo_principal: "Pectoral Inferior y Tríceps",
     musculos_secundarios: ["Deltoides Anterior", "Core"],
     tips: [
@@ -79,7 +85,6 @@ export const EXERCISE_VISUALS = {
   "Press en Máquina Smith / Chest Press": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0574-e8K7b13.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0574-e8K7b13.jpg",
-    frames: ["Barbell_Bench_Press_-_Medium_Grip/0.jpg", "Barbell_Bench_Press_-_Medium_Grip/1.jpg"],
     musculo_principal: "Pectoral Mayor (Guiado)",
     musculos_secundarios: ["Tríceps", "Hombros"],
     tips: [
@@ -93,7 +98,6 @@ export const EXERCISE_VISUALS = {
   "Jalón al Pecho en Polea": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/2330-LEprlgG.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/2330-LEprlgG.jpg",
-    frames: ["Wide-Grip_Lat_Pulldown/0.jpg", "Wide-Grip_Lat_Pulldown/1.jpg"],
     musculo_principal: "Dorsal Ancho (Amplitud de Espalda)",
     musculos_secundarios: ["Bíceps", "Redondo Mayor", "Trapecio"],
     tips: [
@@ -106,7 +110,6 @@ export const EXERCISE_VISUALS = {
   "Dominadas (Pull-ups)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0652-3tP5t2H.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0652-3tP5t2H.jpg",
-    frames: ["Pullups/0.jpg", "Pullups/1.jpg"],
     musculo_principal: "Dorsales y Espalda Alta",
     musculos_secundarios: ["Bíceps", "Antebrazos", "Core"],
     tips: [
@@ -118,7 +121,6 @@ export const EXERCISE_VISUALS = {
   "Remo con Barra": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0027-eZyBC3j.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0027-eZyBC3j.jpg",
-    frames: ["Bent_Over_Two-Arm_Long_Barbell_Row/0.jpg", "Bent_Over_Two-Arm_Long_Barbell_Row/1.jpg"],
     musculo_principal: "Dorsal Ancho y Espalda Media (Grosor)",
     musculos_secundarios: ["Bíceps", "Trapecio", "Erectores Espinales"],
     tips: [
@@ -131,7 +133,6 @@ export const EXERCISE_VISUALS = {
   "Remo Unilateral con Mancuerna (Serrucho)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/3156-v2DfH14.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/3156-v2DfH14.jpg",
-    frames: ["One-Arm_Dumbbell_Row/0.jpg", "One-Arm_Dumbbell_Row/1.jpg"],
     musculo_principal: "Dorsal Ancho (Unilateral)",
     musculos_secundarios: ["Bíceps", "Deltoides Posterior"],
     tips: [
@@ -143,7 +144,6 @@ export const EXERCISE_VISUALS = {
   "Remo en Polea Baja (Gironda)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0180-hvV79Si.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0180-hvV79Si.jpg",
-    frames: ["Seated_Cable_Rows/0.jpg", "Seated_Cable_Rows/1.jpg"],
     musculo_principal: "Espalda Media, Romboides y Dorsal",
     musculos_secundarios: ["Bíceps", "Trapecio"],
     tips: [
@@ -154,11 +154,178 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al traccionar hacia el ombligo; inhala al regresar."
   },
 
-  // --- PIERNAS & GLÚTEOS ---
+  // --- GLÚTEOS VARIADOS (DEDICADOS) ---
+  "Hip Thrust con Barra": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/1409-qKBpF7I.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/1409-qKBpF7I.jpg",
+    musculo_principal: "Glúteo Mayor (Fuerza e Hipertrofia)",
+    musculos_secundarios: ["Isquiosurales", "Cuádriceps", "Core"],
+    tips: [
+      "Escápulas apoyadas en el borde del banco y barra con almohadilla sobre la pelvis.",
+      "Empuja desde los talones hasta alinear torso y muslos a 90° apretando fuerte los glúteos arriba.",
+      "Mantén la barbilla pegada al pecho (mirando al frente) durante todo el levantamiento."
+    ],
+    respiracion: "Inhala abajo; exhala al bloquear y apretar arriba."
+  },
+  "Kas Glute Bridge con Barra": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/3562-qg2PGl6.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/3562-qg2PGl6.jpg",
+    musculo_principal: "Glúteo Mayor (Máxima Contracción Superior)",
+    musculos_secundarios: ["Isquiosurales", "Core"],
+    tips: [
+      "Escápulas apoyadas en banco, rango de movimiento corto concentrado solo en el tercio superior.",
+      "Mantén las espinillas perpendiculares y aprieta los glúteos 2 segundos en el punto más alto."
+    ],
+    respiracion: "Inhala al descender; exhala al bloquear la pelvis arriba."
+  },
+  "Hip Thrust Unilateral con Mancuerna": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/3013-u0cNiij.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/3013-u0cNiij.jpg",
+    musculo_principal: "Glúteo Mayor (Unilateral)",
+    musculos_secundarios: ["Estabilizadores de Cadera", "Core"],
+    tips: [
+      "Una pierna apoyada a 90° y la otra flexionada en el aire.",
+      "Empuja desde el talón sintiendo el glúteo sin girar la pelvis."
+    ],
+    respiracion: "Exhala al subir; inhala al bajar."
+  },
+  "Glute Bridge / Puente de Glúteo en Suelo": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/1409-qKBpF7I.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/1409-qKBpF7I.jpg",
+    musculo_principal: "Glúteo Mayor y Cadena Posterior",
+    musculos_secundarios: ["Isquiosurales", "Core"],
+    tips: [
+      "Tumbada en el suelo con rodillas a 90°.",
+      "Eleva la pelvis hasta alinear rodillas y hombros contrayendo los glúteos 2 segundos."
+    ],
+    respiracion: "Exhala al subir; inhala al bajar."
+  },
+  "Sentadilla Búlgara Enfocada a Glúteo": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0410-qx4fgX7.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0410-qx4fgX7.jpg",
+    musculo_principal: "Glúteo Mayor y Cuádriceps",
+    musculos_secundarios: ["Isquiotibiales", "Aductores"],
+    tips: [
+      "Paso más largo y torso inclinado hacia adelante a 45° con la espalda recta.",
+      "Baja la cadera hacia atrás sintiendo el estiramiento profundo del glúteo de la pierna adelantada."
+    ],
+    respiracion: "Inhala al bajar profundo; exhala al empujar desde el talón."
+  },
+  "Patada de Glúteo en Polea (Cable Kickback)": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0860-HEJ6DIX.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0860-HEJ6DIX.jpg",
+    musculo_principal: "Glúteo Mayor (Aislamiento)",
+    musculos_secundarios: ["Isquiosurales"],
+    tips: [
+      "Tobillera en polea baja, torso ligeramente inclinado.",
+      "Patea hacia atrás y ligeramente en diagonal hacia afuera apretando el glúteo en el tope."
+    ],
+    respiracion: "Exhala al patear atrás; inhala al regresar controlado."
+  },
+  "Patada de Glúteo en Máquina / Cuadrupedia": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0860-HEJ6DIX.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0860-HEJ6DIX.jpg",
+    musculo_principal: "Glúteo Mayor",
+    musculos_secundarios: ["Isquios"],
+    tips: [
+      "Empuja con la planta del pie hacia arriba y atrás manteniendo la espalda neutra.",
+      "Pausa 1 segundo en máxima extensión."
+    ],
+    respiracion: "Exhala al empujar; inhala al flexionar."
+  },
+  "Abducciones de Cadera en Máquina": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0597-CHpahtl.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0597-CHpahtl.jpg",
+    musculo_principal: "Glúteo Medio y Menor (Cadera Redonda)",
+    musculos_secundarios: ["Tensor de la Fascia Lata"],
+    tips: [
+      "Siéntate con el torso inclinado hacia el frente para maximizar el reclutamiento del glúteo medio.",
+      "Abre las piernas con fuerza y controla 2 segundos la vuelta."
+    ],
+    respiracion: "Exhala al abrir; inhala al cerrar."
+  },
+  "Abducciones de Cadera en Polea de Pie": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0168-hBGWILP.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0168-hBGWILP.jpg",
+    musculo_principal: "Glúteo Medio",
+    musculos_secundarios: ["Abductores"],
+    tips: [
+      "De lado a la polea baja, eleva la pierna exterior hacia el lateral sin rotar el torso.",
+      "Mantén la pierna casi recta y controla la fase excéntrica."
+    ],
+    respiracion: "Exhala al abducir la pierna; inhala al bajar."
+  },
+  "Frog Pumps con Mancuerna": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/2429-FFRP97T.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/2429-FFRP97T.jpg",
+    musculo_principal: "Glúteo Mayor y Glúteo Medio",
+    musculos_secundarios: ["Piso Pélvico"],
+    tips: [
+      "Tumbada boca arriba con plantas de los pies juntas (posición de mariposa/rana).",
+      "Eleva la pelvis contrayendo los glúteos al máximo en series de altas repeticiones."
+    ],
+    respiracion: "Exhala al elevar; inhala al tocar suelo."
+  },
+  "Cable Pull-Through en Polea Baja": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0196-OM46QHm.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0196-OM46QHm.jpg",
+    musculo_principal: "Glúteo Mayor y Cadena Posterior",
+    musculos_secundarios: ["Isquiosurales", "Erectores Espinales"],
+    tips: [
+      "De espaldas a la polea con cuerda entre las piernas.",
+      "Empuja las caderas atrás manteniendo la espalda recta y extiende la cadera con fuerza de glúteo."
+    ],
+    respiracion: "Inhala al flexionar cadera; exhala al extender y apretar glúteos."
+  },
+  "Peso Muerto Rumano Unilateral (B-Stance RDL)": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0085-wQ2c4XD.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0085-wQ2c4XD.jpg",
+    musculo_principal: "Glúteo Mayor e Isquiosurales",
+    musculos_secundarios: ["Core", "Glúteo Medio"],
+    tips: [
+      "Un pie apoyado completo y el otro pie retrasado como pata de cabra sobre la punta.",
+      "Lleva las caderas hacia atrás sintiendo el estiramiento profundo del glúteo delantero."
+    ],
+    respiracion: "Inhala al bajar; exhala al subir empujando el suelo."
+  },
+  "Step-Ups en Cajón para Glúteo": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0431-aXtJhlg.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0431-aXtJhlg.jpg",
+    musculo_principal: "Glúteo Mayor",
+    musculos_secundarios: ["Cuádriceps", "Isquios"],
+    tips: [
+      "Pie delantero sobre un cajón a la altura de la rodilla.",
+      "Empuja únicamente con el talón de arriba sin impulsarte con el pie del suelo."
+    ],
+    respiracion: "Exhala al subir; inhala al bajar en 3 segundos."
+  },
+  "Hiperextensiones a 45° Enfocadas a Glúteo": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/1314-qLpO4vV.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/1314-qLpO4vV.jpg",
+    musculo_principal: "Glúteo Mayor",
+    musculos_secundarios: ["Isquiosurales"],
+    tips: [
+      "Puntas de los pies abiertas a 45° y espalda alta ligeramente encorvada para desactivar la lumbar.",
+      "Sube empujando la pelvis contra la almohadilla apretando los glúteos."
+    ],
+    respiracion: "Inhala al bajar; exhala al subir."
+  },
+  "Zancadas Invertidas para Glúteo": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/2796-gFyFj9z.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/2796-gFyFj9z.jpg",
+    musculo_principal: "Glúteo Mayor",
+    musculos_secundarios: ["Cuádriceps", "Isquiosurales"],
+    tips: [
+      "Da un paso amplio hacia atrás e inclina el torso 30° al frente.",
+      "Baja la rodilla trasera casi al suelo y empuja desde el talón delantero."
+    ],
+    respiracion: "Inhala al dar el paso atrás; exhala al incorporarte."
+  },
+
+  // --- PIERNAS & CUÁDRICEPS ---
   "Sentadilla con Barra (Back Squat)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0043-qXTaZnJ.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0043-qXTaZnJ.jpg",
-    frames: ["Barbell_Full_Squat/0.jpg", "Barbell_Full_Squat/1.jpg"],
     musculo_principal: "Cuádriceps, Glúteos e Isquios",
     musculos_secundarios: ["Core", "Erectores Espinales"],
     tips: [
@@ -171,7 +338,6 @@ export const EXERCISE_VISUALS = {
   "Prensa de Piernas 45°": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0739-10Z2DXU.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0739-10Z2DXU.jpg",
-    frames: ["Calf_Press_On_The_Leg_Press_Machine/0.jpg", "Calf_Press_On_The_Leg_Press_Machine/1.jpg"],
     musculo_principal: "Cuádriceps y Glúteos",
     musculos_secundarios: ["Isquiosurales"],
     tips: [
@@ -184,7 +350,6 @@ export const EXERCISE_VISUALS = {
   "Peso Muerto Rumano (RDL)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0085-wQ2c4XD.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0085-wQ2c4XD.jpg",
-    frames: ["Romanian_Deadlift/0.jpg", "Romanian_Deadlift/1.jpg"],
     musculo_principal: "Isquiosurales y Glúteos",
     musculos_secundarios: ["Erectores Espinales"],
     tips: [
@@ -196,7 +361,6 @@ export const EXERCISE_VISUALS = {
   "Extensión de Cuádriceps": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0585-my33uHU.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0585-my33uHU.jpg",
-    frames: ["Calf_Press_On_The_Leg_Press_Machine/0.jpg", "Calf_Press_On_The_Leg_Press_Machine/1.jpg"],
     musculo_principal: "Cuádriceps (Aislamiento)",
     musculos_secundarios: ["Tendón Rotuliano"],
     tips: [
@@ -208,7 +372,6 @@ export const EXERCISE_VISUALS = {
   "Curl Femoral Tumbado / Sentado": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0586-17lJ1kr.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0586-17lJ1kr.jpg",
-    frames: ["Romanian_Deadlift/0.jpg", "Romanian_Deadlift/1.jpg"],
     musculo_principal: "Isquiosurales (Femoral)",
     musculos_secundarios: ["Gemelos"],
     tips: [
@@ -220,7 +383,6 @@ export const EXERCISE_VISUALS = {
   "Elevación de Talones (Gemelos)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/1372-8ozhUIZ.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/1372-8ozhUIZ.jpg",
-    frames: ["Standing_Calf_Raises/0.jpg", "Standing_Calf_Raises/1.jpg"],
     musculo_principal: "Gemelos (Gastrocnemio y Sóleo)",
     musculos_secundarios: ["Fascia Plantar"],
     tips: [
@@ -229,24 +391,11 @@ export const EXERCISE_VISUALS = {
     ],
     respiracion: "Exhala al subir; inhala al bajar."
   },
-  "Hip Thrust con Barra": {
-    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/1409-qKBpF7I.gif",
-    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/1409-qKBpF7I.jpg",
-    frames: ["Single_Leg_Glute_Bridge/0.jpg", "Single_Leg_Glute_Bridge/1.jpg"],
-    musculo_principal: "Glúteo Mayor",
-    musculos_secundarios: ["Isquiosurales", "Cuádriceps"],
-    tips: [
-      "Escápulas apoyadas en el borde del banco.",
-      "Empuja desde los talones hasta alinear torso y muslos a 90° apretando fuerte los glúteos arriba."
-    ],
-    respiracion: "Inhala abajo; exhala al bloquear arriba."
-  },
 
   // --- HOMBROS ---
   "Press Militar con Barra / Mancuernas": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0405-znQUdHY.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0405-znQUdHY.jpg",
-    frames: ["Barbell_Shoulder_Press/0.jpg", "Barbell_Shoulder_Press/1.jpg"],
     musculo_principal: "Deltoides Anterior y Medio",
     musculos_secundarios: ["Tríceps", "Trapecio", "Core"],
     tips: [
@@ -258,7 +407,6 @@ export const EXERCISE_VISUALS = {
   "Elevaciones Laterales": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0334-DsgkuIt.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0334-DsgkuIt.jpg",
-    frames: ["Seated_Side_Lateral_Raise/0.jpg", "Seated_Side_Lateral_Raise/1.jpg"],
     musculo_principal: "Deltoides Lateral (Hombros Redondos)",
     musculos_secundarios: ["Trapecio Superior"],
     tips: [
@@ -270,7 +418,6 @@ export const EXERCISE_VISUALS = {
   "Pájaros / Face Pull en Polea": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/1022-tc5dYrf.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/1022-tc5dYrf.jpg",
-    frames: ["Face_Pull/0.jpg", "Face_Pull/1.jpg"],
     musculo_principal: "Deltoides Posterior y Manguito Rotador",
     musculos_secundarios: ["Romboides", "Trapecio"],
     tips: [
@@ -284,7 +431,6 @@ export const EXERCISE_VISUALS = {
   "Curl de Bíceps con Barra Z": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0447-6TG6x2w.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0447-6TG6x2w.jpg",
-    frames: ["Barbell_Curl/0.jpg", "Barbell_Curl/1.jpg"],
     musculo_principal: "Bíceps Braquial",
     musculos_secundarios: ["Braquial Anterior", "Antebrazos"],
     tips: [
@@ -296,7 +442,6 @@ export const EXERCISE_VISUALS = {
   "Curl Martillo con Mancuernas": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0313-slDvUAU.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0313-slDvUAU.jpg",
-    frames: ["Cable_Hammer_Curls_-_Rope_Attachment/0.jpg", "Cable_Hammer_Curls_-_Rope_Attachment/1.jpg"],
     musculo_principal: "Braquial y Braquiorradial (Grosor del Brazo)",
     musculos_secundarios: ["Bíceps"],
     tips: [
@@ -308,7 +453,6 @@ export const EXERCISE_VISUALS = {
   "Extensiones de Tríceps en Polea (Cuerda)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0172-1PK5Uo3.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0172-1PK5Uo3.jpg",
-    frames: ["Reverse_Grip_Triceps_Pushdown/0.jpg", "Reverse_Grip_Triceps_Pushdown/1.jpg"],
     musculo_principal: "Tríceps Braquial",
     musculos_secundarios: ["Antebrazos"],
     tips: [
@@ -320,7 +464,6 @@ export const EXERCISE_VISUALS = {
   "Press Francés con Barra Z": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0060-h8LFzo9.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0060-h8LFzo9.jpg",
-    frames: ["Lying_Triceps_Press/0.jpg", "Lying_Triceps_Press/1.jpg"],
     musculo_principal: "Tríceps (Cabeza Larga)",
     musculos_secundarios: ["Antebrazos"],
     tips: [
@@ -567,134 +710,83 @@ function normalize(str) {
   return str
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // eliminar tildes y diacríticos
-    .replace(/[\(\)\/\-_,\.]/g, " ") // quitar signos
-    .replace(/\s+/g, " ")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[()/-_,.]/g, " ")
+    .replace(/s+/g, " ")
     .trim();
 }
 
 export function getExerciseVisual(nombre, grupoMuscular = "General") {
   if (!nombre) return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
 
-  // 1. Coincidencia exacta de clave
   if (EXERCISE_VISUALS[nombre]) {
     return EXERCISE_VISUALS[nombre];
   }
 
   const norm = normalize(nombre);
 
-  // 2. Coincidencias específicas por nombres y alias de gimnasio
+  // --- GLÚTEOS ---
+  if (norm.includes("kas") || norm.includes("kas bridge")) return EXERCISE_VISUALS["Kas Glute Bridge con Barra"];
+  if (norm.includes("hip thrust") && (norm.includes("unilateral") || norm.includes("mancuerna") || norm.includes("1 pierna"))) return EXERCISE_VISUALS["Hip Thrust Unilateral con Mancuerna"];
+  if (norm.includes("hip thrust")) return EXERCISE_VISUALS["Hip Thrust con Barra"];
+  if (norm.includes("glute bridge") || norm.includes("puente")) return EXERCISE_VISUALS["Glute Bridge / Puente de Glúteo en Suelo"];
+  if (norm.includes("bulgara") || norm.includes("split squat")) return EXERCISE_VISUALS["Sentadilla Búlgara Enfocada a Glúteo"];
+  if (norm.includes("kickback") || (norm.includes("patada") && norm.includes("gluteo"))) return EXERCISE_VISUALS["Patada de Glúteo en Polea (Cable Kickback)"];
+  if (norm.includes("abducc") && norm.includes("maquina")) return EXERCISE_VISUALS["Abducciones de Cadera en Máquina"];
+  if (norm.includes("abducc") && norm.includes("polea")) return EXERCISE_VISUALS["Abducciones de Cadera en Polea de Pie"];
+  if (norm.includes("abducc") || (norm.includes("abductor") && norm.includes("banda"))) return EXERCISE_VISUALS["Abducciones con Banda Elástica Sentada"];
+  if (norm.includes("frog") || norm.includes("rana")) return EXERCISE_VISUALS["Frog Pumps con Mancuerna"];
+  if (norm.includes("pull through") || norm.includes("pull-through")) return EXERCISE_VISUALS["Cable Pull-Through en Polea Baja"];
+  if (norm.includes("b stance") || norm.includes("b-stance") || (norm.includes("rdl") && norm.includes("unilateral"))) return EXERCISE_VISUALS["Peso Muerto Rumano Unilateral (B-Stance RDL)"];
+  if (norm.includes("sumo")) return EXERCISE_VISUALS["Sentadilla Sumo con Mancuerna / Kettlebell"];
+  if (norm.includes("step up") || norm.includes("step-up") || norm.includes("cajon")) return EXERCISE_VISUALS["Step-Ups en Cajón para Glúteo"];
+  if (norm.includes("hiperextens")) return EXERCISE_VISUALS["Hiperextensiones a 45° Enfocadas a Glúteo"];
+  if (norm.includes("zancada invertida") || norm.includes("lunge invertido")) return EXERCISE_VISUALS["Zancadas Invertidas para Glúteo"];
+
   // --- ESPALDA ---
-  if (norm.includes("remo") && (norm.includes("polea") || norm.includes("gironda") || norm.includes("sentado") || norm.includes("baja"))) {
-    return EXERCISE_VISUALS["Remo en Polea Baja (Gironda)"];
-  }
-  if (norm.includes("serrucho") || (norm.includes("remo") && (norm.includes("mancuerna") || norm.includes("unilateral") || norm.includes("unipodal")))) {
-    return EXERCISE_VISUALS["Remo Unilateral con Mancuerna (Serrucho)"];
-  }
-  if (norm.includes("remo") && (norm.includes("barra") || norm.includes("t") || norm.includes("inclinado"))) {
-    return EXERCISE_VISUALS["Remo con Barra"];
-  }
-  if (norm.includes("remo")) {
-    return EXERCISE_VISUALS["Remo con Barra"];
-  }
-  if (norm.includes("jalon") || (norm.includes("polea") && norm.includes("pecho")) || norm.includes("lat pulldown") || norm.includes("tiron dorsal")) {
-    return EXERCISE_VISUALS["Jalón al Pecho en Polea"];
-  }
-  if (norm.includes("dominada") || norm.includes("pull up") || norm.includes("pullup") || norm.includes("chin up")) {
-    return EXERCISE_VISUALS["Dominadas (Pull-ups)"];
-  }
+  if (norm.includes("remo") && (norm.includes("polea") || norm.includes("gironda") || norm.includes("sentado") || norm.includes("baja"))) return EXERCISE_VISUALS["Remo en Polea Baja (Gironda)"];
+  if (norm.includes("serrucho") || (norm.includes("remo") && (norm.includes("mancuerna") || norm.includes("unilateral")))) return EXERCISE_VISUALS["Remo Unilateral con Mancuerna (Serrucho)"];
+  if (norm.includes("remo")) return EXERCISE_VISUALS["Remo con Barra"];
+  if (norm.includes("jalon") || (norm.includes("polea") && norm.includes("pecho")) || norm.includes("lat pulldown")) return EXERCISE_VISUALS["Jalón al Pecho en Polea"];
+  if (norm.includes("dominada") || norm.includes("pull up") || norm.includes("chin up")) return EXERCISE_VISUALS["Dominadas (Pull-ups)"];
 
   // --- PECHO ---
-  if (norm.includes("inclinad") && (norm.includes("press") || norm.includes("mancuerna") || norm.includes("pecho") || norm.includes("banca"))) {
-    return EXERCISE_VISUALS["Press Inclinado con Mancuernas"];
-  }
-  if (norm.includes("mancuerna") && (norm.includes("press") || norm.includes("pecho") || norm.includes("banca"))) {
-    return EXERCISE_VISUALS["Press de Banca Plano con Mancuernas"];
-  }
-  if (norm.includes("smith") || norm.includes("chest press") || norm.includes("maquina pecho")) {
-    return EXERCISE_VISUALS["Press en Máquina Smith / Chest Press"];
-  }
-  if (norm.includes("apertura") || norm.includes("cruce") || norm.includes("crossover") || norm.includes("peck deck") || norm.includes("contractor") || norm.includes("fly")) {
-    return EXERCISE_VISUALS["Aperturas en Polea (Cruces)"];
-  }
-  if (norm.includes("flexion") || norm.includes("push up") || norm.includes("pushup") || norm.includes("lagartija")) {
-    return EXERCISE_VISUALS["Flexiones de pecho (Push-ups)"];
-  }
-  if (norm.includes("fondo") || norm.includes("dip") || norm.includes("paralela")) {
-    return EXERCISE_VISUALS["Fondos en Paralelas (Dips)"];
-  }
-  if (norm.includes("press") && (norm.includes("banca") || norm.includes("pecho") || norm.includes("plano") || norm.includes("plana") || norm.includes("barra"))) {
-    return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
-  }
-  if (norm.includes("banca") || norm.includes("pecho plano")) {
-    return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
-  }
+  if (norm.includes("inclinad") && (norm.includes("press") || norm.includes("mancuerna") || norm.includes("pecho"))) return EXERCISE_VISUALS["Press Inclinado con Mancuernas"];
+  if (norm.includes("mancuerna") && (norm.includes("press") || norm.includes("pecho"))) return EXERCISE_VISUALS["Press de Banca Plano con Mancuernas"];
+  if (norm.includes("smith") || norm.includes("chest press")) return EXERCISE_VISUALS["Press en Máquina Smith / Chest Press"];
+  if (norm.includes("apertura") || norm.includes("cruce") || norm.includes("crossover") || norm.includes("peck deck")) return EXERCISE_VISUALS["Aperturas en Polea (Cruces)"];
+  if (norm.includes("flexion") || norm.includes("push up")) return EXERCISE_VISUALS["Flexiones de pecho (Push-ups)"];
+  if (norm.includes("fondo") || norm.includes("dip") || norm.includes("paralela")) return EXERCISE_VISUALS["Fondos en Paralelas (Dips)"];
+  if (norm.includes("press") && (norm.includes("banca") || norm.includes("pecho") || norm.includes("plano") || norm.includes("barra"))) return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
 
-  // --- PIERNAS & GLÚTEOS ---
-  if (norm.includes("prensa") || norm.includes("leg press")) {
-    return EXERCISE_VISUALS["Prensa de Piernas 45°"];
-  }
-  if (norm.includes("sentadilla") || norm.includes("squat")) {
-    return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
-  }
-  if (norm.includes("peso muerto") || norm.includes("rdl") || norm.includes("rumano") || norm.includes("deadlift") || norm.includes("stiff")) {
-    return EXERCISE_VISUALS["Peso Muerto Rumano (RDL)"];
-  }
-  if (norm.includes("sillon") || (norm.includes("extension") && (norm.includes("cuadriceps") || norm.includes("pierna")))) {
-    return EXERCISE_VISUALS["Extensión de Cuádriceps"];
-  }
-  if (norm.includes("curl") && (norm.includes("femoral") || norm.includes("isquio") || norm.includes("camilla"))) {
-    return EXERCISE_VISUALS["Curl Femoral Tumbado / Sentado"];
-  }
-  if (norm.includes("femoral") || norm.includes("isquiotibial") || norm.includes("isquio")) {
-    return EXERCISE_VISUALS["Curl Femoral Tumbado / Sentado"];
-  }
-  if (norm.includes("gemelo") || norm.includes("talon") || norm.includes("pantorrilla") || norm.includes("calf")) {
-    return EXERCISE_VISUALS["Elevación de Talones (Gemelos)"];
-  }
-  if (norm.includes("hip thrust") || norm.includes("glute bridge") || norm.includes("puente") || norm.includes("gluteo")) {
-    return EXERCISE_VISUALS["Hip Thrust con Barra"];
-  }
+  // --- PIERNAS ---
+  if (norm.includes("prensa") || norm.includes("leg press")) return EXERCISE_VISUALS["Prensa de Piernas 45°"];
+  if (norm.includes("sentadilla") || norm.includes("squat")) return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
+  if (norm.includes("peso muerto") || norm.includes("rdl") || norm.includes("rumano") || norm.includes("deadlift")) return EXERCISE_VISUALS["Peso Muerto Rumano (RDL)"];
+  if (norm.includes("sillon") || (norm.includes("extension") && norm.includes("cuadriceps"))) return EXERCISE_VISUALS["Extensión de Cuádriceps"];
+  if (norm.includes("femoral") || norm.includes("isquio")) return EXERCISE_VISUALS["Curl Femoral Tumbado / Sentado"];
+  if (norm.includes("gemelo") || norm.includes("talon") || norm.includes("pantorrilla")) return EXERCISE_VISUALS["Elevación de Talones (Gemelos)"];
 
   // --- HOMBROS ---
-  if (norm.includes("lateral") || norm.includes("vuelo") || (norm.includes("elevacion") && norm.includes("hombro"))) {
-    return EXERCISE_VISUALS["Elevaciones Laterales"];
-  }
-  if (norm.includes("pajaro") || norm.includes("face pull") || norm.includes("deltoides post") || norm.includes("rear delt")) {
-    return EXERCISE_VISUALS["Pájaros / Face Pull en Polea"];
-  }
-  if (norm.includes("militar") || (norm.includes("press") && (norm.includes("hombro") || norm.includes("overhead")))) {
-    return EXERCISE_VISUALS["Press Militar con Barra / Mancuernas"];
-  }
+  if (norm.includes("lateral") || norm.includes("vuelo") || (norm.includes("elevacion") && norm.includes("hombro"))) return EXERCISE_VISUALS["Elevaciones Laterales"];
+  if (norm.includes("pajaro") || norm.includes("face pull") || norm.includes("rear delt")) return EXERCISE_VISUALS["Pájaros / Face Pull en Polea"];
+  if (norm.includes("militar") || (norm.includes("press") && norm.includes("hombro"))) return EXERCISE_VISUALS["Press Militar con Barra / Mancuernas"];
 
   // --- BRAZOS ---
-  if (norm.includes("martillo") || norm.includes("hammer")) {
-    return EXERCISE_VISUALS["Curl Martillo con Mancuernas"];
-  }
-  if (norm.includes("curl") || norm.includes("biceps")) {
-    return EXERCISE_VISUALS["Curl de Bíceps con Barra Z"];
-  }
-  if (norm.includes("frances") || norm.includes("skull crusher")) {
-    return EXERCISE_VISUALS["Press Francés con Barra Z"];
-  }
-  if (norm.includes("triceps") || norm.includes("pushdown") || norm.includes("cuerda polea")) {
-    return EXERCISE_VISUALS["Extensiones de Tríceps en Polea (Cuerda)"];
-  }
+  if (norm.includes("martillo")) return EXERCISE_VISUALS["Curl Martillo con Mancuernas"];
+  if (norm.includes("curl") || norm.includes("biceps")) return EXERCISE_VISUALS["Curl de Bíceps con Barra Z"];
+  if (norm.includes("frances") || norm.includes("skull crusher")) return EXERCISE_VISUALS["Press Francés con Barra Z"];
+  if (norm.includes("triceps") || norm.includes("pushdown") || norm.includes("cuerda polea")) return EXERCISE_VISUALS["Extensiones de Tríceps en Polea (Cuerda)"];
 
   // --- CORE ---
-  if (norm.includes("plancha") || norm.includes("plank")) {
-    return EXERCISE_VISUALS["Plancha Abdominal"];
-  }
-  if (norm.includes("pierna") && (norm.includes("elevacion") || norm.includes("colgado"))) {
-    return EXERCISE_VISUALS["Elevación de Piernas Colgado"];
-  }
-  if (norm.includes("crunch") || norm.includes("abdominal")) {
-    return EXERCISE_VISUALS["Crunch en Polea Alta"];
-  }
+  if (norm.includes("plancha") || norm.includes("plank")) return EXERCISE_VISUALS["Plancha Abdominal"];
+  if (norm.includes("pierna") && (norm.includes("elevacion") || norm.includes("colgado"))) return EXERCISE_VISUALS["Elevación de Piernas Colgado"];
+  if (norm.includes("crunch") || norm.includes("abdominal")) return EXERCISE_VISUALS["Crunch en Polea Alta"];
 
   // --- CALENTAMIENTO, REHABILITACIÓN & ESTIRAMIENTOS ---
   if (norm.includes("wall sit") || (norm.includes("sentadilla") && norm.includes("pared"))) return EXERCISE_VISUALS["Sentadilla Isométrica en Pared (Wall Sit)"];
   if (norm.includes("clamshell") || norm.includes("almeja")) return EXERCISE_VISUALS["Clamshells / Almejas con Banda"];
+  if (norm.includes("monster") || norm.includes("walk")) return EXERCISE_VISUALS["Monster Walk / Pasos con Banda"];
   if (norm.includes("tke") || (norm.includes("extensi") && norm.includes("rodilla"))) return EXERCISE_VISUALS["Extensiones Terminales de Rodilla con Banda (TKE)"];
   if (norm.includes("toracica") || norm.includes("toracico")) return EXERCISE_VISUALS["Rotación Torácica en Cuadrupedia"];
   if (norm.includes("gato") || norm.includes("camello") || norm.includes("cat cow")) return EXERCISE_VISUALS["Gato-Camello (Cat-Cow) Columna"];
@@ -708,18 +800,16 @@ export function getExerciseVisual(nombre, grupoMuscular = "General") {
   if (norm.includes("pectoral") && norm.includes("pared")) return EXERCISE_VISUALS["Estiramiento Pectoral en Pared"];
   if (norm.includes("90 90") || norm.includes("90/90")) return EXERCISE_VISUALS["Apertura de Cadera en 90/90"];
 
-  // 3. Fallback inteligente según grupo muscular
+  // 3. Fallback inteligente por grupo muscular
   const grupoLow = normalize(grupoMuscular);
+  if (grupoLow.includes("gluteo")) return EXERCISE_VISUALS["Hip Thrust con Barra"];
   if (grupoLow.includes("espalda")) return EXERCISE_VISUALS["Remo en Polea Baja (Gironda)"];
   if (grupoLow.includes("pecho")) return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
-  if (grupoLow.includes("pierna") || grupoLow.includes("gluteo")) return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
+  if (grupoLow.includes("pierna")) return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
   if (grupoLow.includes("hombro")) return EXERCISE_VISUALS["Press Militar con Barra / Mancuernas"];
   if (grupoLow.includes("brazo") || grupoLow.includes("biceps")) return EXERCISE_VISUALS["Curl de Bíceps con Barra Z"];
   if (grupoLow.includes("triceps")) return EXERCISE_VISUALS["Extensiones de Tríceps en Polea (Cuerda)"];
   if (grupoLow.includes("core") || grupoLow.includes("abdom")) return EXERCISE_VISUALS["Plancha Abdominal"];
-  if (grupoLow.includes("calentam")) return EXERCISE_VISUALS["Gato-Camello (Cat-Cow) Columna"];
-  if (grupoLow.includes("rehab")) return EXERCISE_VISUALS["Sentadilla Isométrica en Pared (Wall Sit)"];
-  if (grupoLow.includes("estira")) return EXERCISE_VISUALS["Estiramiento de Isquiosurales en Suelo"];
 
   return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
 }

@@ -8,6 +8,7 @@ import Historial from './pages/Historial';
 import Progreso from './pages/Progreso';
 import Perfil from './pages/Perfil';
 import Calculadora1RM from './pages/Calculadora1RM';
+import Calendario from './pages/Calendario';
 
 const STORAGE_KEY = 'mbtracker_active_workout';
 const AUTH_KEY = 'mbtracker_auth_user';
@@ -109,6 +110,10 @@ export default function App() {
 
         {activeTab === 'progreso' && (
           <Progreso onNavigateTab={setActiveTab} />
+        )}
+
+        {activeTab === 'calendario' && (
+          <Calendario onStartWorkout={handleStartWorkout} onNavigateTab={setActiveTab} />
         )}
 
         {activeTab === 'fuerza_1rm' && (
