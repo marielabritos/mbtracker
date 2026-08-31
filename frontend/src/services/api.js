@@ -1,73 +1,136 @@
 // Cliente API Offline-First para MBTracker con persistencia dual (Local + Nube)
 
-const DEFAULT_EJERCICIOS = [
+export const DEFAULT_EJERCICIOS = [
+  // --- PECHO ---
   { id: 1, nombre: "Press de Banca Plano con Barra", grupo_muscular: "Pecho", equipo: "Barra", es_personalizado: false },
-  { id: 2, nombre: "Press Inclinado con Mancuernas", grupo_muscular: "Pecho", equipo: "Mancuerna", es_personalizado: false },
-  { id: 3, nombre: "Aperturas en Polea (Cruces)", grupo_muscular: "Pecho", equipo: "Polea", es_personalizado: false },
-  { id: 4, nombre: "Fondos en Paralelas (Dips)", grupo_muscular: "Pecho", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 5, nombre: "Press en Máquina Smith / Chest Press", grupo_muscular: "Pecho", equipo: "Máquina", es_personalizado: false },
-  { id: 6, nombre: "Jalón al Pecho en Polea", grupo_muscular: "Espalda", equipo: "Polea", es_personalizado: false },
-  { id: 7, nombre: "Dominadas (Pull-ups)", grupo_muscular: "Espalda", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 8, nombre: "Remo con Barra", grupo_muscular: "Espalda", equipo: "Barra", es_personalizado: false },
-  { id: 9, nombre: "Remo Unilateral con Mancuerna (Serrucho)", grupo_muscular: "Espalda", equipo: "Mancuerna", es_personalizado: false },
-  { id: 10, nombre: "Remo en Polea Baja (Gironda)", grupo_muscular: "Espalda", equipo: "Polea", es_personalizado: false },
-  { id: 11, nombre: "Sentadilla con Barra (Back Squat)", grupo_muscular: "Piernas", equipo: "Barra", es_personalizado: false },
-  { id: 12, nombre: "Prensa de Piernas 45°", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
-  { id: 13, nombre: "Peso Muerto Rumano (RDL)", grupo_muscular: "Piernas", equipo: "Barra", es_personalizado: false },
-  { id: 14, nombre: "Extensión de Cuádriceps", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
-  { id: 15, nombre: "Curl Femoral Tumbado / Sentado", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
-  { id: 16, nombre: "Elevación de Talones (Gemelos)", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
-  { id: 17, nombre: "Hip Thrust con Barra", grupo_muscular: "Piernas", equipo: "Barra", es_personalizado: false },
-  { id: 18, nombre: "Press Militar con Barra / Mancuernas", grupo_muscular: "Hombros", equipo: "Mancuerna", es_personalizado: false },
-  { id: 19, nombre: "Elevaciones Laterales", grupo_muscular: "Hombros", equipo: "Mancuerna", es_personalizado: false },
-  { id: 20, nombre: "Pájaros / Face Pull en Polea", grupo_muscular: "Hombros", equipo: "Polea", es_personalizado: false },
-  { id: 21, nombre: "Curl de Bíceps con Barra Z", grupo_muscular: "Brazos", equipo: "Barra", es_personalizado: false },
-  { id: 22, nombre: "Curl Martillo con Mancuernas", grupo_muscular: "Brazos", equipo: "Mancuerna", es_personalizado: false },
-  { id: 23, nombre: "Extensiones de Tríceps en Polea (Cuerda)", grupo_muscular: "Brazos", equipo: "Polea", es_personalizado: false },
-  { id: 24, nombre: "Press Francés con Barra Z", grupo_muscular: "Brazos", equipo: "Barra", es_personalizado: false },
-  { id: 25, nombre: "Plancha Abdominal", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 26, nombre: "Elevación de Piernas Colgado", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 27, nombre: "Crunch en Polea Alta", grupo_muscular: "Core", equipo: "Polea", es_personalizado: false },
+  { id: 2, nombre: "Press de Banca Plano con Mancuernas", grupo_muscular: "Pecho", equipo: "Mancuerna", es_personalizado: false },
+  { id: 3, nombre: "Press Inclinado con Barra", grupo_muscular: "Pecho", equipo: "Barra", es_personalizado: false },
+  { id: 4, nombre: "Press Inclinado con Mancuernas", grupo_muscular: "Pecho", equipo: "Mancuerna", es_personalizado: false },
+  { id: 5, nombre: "Press Declinado con Barra / Mancuernas", grupo_muscular: "Pecho", equipo: "Barra", es_personalizado: false },
+  { id: 6, nombre: "Aperturas en Polea (Cruces)", grupo_muscular: "Pecho", equipo: "Polea", es_personalizado: false },
+  { id: 7, nombre: "Aperturas con Mancuernas en Banco Plano", grupo_muscular: "Pecho", equipo: "Mancuerna", es_personalizado: false },
+  { id: 8, nombre: "Aperturas con Mancuernas en Banco Inclinado", grupo_muscular: "Pecho", equipo: "Mancuerna", es_personalizado: false },
+  { id: 9, nombre: "Fondos en Paralelas (Dips)", grupo_muscular: "Pecho", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 10, nombre: "Flexiones de pecho (Push-ups)", grupo_muscular: "Pecho", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 11, nombre: "Press en Máquina Smith / Chest Press", grupo_muscular: "Pecho", equipo: "Máquina", es_personalizado: false },
+  { id: 12, nombre: "Pec Deck / Contractor de Pecho", grupo_muscular: "Pecho", equipo: "Máquina", es_personalizado: false },
+  { id: 13, nombre: "Pullover con Mancuerna", grupo_muscular: "Pecho", equipo: "Mancuerna", es_personalizado: false },
+
+  // --- ESPALDA ---
+  { id: 14, nombre: "Jalón al Pecho en Polea", grupo_muscular: "Espalda", equipo: "Polea", es_personalizado: false },
+  { id: 15, nombre: "Jalón al Pecho Agarre Supino / Estrecho", grupo_muscular: "Espalda", equipo: "Polea", es_personalizado: false },
+  { id: 16, nombre: "Dominadas (Pull-ups)", grupo_muscular: "Espalda", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 17, nombre: "Dominadas Supinas (Chin-ups)", grupo_muscular: "Espalda", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 18, nombre: "Remo con Barra", grupo_muscular: "Espalda", equipo: "Barra", es_personalizado: false },
+  { id: 19, nombre: "Remo Unilateral con Mancuerna (Serrucho)", grupo_muscular: "Espalda", equipo: "Mancuerna", es_personalizado: false },
+  { id: 20, nombre: "Remo en Polea Baja (Gironda)", grupo_muscular: "Espalda", equipo: "Polea", es_personalizado: false },
+  { id: 21, nombre: "Remo en Barra T / Con Apoyo en Pecho", grupo_muscular: "Espalda", equipo: "Barra", es_personalizado: false },
+  { id: 22, nombre: "Remo en Máquina / Chest Supported Row", grupo_muscular: "Espalda", equipo: "Máquina", es_personalizado: false },
+  { id: 23, nombre: "Pullover en Polea Alta con Cuerda / Barra", grupo_muscular: "Espalda", equipo: "Polea", es_personalizado: false },
+  { id: 24, nombre: "Peso Muerto Convencional", grupo_muscular: "Espalda", equipo: "Barra", es_personalizado: false },
+  { id: 25, nombre: "Hiperextensiones Lumbares", grupo_muscular: "Espalda", equipo: "Banco", es_personalizado: false },
+
+  // --- PIERNAS & GLÚTEOS ---
+  { id: 26, nombre: "Sentadilla con Barra (Back Squat)", grupo_muscular: "Piernas", equipo: "Barra", es_personalizado: false },
+  { id: 27, nombre: "Sentadilla Frontal con Barra (Front Squat)", grupo_muscular: "Piernas", equipo: "Barra", es_personalizado: false },
+  { id: 28, nombre: "Sentadilla Goblet con Mancuerna / Kettlebell", grupo_muscular: "Piernas", equipo: "Mancuerna", es_personalizado: false },
+  { id: 29, nombre: "Sentadilla Búlgara con Mancuernas", grupo_muscular: "Piernas", equipo: "Mancuerna", es_personalizado: false },
+  { id: 30, nombre: "Prensa de Piernas 45°", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
+  { id: 31, nombre: "Hack Squat / Sentadilla Hack", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
+  { id: 32, nombre: "Extensión de Cuádriceps", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
+  { id: 33, nombre: "Zancadas / Estocadas Caminando", grupo_muscular: "Piernas", equipo: "Mancuerna", es_personalizado: false },
+  { id: 34, nombre: "Peso Muerto Rumano (RDL)", grupo_muscular: "Piernas", equipo: "Barra", es_personalizado: false },
+  { id: 35, nombre: "Peso Muerto Rumano con Mancuernas", grupo_muscular: "Piernas", equipo: "Mancuerna", es_personalizado: false },
+  { id: 36, nombre: "Peso Muerto Sumo", grupo_muscular: "Piernas", equipo: "Barra", es_personalizado: false },
+  { id: 37, nombre: "Curl Femoral Tumbado / Sentado", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
+  { id: 38, nombre: "Hip Thrust con Barra", grupo_muscular: "Piernas", equipo: "Barra", es_personalizado: false },
+  { id: 39, nombre: "Glute Bridge / Puente de Glúteo en Suelo", grupo_muscular: "Piernas", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 40, nombre: "Abductores en Máquina (Glúteo Medio)", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
+  { id: 41, nombre: "Aductores en Máquina", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
+  { id: 42, nombre: "Patada de Glúteo en Polea", grupo_muscular: "Piernas", equipo: "Polea", es_personalizado: false },
+  { id: 43, nombre: "Elevación de Talones (Gemelos de Pie)", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
+  { id: 44, nombre: "Elevación de Talones Sentado (Sóleo)", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
+
+  // --- HOMBROS ---
+  { id: 45, nombre: "Press Militar con Barra / Mancuernas", grupo_muscular: "Hombros", equipo: "Mancuerna", es_personalizado: false },
+  { id: 46, nombre: "Press Militar de Pie con Barra", grupo_muscular: "Hombros", equipo: "Barra", es_personalizado: false },
+  { id: 47, nombre: "Press Arnold con Mancuernas", grupo_muscular: "Hombros", equipo: "Mancuerna", es_personalizado: false },
+  { id: 48, nombre: "Elevaciones Laterales con Mancuernas", grupo_muscular: "Hombros", equipo: "Mancuerna", es_personalizado: false },
+  { id: 49, nombre: "Elevaciones Laterales en Polea", grupo_muscular: "Hombros", equipo: "Polea", es_personalizado: false },
+  { id: 50, nombre: "Elevaciones Frontales con Mancuernas / Disco", grupo_muscular: "Hombros", equipo: "Mancuerna", es_personalizado: false },
+  { id: 51, nombre: "Pájaros / Face Pull en Polea", grupo_muscular: "Hombros", equipo: "Polea", es_personalizado: false },
+  { id: 52, nombre: "Pájaros con Mancuernas (Deltoides Posterior)", grupo_muscular: "Hombros", equipo: "Mancuerna", es_personalizado: false },
+  { id: 53, nombre: "Remo al Mentón con Barra Z / Polea", grupo_muscular: "Hombros", equipo: "Barra", es_personalizado: false },
+  { id: 54, nombre: "Encogimientos de Trapecio (Shrugs)", grupo_muscular: "Hombros", equipo: "Mancuerna", es_personalizado: false },
+
+  // --- BRAZOS (BÍCEPS, TRÍCEPS, ANTEBRAZOS) ---
+  { id: 55, nombre: "Curl de Bíceps con Barra Z", grupo_muscular: "Brazos", equipo: "Barra", es_personalizado: false },
+  { id: 56, nombre: "Curl de Bíceps Alterno con Mancuernas", grupo_muscular: "Brazos", equipo: "Mancuerna", es_personalizado: false },
+  { id: 57, nombre: "Curl Martillo con Mancuernas", grupo_muscular: "Brazos", equipo: "Mancuerna", es_personalizado: false },
+  { id: 58, nombre: "Curl en Banco Inclinado con Mancuernas", grupo_muscular: "Brazos", equipo: "Mancuerna", es_personalizado: false },
+  { id: 59, nombre: "Curl en Banco Scott / Predicador", grupo_muscular: "Brazos", equipo: "Barra", es_personalizado: false },
+  { id: 60, nombre: "Curl Concentrado con Mancuerna", grupo_muscular: "Brazos", equipo: "Mancuerna", es_personalizado: false },
+  { id: 61, nombre: "Curl de Bíceps en Polea Baja", grupo_muscular: "Brazos", equipo: "Polea", es_personalizado: false },
+  { id: 62, nombre: "Extensiones de Tríceps en Polea (Cuerda)", grupo_muscular: "Brazos", equipo: "Polea", es_personalizado: false },
+  { id: 63, nombre: "Extensiones de Tríceps en Polea (Barra Recta)", grupo_muscular: "Brazos", equipo: "Polea", es_personalizado: false },
+  { id: 64, nombre: "Press Francés con Barra Z", grupo_muscular: "Brazos", equipo: "Barra", es_personalizado: false },
+  { id: 65, nombre: "Extensión de Tríceps sobre la Cabeza (Copa)", grupo_muscular: "Brazos", equipo: "Mancuerna", es_personalizado: false },
+  { id: 66, nombre: "Fondos entre Bancos para Tríceps", grupo_muscular: "Brazos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 67, nombre: "Patada de Tríceps con Mancuerna / Polea", grupo_muscular: "Brazos", equipo: "Mancuerna", es_personalizado: false },
+  { id: 68, nombre: "Curl de Muñeca Supino / Pronado (Antebrazos)", grupo_muscular: "Brazos", equipo: "Barra", es_personalizado: false },
+
+  // --- CORE / ABDOMEN ---
+  { id: 69, nombre: "Plancha Abdominal", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 70, nombre: "Plancha Lateral (Side Plank)", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 71, nombre: "Elevación de Piernas Colgado", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 72, nombre: "Elevación de Piernas en Suelo / Banco", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 73, nombre: "Crunch en Polea Alta", grupo_muscular: "Core", equipo: "Polea", es_personalizado: false },
+  { id: 74, nombre: "Crunch Abdominal Clásico en Suelo", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 75, nombre: "Rueda Abdominal (Ab Wheel)", grupo_muscular: "Core", equipo: "Rueda Abdominal", es_personalizado: false },
+  { id: 76, nombre: "Russian Twists / Giros Rusos", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 77, nombre: "Vacío Abdominal (Stomach Vacuum)", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
 
   // --- CALENTAMIENTO Y MOVILIDAD ---
-  { id: 28, nombre: "Dislocaciones de Hombro con Banda / Pica", grupo_muscular: "Calentamiento", equipo: "Banda Elástica", es_personalizado: false },
-  { id: 29, nombre: "Gato-Camello (Cat-Cow) Columna", grupo_muscular: "Calentamiento", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 30, nombre: "Rotación Torácica en Cuadrupedia", grupo_muscular: "Calentamiento", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 31, nombre: "Apertura de Cadera en 90/90", grupo_muscular: "Calentamiento", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 78, nombre: "Dislocaciones de Hombro con Banda / Pica", grupo_muscular: "Calentamiento", equipo: "Banda Elástica", es_personalizado: false },
+  { id: 79, nombre: "Gato-Camello (Cat-Cow) Columna", grupo_muscular: "Calentamiento", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 80, nombre: "Rotación Torácica en Cuadrupedia", grupo_muscular: "Calentamiento", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 81, nombre: "Apertura de Cadera en 90/90", grupo_muscular: "Calentamiento", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 82, nombre: "Círculos de Brazos y Hombros", grupo_muscular: "Calentamiento", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 83, nombre: "Movilidad de Cadera en Estocada Dinámica", grupo_muscular: "Calentamiento", equipo: "Peso Corporal", es_personalizado: false },
 
-  // --- REHABILITACIÓN DE RODILLA ---
-  { id: 32, nombre: "Sentadilla Isométrica en Pared (Wall Sit)", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 33, nombre: "Extensiones Terminales de Rodilla con Banda (TKE)", grupo_muscular: "Rehabilitación", equipo: "Banda Elástica", es_personalizado: false },
-  { id: 34, nombre: "Puente de Glúteo Unipodal", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 35, nombre: "Clamshells / Almejas con Banda", grupo_muscular: "Rehabilitación", equipo: "Banda Elástica", es_personalizado: false },
-  { id: 36, nombre: "Monster Walk / Pasos con Banda", grupo_muscular: "Rehabilitación", equipo: "Banda Elástica", es_personalizado: false },
-
-  // --- REHABILITACIÓN DE TOBILLO Y PIE ---
-  { id: 37, nombre: "Dorsiflexión de Tobillo en Pared", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 38, nombre: "Elevación de Gemelos Excéntrica a 1 Pierna", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 39, nombre: "Caminata en Talones y Puntas", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
+  // --- REHABILITACIÓN Y SALUD ARTICULAR ---
+  { id: 84, nombre: "Sentadilla Isométrica en Pared (Wall Sit)", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 85, nombre: "Extensiones Terminales de Rodilla con Banda (TKE)", grupo_muscular: "Rehabilitación", equipo: "Banda Elástica", es_personalizado: false },
+  { id: 86, nombre: "Puente de Glúteo Unipodal", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 87, nombre: "Clamshells / Almejas con Banda", grupo_muscular: "Rehabilitación", equipo: "Banda Elástica", es_personalizado: false },
+  { id: 88, nombre: "Monster Walk / Pasos con Banda", grupo_muscular: "Rehabilitación", equipo: "Banda Elástica", es_personalizado: false },
+  { id: 89, nombre: "Dorsiflexión de Tobillo en Pared", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 90, nombre: "Elevación de Gemelos Excéntrica a 1 Pierna", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 91, nombre: "Caminata en Talones y Puntas", grupo_muscular: "Rehabilitación", equipo: "Peso Corporal", es_personalizado: false },
 
   // --- ESTIRAMIENTOS Y FLEXIBILIDAD ---
-  { id: 40, nombre: "Estiramiento de Isquiosurales en Suelo", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 41, nombre: "Estiramiento de Cuádriceps y Psoas", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 42, nombre: "Posición del Niño (Child's Pose)", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 43, nombre: "Cobra / Extensión Lumbar Suave", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
-  { id: 44, nombre: "Estiramiento Pectoral en Pared", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 92, nombre: "Estiramiento de Isquiosurales en Suelo", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 93, nombre: "Estiramiento de Cuádriceps y Psoas", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 94, nombre: "Posición del Niño (Child's Pose)", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 95, nombre: "Cobra / Extensión Lumbar Suave", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 96, nombre: "Estiramiento Pectoral en Pared", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 97, nombre: "Estiramiento de Glúteo y Piramidal en Suelo", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 98, nombre: "Estiramiento de Dorsales en Barra / Pared", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
 
   // --- CARDIO, RUNNING, BICICLETA & MONTAÑISMO ---
-  { id: 45, nombre: "Carrera / Running Continuo", grupo_muscular: "Cardio", equipo: "Aire Libre / Cinta", es_personalizado: false },
-  { id: 46, nombre: "Series de Velocidad / Intervalos Running", grupo_muscular: "Cardio", equipo: "Aire Libre", es_personalizado: false },
-  { id: 47, nombre: "Ciclismo en Ruta / Bicicleta", grupo_muscular: "Cardio", equipo: "Bicicleta", es_personalizado: false },
-  { id: 48, nombre: "Spinning / Bici Estática", grupo_muscular: "Cardio", equipo: "Bicicleta Estática", es_personalizado: false },
-  { id: 49, nombre: "Trekking / Senderismo con Desnivel", grupo_muscular: "Montañismo", equipo: "Montaña / Bastones", es_personalizado: false },
-  { id: 50, nombre: "Montañismo con Mochila (Rucking)", grupo_muscular: "Montañismo", equipo: "Mochila con Peso", es_personalizado: false },
+  { id: 99, nombre: "Carrera / Running Continuo", grupo_muscular: "Cardio", equipo: "Aire Libre / Cinta", es_personalizado: false },
+  { id: 100, nombre: "Series de Velocidad / Intervalos Running", grupo_muscular: "Cardio", equipo: "Aire Libre", es_personalizado: false },
+  { id: 101, nombre: "Ciclismo en Ruta / Bicicleta", grupo_muscular: "Cardio", equipo: "Bicicleta", es_personalizado: false },
+  { id: 102, nombre: "Spinning / Bici Estática", grupo_muscular: "Cardio", equipo: "Bicicleta Estática", es_personalizado: false },
+  { id: 103, nombre: "Trekking / Senderismo con Desnivel", grupo_muscular: "Montañismo", equipo: "Montaña / Bastones", es_personalizado: false },
+  { id: 104, nombre: "Montañismo con Mochila (Rucking)", grupo_muscular: "Montañismo", equipo: "Mochila con Peso", es_personalizado: false }
 ];
 
-const DEFAULT_RUTINAS = [
+export const DEFAULT_RUTINAS = [
   {
     id: 1,
     nombre: "Rutina Push / Pull / Legs (PPL)",
-    descripcion: "División clásica de 3 días para fuerza e hipertrofia.",
+    descripcion: "División clásica de 3 días para fuerza, hipertrofia y salud articular.",
     duracion_semanas: "6 semanas",
     duracion_estimada_minutos: 55,
     activa: true,
@@ -78,10 +141,10 @@ const DEFAULT_RUTINAS = [
         orden: 1,
         ejercicios: [
           { id: 1, ejercicio_id: 1, series_objetivo: 4, reps_objetivo: "6-8", descanso_segundos: 120, orden: 1, ejercicio: DEFAULT_EJERCICIOS[0] },
-          { id: 2, ejercicio_id: 2, series_objetivo: 3, reps_objetivo: "8-10", descanso_segundos: 90, orden: 2, ejercicio: DEFAULT_EJERCICIOS[1] },
-          { id: 3, ejercicio_id: 18, series_objetivo: 3, reps_objetivo: "8-10", descanso_segundos: 90, orden: 3, ejercicio: DEFAULT_EJERCICIOS[17] },
-          { id: 4, ejercicio_id: 19, series_objetivo: 4, reps_objetivo: "12-15", descanso_segundos: 60, orden: 4, ejercicio: DEFAULT_EJERCICIOS[18] },
-          { id: 5, ejercicio_id: 23, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 5, ejercicio: DEFAULT_EJERCICIOS[22] },
+          { id: 2, ejercicio_id: 4, series_objetivo: 3, reps_objetivo: "8-10", descanso_segundos: 90, orden: 2, ejercicio: DEFAULT_EJERCICIOS[3] },
+          { id: 3, ejercicio_id: 45, series_objetivo: 3, reps_objetivo: "8-10", descanso_segundos: 90, orden: 3, ejercicio: DEFAULT_EJERCICIOS[44] },
+          { id: 4, ejercicio_id: 48, series_objetivo: 4, reps_objetivo: "12-15", descanso_segundos: 60, orden: 4, ejercicio: DEFAULT_EJERCICIOS[47] },
+          { id: 5, ejercicio_id: 62, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 5, ejercicio: DEFAULT_EJERCICIOS[61] },
         ]
       },
       {
@@ -89,55 +152,31 @@ const DEFAULT_RUTINAS = [
         nombre: "Día 2: Pull (Espalda, Deltoides Post, Bíceps)",
         orden: 2,
         ejercicios: [
-          { id: 6, ejercicio_id: 8, series_objetivo: 4, reps_objetivo: "6-8", descanso_segundos: 120, orden: 1, ejercicio: DEFAULT_EJERCICIOS[7] },
-          { id: 7, ejercicio_id: 6, series_objetivo: 3, reps_objetivo: "8-10", descanso_segundos: 90, orden: 2, ejercicio: DEFAULT_EJERCICIOS[5] },
-          { id: 8, ejercicio_id: 9, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 3, ejercicio: DEFAULT_EJERCICIOS[8] },
-          { id: 9, ejercicio_id: 20, series_objetivo: 4, reps_objetivo: "12-15", descanso_segundos: 60, orden: 4, ejercicio: DEFAULT_EJERCICIOS[19] },
-          { id: 10, ejercicio_id: 21, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 5, ejercicio: DEFAULT_EJERCICIOS[20] },
+          { id: 6, ejercicio_id: 18, series_objetivo: 4, reps_objetivo: "6-8", descanso_segundos: 120, orden: 1, ejercicio: DEFAULT_EJERCICIOS[17] },
+          { id: 7, ejercicio_id: 14, series_objetivo: 3, reps_objetivo: "8-10", descanso_segundos: 90, orden: 2, ejercicio: DEFAULT_EJERCICIOS[13] },
+          { id: 8, ejercicio_id: 19, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 3, ejercicio: DEFAULT_EJERCICIOS[18] },
+          { id: 9, ejercicio_id: 20, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 4, ejercicio: DEFAULT_EJERCICIOS[19] },
+          { id: 10, ejercicio_id: 51, series_objetivo: 4, reps_objetivo: "12-15", descanso_segundos: 60, orden: 5, ejercicio: DEFAULT_EJERCICIOS[50] },
+          { id: 11, ejercicio_id: 55, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 6, ejercicio: DEFAULT_EJERCICIOS[54] },
         ]
       },
       {
         id: 103,
-        nombre: "Día 3: Legs (Pierna completa y Core)",
+        nombre: "Día 3: Legs (Pierna Completa, Glúteo, Core)",
         orden: 3,
         ejercicios: [
-          { id: 11, ejercicio_id: 11, series_objetivo: 4, reps_objetivo: "6-8", descanso_segundos: 120, orden: 1, ejercicio: DEFAULT_EJERCICIOS[10] },
-          { id: 12, ejercicio_id: 12, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 2, ejercicio: DEFAULT_EJERCICIOS[11] },
-          { id: 13, ejercicio_id: 13, series_objetivo: 3, reps_objetivo: "8-10", descanso_segundos: 90, orden: 3, ejercicio: DEFAULT_EJERCICIOS[12] },
-          { id: 14, ejercicio_id: 14, series_objetivo: 3, reps_objetivo: "12-15", descanso_segundos: 60, orden: 4, ejercicio: DEFAULT_EJERCICIOS[13] },
-          { id: 15, ejercicio_id: 25, series_objetivo: 3, reps_objetivo: "45s", descanso_segundos: 45, orden: 5, ejercicio: DEFAULT_EJERCICIOS[24] },
-        ]
-      }
-    ]
-  },
-  {
-    id: 2,
-    nombre: "Tren Superior: Tracción, Hombros & Bíceps",
-    descripcion: "Enfoque completo en espalda (tracción vertical y horizontal), deltoides y bíceps.",
-    duracion_semanas: "4 semanas",
-    duracion_estimada_minutos: 50,
-    activa: true,
-    dias: [
-      {
-        id: 201,
-        nombre: "Día 1: Tracción (Espalda), Hombros y Bíceps",
-        orden: 1,
-        ejercicios: [
-          { id: 21, ejercicio_id: 6, series_objetivo: 4, reps_objetivo: "8-10", descanso_segundos: 90, orden: 1, ejercicio: DEFAULT_EJERCICIOS[5] },
-          { id: 22, ejercicio_id: 8, series_objetivo: 4, reps_objetivo: "8-10", descanso_segundos: 90, orden: 2, ejercicio: DEFAULT_EJERCICIOS[7] },
-          { id: 23, ejercicio_id: 9, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 3, ejercicio: DEFAULT_EJERCICIOS[8] },
-          { id: 24, ejercicio_id: 18, series_objetivo: 3, reps_objetivo: "8-10", descanso_segundos: 90, orden: 4, ejercicio: DEFAULT_EJERCICIOS[17] },
-          { id: 25, ejercicio_id: 19, series_objetivo: 4, reps_objetivo: "12-15", descanso_segundos: 60, orden: 5, ejercicio: DEFAULT_EJERCICIOS[18] },
-          { id: 26, ejercicio_id: 20, series_objetivo: 3, reps_objetivo: "12-15", descanso_segundos: 60, orden: 6, ejercicio: DEFAULT_EJERCICIOS[19] },
-          { id: 27, ejercicio_id: 21, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 7, ejercicio: DEFAULT_EJERCICIOS[20] },
-          { id: 28, ejercicio_id: 22, series_objetivo: 3, reps_objetivo: "12-15", descanso_segundos: 60, orden: 8, ejercicio: DEFAULT_EJERCICIOS[21] },
+          { id: 12, ejercicio_id: 26, series_objetivo: 4, reps_objetivo: "6-8", descanso_segundos: 120, orden: 1, ejercicio: DEFAULT_EJERCICIOS[25] },
+          { id: 13, ejercicio_id: 30, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 2, ejercicio: DEFAULT_EJERCICIOS[29] },
+          { id: 14, ejercicio_id: 34, series_objetivo: 4, reps_objetivo: "8-10", descanso_segundos: 90, orden: 3, ejercicio: DEFAULT_EJERCICIOS[33] },
+          { id: 15, ejercicio_id: 38, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 4, ejercicio: DEFAULT_EJERCICIOS[37] },
+          { id: 16, ejercicio_id: 43, series_objetivo: 4, reps_objetivo: "15-20", descanso_segundos: 60, orden: 5, ejercicio: DEFAULT_EJERCICIOS[42] },
+          { id: 17, ejercicio_id: 69, series_objetivo: 3, reps_objetivo: "45s", descanso_segundos: 60, orden: 6, ejercicio: DEFAULT_EJERCICIOS[68] },
         ]
       }
     ]
   }
 ];
 
-// Helper para obtener URL base
 const getApiBase = () => {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
@@ -153,7 +192,6 @@ const getApiBase = () => {
 
 const API_BASE = getApiBase();
 
-// Storage local helpers
 const getStored = (key, defaultVal) => {
   try {
     const val = localStorage.getItem(`mbtracker_${key}`);
@@ -171,11 +209,10 @@ const setStored = (key, val) => {
   }
 };
 
-// Petición HTTP con timeout
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 4500); // 4.5s timeout
+  const timeoutId = setTimeout(() => controller.abort(), 4500);
 
   const config = {
     headers: { 'Content-Type': 'application/json', ...options.headers },
@@ -200,93 +237,98 @@ async function request(endpoint, options = {}) {
 export const api = {
   // --- ESTADÍSTICAS & DASHBOARD ---
   getDashboardStats: async () => {
+    const sesiones = getStored('sesiones', []);
+    const prs = getStored('prs', []);
+    const totalVolumen = sesiones.reduce((acc, s) => {
+      return acc + (s.series || []).reduce((sAcc, item) => sAcc + ((parseFloat(item.peso_kg) || 0) * (parseInt(item.repeticiones) || 0)), 0);
+    }, 0);
+
+    const localStats = {
+      total_entrenamientos: sesiones.length,
+      racha_dias_mes: sesiones.length > 0 ? Math.min(sesiones.length, 30) : 0,
+      volumen_semanal_kg: Math.round(totalVolumen),
+      tiempo_total_minutos: Math.round(sesiones.reduce((acc, s) => acc + (parseInt(s.duracion_segundos) || 0), 0) / 60),
+      ultimos_prs: prs.slice(0, 8),
+      ultimas_sesiones: sesiones.slice(0, 5)
+    };
+
+    setStored('dashboard_stats', localStats);
+
     try {
       const data = await request('/api/estadisticas/dashboard');
-      setStored('dashboard_stats', data);
-      return data;
-    } catch (e) {
-      // Fallback local
-      const sesiones = getStored('sesiones', []);
-      const prs = getStored('prs', []);
-      const totalVolumen = sesiones.reduce((acc, s) => {
-        return acc + s.series.reduce((sAcc, item) => sAcc + (item.peso_kg * item.repeticiones), 0);
-      }, 0);
+      if (data && data.total_entrenamientos > 0) {
+        return {
+          ...data,
+          total_entrenamientos: Math.max(data.total_entrenamientos, localStats.total_entrenamientos),
+          volumen_semanal_kg: Math.max(data.volumen_semanal_kg, localStats.volumen_semanal_kg)
+        };
+      }
+    } catch (e) {}
 
-      return {
-        total_entrenamientos: sesiones.length,
-        racha_dias_mes: sesiones.length > 0 ? Math.min(sesiones.length, 30) : 0,
-        volumen_semanal_kg: Math.round(totalVolumen),
-        tiempo_total_minutos: Math.round(sesiones.reduce((acc, s) => acc + (s.duracion_segundos || 0), 0) / 60),
-        ultimos_prs: prs.slice(0, 8),
-        ultimas_sesiones: sesiones.slice(0, 5)
-      };
-    }
+    return localStats;
   },
 
   getProgresoEjercicio: async (ejercicioId) => {
+    const sesiones = getStored('sesiones', []);
+    const series = [];
+    
+    // Filtrar sesiones de forma cronológica
+    const sorted = [...sesiones].sort((a, b) => new Date(a.fecha_inicio || a.fecha || 0) - new Date(b.fecha_inicio || b.fecha || 0));
+
+    sorted.forEach(s => {
+      const matches = (s.series || []).filter(item => item.ejercicio_id === parseInt(ejercicioId));
+      if (matches.length > 0) {
+        const maxP = Math.max(...matches.map(m => parseFloat(m.peso_kg) || 0));
+        const matchMax = matches.find(m => parseFloat(m.peso_kg) === maxP) || matches[0];
+        const reps = parseInt(matchMax.repeticiones) || 0;
+        series.push({
+          fecha: new Date(s.fecha_inicio || s.fecha || Date.now()).toLocaleDateString('es-ES'),
+          peso_max: maxP,
+          reps_en_peso_max: reps,
+          volumen_total: matches.reduce((acc, m) => acc + ((parseFloat(m.peso_kg) || 0) * (parseInt(m.repeticiones) || 0)), 0),
+          '1rm_estimado': maxP > 0 ? Math.round(maxP * (1 + reps / 30)) : 0
+        });
+      }
+    });
+
     try {
-      return await request(`/api/estadisticas/ejercicio/${ejercicioId}/progreso`);
-    } catch (e) {
-      const sesiones = getStored('sesiones', []);
-      const series = [];
-      sesiones.forEach(s => {
-        const matches = s.series.filter(item => item.ejercicio_id === parseInt(ejercicioId));
-        if (matches.length > 0) {
-          const maxP = Math.max(...matches.map(m => m.peso_kg || 0));
-          const matchMax = matches.find(m => m.peso_kg === maxP) || matches[0];
-          series.push({
-            fecha: new Date(s.fecha_inicio).toLocaleDateString('es-ES'),
-            peso_max: maxP,
-            reps_en_peso_max: matchMax.repeticiones || 0,
-            volumen_total: matches.reduce((acc, m) => acc + (m.peso_kg * m.repeticiones), 0),
-            '1rm_estimado': Math.round(maxP * (1 + (matchMax.repeticiones || 0) / 30))
-          });
-        }
-      });
-      return series;
-    }
+      const data = await request(`/api/estadisticas/ejercicio/${ejercicioId}/progreso`);
+      if (Array.isArray(data) && data.length > 0 && series.length === 0) {
+        return data;
+      }
+    } catch (e) {}
+
+    return series;
   },
 
   // --- EJERCICIOS ---
   getEjercicios: async (grupo = '', busqueda = '') => {
-    try {
-      const params = new URLSearchParams();
-      if (grupo && grupo !== 'Todos') params.append('grupo_muscular', grupo);
-      if (busqueda) params.append('busqueda', busqueda);
-      const query = params.toString() ? `?${params.toString()}` : '';
-      const data = await request(`/api/ejercicios${query}`);
-      setStored('ejercicios', data);
-      return data;
-    } catch (e) {
-      const local = getStored('ejercicios', DEFAULT_EJERCICIOS);
-      return local.filter(ej => {
-        const matchG = !grupo || grupo === 'Todos' || ej.grupo_muscular === grupo;
-        const matchB = !busqueda || ej.nombre.toLowerCase().includes(busqueda.toLowerCase());
-        return matchG && matchB;
-      });
-    }
+    const local = getStored('ejercicios', DEFAULT_EJERCICIOS);
+    const custom = local.filter(e => e.es_personalizado);
+    const mergedMap = new Map();
+    DEFAULT_EJERCICIOS.forEach(e => mergedMap.set(e.id, e));
+    custom.forEach(e => mergedMap.set(e.id, e));
+    const all = Array.from(mergedMap.values());
+    setStored('ejercicios', all);
+
+    return all.filter(ej => {
+      const matchG = !grupo || grupo === 'Todos' || ej.grupo_muscular === grupo;
+      const matchB = !busqueda || ej.nombre.toLowerCase().includes(busqueda.toLowerCase());
+      return matchG && matchB;
+    });
   },
 
   createEjercicio: async (data) => {
+    const newId = Date.now();
+    const nuevo = { ...data, id: newId, es_personalizado: true };
+    const current = getStored('ejercicios', DEFAULT_EJERCICIOS);
+    setStored('ejercicios', [nuevo, ...current]);
+
     try {
-      const res = await request('/api/ejercicios', { method: 'POST', body: JSON.stringify(data) });
-      const current = getStored('ejercicios', DEFAULT_EJERCICIOS);
-      setStored('ejercicios', [res, ...current]);
-      return res;
-    } catch (e) {
-      const current = getStored('ejercicios', DEFAULT_EJERCICIOS);
-      const nuevo = {
-        id: Date.now(),
-        nombre: data.nombre,
-        grupo_muscular: data.grupo_muscular,
-        equipo: data.equipo || 'General',
-        descripcion: data.descripcion || '',
-        es_personalizado: true,
-        fecha_creacion: new Date().toISOString()
-      };
-      setStored('ejercicios', [nuevo, ...current]);
-      return nuevo;
-    }
+      await request('/api/ejercicios', { method: 'POST', body: JSON.stringify(data) });
+    } catch (e) {}
+
+    return nuevo;
   },
 
   updateEjercicio: async (id, data) => {
@@ -294,37 +336,21 @@ export const api = {
     const updated = current.map(e => e.id === parseInt(id) ? { ...e, ...data } : e);
     setStored('ejercicios', updated);
 
-    // Actualizar también en rutinas locales que contengan este ejercicio
-    const rutinas = getStored('rutinas', DEFAULT_RUTINAS);
-    const updatedRutinas = rutinas.map(r => ({
-      ...r,
-      dias: (r.dias || []).map(d => ({
-        ...d,
-        ejercicios: (d.ejercicios || []).map(ej => {
-          if (ej.ejercicio_id === parseInt(id)) {
-            return { ...ej, ejercicio: { ...ej.ejercicio, ...data } };
-          }
-          return ej;
-        })
-      }))
-    }));
-    setStored('rutinas', updatedRutinas);
-
     try {
-      return await request(`/api/ejercicios/${id}`, { method: 'PUT', body: JSON.stringify(data) });
-    } catch (e) {
-      return { ...data, id };
-    }
+      await request(`/api/ejercicios/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+    } catch (e) {}
+
+    return { ...data, id: parseInt(id) };
   },
 
   deleteEjercicio: async (id) => {
-    try {
-      await request(`/api/ejercicios/${id}`, { method: 'DELETE' });
-    } catch (e) {
-      // offline delete
-    }
     const current = getStored('ejercicios', DEFAULT_EJERCICIOS);
     setStored('ejercicios', current.filter(e => e.id !== parseInt(id)));
+
+    try {
+      await request(`/api/ejercicios/${id}`, { method: 'DELETE' });
+    } catch (e) {}
+
     return { success: true };
   },
 
@@ -332,18 +358,13 @@ export const api = {
   getRutinas: async () => {
     const deletedIds = getStored('deleted_rutina_ids', []);
     const localRutinas = getStored('rutinas', null);
-    const hasCustom = getStored('has_custom_rutinas', false);
 
-    // Si el usuario ya tiene rutinas en su dispositivo, PRESERVARLAS SIEMPRE (Prioridad 1)
     if (localRutinas && Array.isArray(localRutinas) && localRutinas.length > 0) {
       const cleanLocal = localRutinas.filter(r => !deletedIds.includes(r.id));
-      
-      // Sincronizar en segundo plano hacia el backend (sin sobreescribir local)
       request('/api/rutinas').catch(() => {});
       return cleanLocal;
     }
 
-    // Primera vez abriendo la app: intentar cargar desde backend
     try {
       const data = await request('/api/rutinas');
       if (Array.isArray(data) && data.length > 0) {
@@ -353,7 +374,6 @@ export const api = {
       }
     } catch (e) {}
 
-    // Fallback con rutinas oficiales
     setStored('rutinas', DEFAULT_RUTINAS);
     return DEFAULT_RUTINAS.filter(r => !deletedIds.includes(r.id));
   },
@@ -415,8 +435,11 @@ export const api = {
 
     const catalog = getStored('ejercicios', DEFAULT_EJERCICIOS);
     const current = getStored('rutinas', DEFAULT_RUTINAS);
+    let found = false;
+
     const updatedList = current.map(r => {
-      if (r.id === parseInt(id)) {
+      if (r.id === parseInt(id) || String(r.id) === String(id)) {
+        found = true;
         return {
           ...r,
           ...data,
@@ -439,29 +462,33 @@ export const api = {
       return r;
     });
 
+    if (!found) {
+      updatedList.push({
+        ...data,
+        id: parseInt(id) || Date.now()
+      });
+    }
+
     setStored('rutinas', updatedList);
 
     try {
       await request(`/api/rutinas/${id}`, { method: 'PUT', body: JSON.stringify(data) });
     } catch (e) {}
 
-    return updatedList.find(r => r.id === parseInt(id));
+    return updatedList.find(r => r.id === parseInt(id) || String(r.id) === String(id));
   },
 
   deleteRutina: async (id) => {
     setStored('has_custom_rutinas', true);
-    // 1. Guardar id en la lista negra de rutinas eliminadas
     const deletedIds = getStored('deleted_rutina_ids', []);
     if (!deletedIds.includes(parseInt(id))) {
       setStored('deleted_rutina_ids', [...deletedIds, parseInt(id)]);
     }
 
-    // 2. Eliminar del almacenamiento local
     const current = getStored('rutinas', DEFAULT_RUTINAS);
-    const filtered = current.filter(r => r.id !== parseInt(id));
+    const filtered = current.filter(r => r.id !== parseInt(id) && String(r.id) !== String(id));
     setStored('rutinas', filtered);
 
-    // 3. Enviar borrado al backend
     try {
       await request(`/api/rutinas/${id}`, { method: 'DELETE' });
     } catch (e) {}
@@ -474,7 +501,6 @@ export const api = {
     try {
       const data = await request('/api/sesiones');
       if (Array.isArray(data)) {
-        // Combinar sesiones locales y de backend evitando duplicados
         const map = new Map();
         local.forEach(s => map.set(s.id, s));
         data.forEach(s => map.set(s.id, { ...map.get(s.id), ...s }));
@@ -493,24 +519,23 @@ export const api = {
   },
 
   createSesion: async (data) => {
-    // 1. Calcular PRs locales
     const catalog = getStored('ejercicios', DEFAULT_EJERCICIOS);
     const currentPRs = getStored('prs', []);
     const prMap = {};
     currentPRs.forEach(p => { prMap[p.ejercicio_id] = p.peso_maximo_kg; });
 
-    const seriesProcessed = data.series.map((s, idx) => {
+    const seriesProcessed = (data.series || []).map((s, idx) => {
       const peso = parseFloat(s.peso_kg) || 0;
       const prevMax = prMap[s.ejercicio_id] || 0;
       const isPR = peso > 0 && peso > prevMax;
       if (isPR) {
         prMap[s.ejercicio_id] = peso;
       }
-      const ejInfo = catalog.find(e => e.id === s.ejercicio_id) || { nombre: 'Ejercicio', grupo_muscular: 'General' };
+      const ejInfo = catalog.find(e => e.id === s.ejercicio_id) || { nombre: s.nombre_ejercicio || 'Ejercicio', grupo_muscular: 'General' };
       return {
         id: Date.now() + idx,
         ejercicio_id: s.ejercicio_id,
-        numero_serie: s.numero_serie,
+        numero_serie: s.numero_serie || idx + 1,
         peso_kg: peso,
         repeticiones: parseInt(s.repeticiones) || 0,
         rpe: s.rpe || null,
@@ -534,7 +559,7 @@ export const api = {
       calorias_quemadas: data.calorias_quemadas || 0,
       vueltas_laps: data.vueltas_laps || [],
       dia_rutina_id: data.dia_rutina_id || null,
-      fecha_inicio: data.fecha_inicio || new Date().toISOString(),
+      fecha_inicio: data.fecha_inicio || data.fecha || new Date().toISOString(),
       fecha_fin: new Date().toISOString(),
       duracion_segundos: data.duracion_segundos || 0,
       duracion_minutos: data.duracion_minutos || Math.max(Math.round((data.duracion_segundos || 0) / 60), 1),
@@ -543,9 +568,9 @@ export const api = {
       series: seriesProcessed
     };
 
-    // Actualizar historial local inmediatamente
     const currentSesiones = getStored('sesiones', []);
-    setStored('sesiones', [nuevaSesion, ...currentSesiones]);
+    const updatedSesiones = [nuevaSesion, ...currentSesiones];
+    setStored('sesiones', updatedSesiones);
 
     // Actualizar PRs
     const updatedPRs = [...currentPRs];
@@ -568,14 +593,11 @@ export const api = {
     });
     setStored('prs', updatedPRs);
 
-    // Intentar sincronizar con backend
     try {
-      const res = await request('/api/sesiones', { method: 'POST', body: JSON.stringify(data) });
-      return res;
-    } catch (e) {
-      console.log("Sesión guardada en almacenamiento local.");
-      return nuevaSesion;
-    }
+      await request('/api/sesiones', { method: 'POST', body: JSON.stringify(data) });
+    } catch (e) {}
+
+    return nuevaSesion;
   },
 
   deleteSesion: async (id) => {
@@ -588,19 +610,31 @@ export const api = {
   },
 
   getUltimoRegistroEjercicio: async (ejercicioId) => {
+    const sesiones = getStored('sesiones', []);
+    for (const s of sesiones) {
+      const matches = (s.series || []).filter(item => item.ejercicio_id === parseInt(ejercicioId));
+      if (matches.length > 0) return matches;
+    }
+
     try {
       const res = await request(`/api/sesiones/ultimo-registro/${ejercicioId}`);
       if (Array.isArray(res) && res.length > 0) return res;
     } catch (e) {}
 
-    // Buscar en historial local
-    const sesiones = getStored('sesiones', []);
-    for (const s of sesiones) {
-      const match = s.series.filter(item => item.ejercicio_id === parseInt(ejercicioId));
-      if (match.length > 0) {
-        return match;
-      }
-    }
     return [];
+  },
+
+  // --- REINICIAR Y PURGAR ---
+  resetAllUserData: async () => {
+    try {
+      localStorage.clear();
+      setStored('rutinas', DEFAULT_RUTINAS);
+      setStored('ejercicios', DEFAULT_EJERCICIOS);
+      setStored('sesiones', []);
+      setStored('prs', []);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 };

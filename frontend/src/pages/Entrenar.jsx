@@ -799,7 +799,7 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
                 </div>
 
                 <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                  {['Todos', 'Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core', 'Calentamiento', 'Rehabilitación', 'Estiramientos'].map((group) => (
+                  {['Todos', 'Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core', 'Calentamiento', 'Rehabilitación', 'Estiramientos', 'Cardio', 'Montañismo'].map((group) => (
                     <button
                       key={group}
                       onClick={() => setMuscleFilter(group)}

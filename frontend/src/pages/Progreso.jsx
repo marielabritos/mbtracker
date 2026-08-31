@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, Trophy, Dumbbell, Award, Calendar, Activity, MapPin, Mountain, Flame, Compass } from 'lucide-react';
+import { TrendingUp, Trophy, Dumbbell, Award, Calendar, Activity, MapPin, Mountain, Flame, Compass, Zap, ArrowRight } from 'lucide-react';
 import { api } from '../services/api';
 
-export default function Progreso() {
+export default function Progreso({ onNavigateTab }) {
   const [stats, setStats] = useState(null);
   const [ejercicios, setEjercicios] = useState([]);
   const [selectedEjercicioId, setSelectedEjercicioId] = useState('');
@@ -198,9 +198,21 @@ export default function Progreso() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6 pb-28">
-      <div>
-        <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Progreso y Récords</h2>
-        <p className="text-sm text-slate-400">Visualiza tu sobrecarga progresiva y evolución de fuerza</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Progreso y Récords</h2>
+          <p className="text-sm text-slate-400">Visualiza tu sobrecarga progresiva y evolución de fuerza</p>
+        </div>
+        {onNavigateTab && (
+          <button
+            onClick={() => onNavigateTab('fuerza_1rm')}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-lg shadow-amber-500/20 active:scale-95 transition-all w-fit"
+          >
+            <Zap className="w-4 h-4 fill-current" />
+            <span>Calculadora de Fuerza 1RM</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
 
       {/* Gráfico de Evolución de Fuerza */}

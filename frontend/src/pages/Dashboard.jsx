@@ -352,6 +352,38 @@ export default function Dashboard({ onStartWorkout, onNavigateTab }) {
         </div>
       </div>
 
+      {/* SECCIÓN DESTACADA: 🎯 MEDIDOR DE FUERZA 1RM & RPMS */}
+      <div 
+        onClick={() => onNavigateTab && onNavigateTab('fuerza_1rm')}
+        className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-900 border border-amber-500/40 hover:border-amber-400/80 transition-all cursor-pointer group shadow-xl relative overflow-hidden active:scale-98"
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md shadow-amber-500/20 shrink-0">
+              🎯
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-black text-base sm:text-lg text-white group-hover:text-amber-400">
+                  Calculadora & Medidor de Fuerza 1RM (RPMs)
+                </h3>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-black border border-amber-500/30">
+                  NUEVO
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5 leading-snug">
+                Calcula tu repetición máxima, porcentajes de carga (%1RM), fórmulas científicas y registra tus marcas.
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md">
+            <span>Calcular</span>
+            <ChevronRight className="w-4 h-4 stroke-[3]" />
+          </div>
+        </div>
+      </div>
+
       {/* SECCIÓN NUEVA: 🏃 DEPORTES Y AIRE LIBRE */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
