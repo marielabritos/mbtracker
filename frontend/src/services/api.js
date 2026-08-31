@@ -67,6 +67,7 @@ export const DEFAULT_EJERCICIOS = [
   { id: 57, nombre: "Aductores en Máquina", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
   { id: 58, nombre: "Elevación de Talones (Gemelos de Pie)", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
   { id: 59, nombre: "Elevación de Talones Sentado (Sóleo)", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
+  { id: 120, nombre: "Pantorrilla en Prensa 45°", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
 
   // --- HOMBROS ---
   { id: 60, nombre: "Press Militar con Barra / Mancuernas", grupo_muscular: "Hombros", equipo: "Mancuerna", es_personalizado: false },

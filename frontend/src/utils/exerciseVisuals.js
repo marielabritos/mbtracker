@@ -1,4 +1,4 @@
-// Base de datos de Demostraciones Visuales con GIFs e Imágenes Reales de OpenGym + Gráficos Biomecánicos
+// Base de datos de Demostraciones Visuales con GIFs e Imágenes Reales de OpenGym
 
 export const EXERCISE_VISUALS = {
   // --- PECHO ---
@@ -323,7 +323,53 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al dar el paso atrás; exhala al incorporarte."
   },
 
-  // --- PIERNAS & CUÁDRICEPS ---
+  // --- PIERNAS, CUÁDRICEPS, ADUCTORES & PANTORRILLAS ---
+  "Aductores en Máquina": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0598-oHsrypV.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0598-oHsrypV.jpg",
+    musculo_principal: "Aductores (Muslo Interno)",
+    musculos_secundarios: ["Pectíneo", "Grácil"],
+    tips: [
+      "Espalda bien apoyada en el respaldo.",
+      "Cierra las piernas de manera controlada apretando en el centro 1 segundo.",
+      "Abre lentamente sintiendo el estiramiento del aductor sin dejar caer las placas."
+    ],
+    respiracion: "Exhala al cerrar las piernas; inhala al abrirlas."
+  },
+  "Pantorrilla en Prensa 45°": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0738-qCNVnaU.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0738-qCNVnaU.jpg",
+    musculo_principal: "Gemelos / Gastrocnemio y Sóleo",
+    musculos_secundarios: ["Tendón de Aquiles", "Fascia Plantar"],
+    tips: [
+      "Apoya solo la punta de los pies en el borde inferior de la plataforma de la prensa.",
+      "Extiende los tobillos empujando la plataforma con la punta de los pies.",
+      "Baja profundamente sintiendo el estiramiento completo en la pantorrilla sin flexionar las rodillas."
+    ],
+    respiracion: "Exhala al empujar hacia adelante; inhala al estirar hacia atrás."
+  },
+  "Elevación de Talones (Gemelos de Pie)": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/1372-8ozhUIZ.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/1372-8ozhUIZ.jpg",
+    musculo_principal: "Gemelos (Gastrocnemio)",
+    musculos_secundarios: ["Sóleo", "Fascia Plantar"],
+    tips: [
+      "Eleva los talones al máximo sintiendo la contracción en la pantorrilla.",
+      "Baja lentamente estirando por debajo del escalón."
+    ],
+    respiracion: "Exhala al subir; inhala al bajar."
+  },
+  "Elevación de Talones Sentado (Sóleo)": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0088-ktsFQAZ.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0088-ktsFQAZ.jpg",
+    musculo_principal: "Sóleo (Pantorrilla Profunda)",
+    musculos_secundarios: ["Gemelos"],
+    tips: [
+      "Rodillas a 90° con almohadilla sobre los muslos.",
+      "Eleva los talones con fuerza pausando 1 segundo arriba."
+    ],
+    respiracion: "Exhala al subir; inhala al descender."
+  },
   "Sentadilla con Barra (Back Squat)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0043-qXTaZnJ.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0043-qXTaZnJ.jpg",
@@ -381,16 +427,88 @@ export const EXERCISE_VISUALS = {
     ],
     respiracion: "Exhala al flexionar; inhala al descender."
   },
-  "Elevación de Talones (Gemelos)": {
-    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/1372-8ozhUIZ.gif",
-    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/1372-8ozhUIZ.jpg",
-    musculo_principal: "Gemelos (Gastrocnemio y Sóleo)",
-    musculos_secundarios: ["Fascia Plantar"],
+
+  // --- TRÍCEPS DEDICADOS Y PRECISOS ---
+  "Extensiones de Tríceps en Polea (Cuerda)": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0200-dU605di.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0200-dU605di.jpg",
+    musculo_principal: "Tríceps Braquial (Cabeza Lateral y Medial)",
+    musculos_secundarios: ["Antebrazos"],
     tips: [
-      "Eleva los talones al máximo sintiendo la contracción en la pantorrilla.",
-      "Baja lentamente estirando por debajo del escalón."
+      "Codos pegados a las costillas y hombros fijos.",
+      "Extiende los brazos hacia abajo separando los extremos de la cuerda al final del recorrido.",
+      "Pausa 1 segundo abajo y regresa controlando el peso hasta 90° de flexión."
     ],
-    respiracion: "Exhala al subir; inhala al bajar."
+    respiracion: "Exhala al empujar hacia abajo; inhala al regresar a 90°."
+  },
+  "Extensiones de Tríceps en Polea (Barra Recta)": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0241-gAwDzB3.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0241-gAwDzB3.jpg",
+    musculo_principal: "Tríceps Braquial (Fuerza y Sobrecarga)",
+    musculos_secundarios: ["Antebrazos"],
+    tips: [
+      "Agarre prono con barra recta o V-bar.",
+      "Empuja verticalmente hacia el suelo manteniendo los codos bloqueados a los lados del torso."
+    ],
+    respiracion: "Exhala al extender los codos; inhala al subir."
+  },
+  "Extensión de Tríceps sobre la Cabeza (Copa)": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0194-2IxROQ1.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0194-2IxROQ1.jpg",
+    musculo_principal: "Tríceps (Cabeza Larga)",
+    musculos_secundarios: ["Hombros", "Core"],
+    tips: [
+      "Brazos elevados junto a las orejas con mancuerna o polea con cuerda.",
+      "Flexiona los codos por detrás de la cabeza y extiende completamente hacia arriba.",
+      "Mantén los codos cerrados sin abrirlos en exceso."
+    ],
+    respiracion: "Inhala al bajar detrás de la cabeza; exhala al extender arriba."
+  },
+  "Press Francés con Barra Z": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0060-h8LFzo9.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0060-h8LFzo9.jpg",
+    musculo_principal: "Tríceps Braquial (Skull Crusher)",
+    musculos_secundarios: ["Antebrazos"],
+    tips: [
+      "Acostada en banco plano con barra Z sobre el pecho.",
+      "Baja la barra hacia la frente flexionando únicamente los codos.",
+      "Extiende con fuerza manteniendo los brazos perpendiculares al suelo."
+    ],
+    respiracion: "Inhala al descender hacia la frente; exhala al extender."
+  },
+  "Patada de Tríceps con Mancuerna / Polea": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0333-W6PxUkg.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0333-W6PxUkg.jpg",
+    musculo_principal: "Tríceps (Aislamiento Posterior)",
+    musculos_secundarios: ["Deltoides Posterior"],
+    tips: [
+      "Torso inclinado paralelo al suelo con el codo pegado a la costilla.",
+      "Extiende el antebrazo hacia atrás hasta que el brazo quede recto y aprieta 1 segundo.",
+      "No bajes el codo durante la repetición."
+    ],
+    respiracion: "Exhala al extender el brazo atrás; inhala al flexionar a 90°."
+  },
+  "Fondos entre Bancos para Tríceps": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0019-J60bN17.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0019-J60bN17.jpg",
+    musculo_principal: "Tríceps y Pectoral",
+    musculos_secundarios: ["Deltoides Anterior"],
+    tips: [
+      "Manos apoyadas al ancho de caderas en el borde del banco.",
+      "Baja el cuerpo verticalmente hasta que los codos formen 90° y empuja hacia arriba."
+    ],
+    respiracion: "Inhala al bajar; exhala al empujar arriba."
+  },
+  "Press de Banca Agarre Cerrado": {
+    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0030-J6Dx1Mu.gif",
+    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0030-J6Dx1Mu.jpg",
+    musculo_principal: "Tríceps Braquial y Pectoral",
+    musculos_secundarios: ["Deltoides Anterior"],
+    tips: [
+      "Manos al ancho de hombros sobre la barra.",
+      "Baja la barra rozando los codos contra las costillas y empuja con fuerza de tríceps."
+    ],
+    respiracion: "Inhala al bajar; exhala al empujar."
   },
 
   // --- HOMBROS ---
@@ -428,7 +546,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al tirar hacia la cara; inhala al regresar."
   },
 
-  // --- BRAZOS ---
+  // --- BÍCEPS & ANTEBRAZOS ---
   "Curl de Bíceps con Barra Z": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0447-6TG6x2w.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0447-6TG6x2w.jpg",
@@ -450,28 +568,6 @@ export const EXERCISE_VISUALS = {
       "Controla el descenso completo."
     ],
     respiracion: "Exhala al subir; inhala al bajar."
-  },
-  "Extensiones de Tríceps en Polea (Cuerda)": {
-    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0172-1PK5Uo3.gif",
-    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0172-1PK5Uo3.jpg",
-    musculo_principal: "Tríceps Braquial",
-    musculos_secundarios: ["Antebrazos"],
-    tips: [
-      "Codos fijos a las costillas.",
-      "Empuja la cuerda hacia abajo y ábrela al final para máxima contracción."
-    ],
-    respiracion: "Exhala al extender los brazos; inhala al flexionar."
-  },
-  "Press Francés con Barra Z": {
-    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0060-h8LFzo9.gif",
-    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0060-h8LFzo9.jpg",
-    musculo_principal: "Tríceps (Cabeza Larga)",
-    musculos_secundarios: ["Antebrazos"],
-    tips: [
-      "Acostado en banco, baja la barra hacia la frente flexionando solo los codos.",
-      "Extiende los brazos manteniendo los codos apuntando al techo."
-    ],
-    respiracion: "Inhala al bajar; exhala al extender."
   },
 
   // --- CORE ---
@@ -553,7 +649,7 @@ export const EXERCISE_VISUALS = {
     respiracion: "Respira hondo y relajada en cada cambio."
   },
 
-  // --- REHABILITACIÓN DE RODILLA ---
+  // --- REHABILITACIÓN DE RODILLA & TOBILLO ---
   "Sentadilla Isométrica en Pared (Wall Sit)": {
     specialized_type: "wall_sit",
     musculo_principal: "Cuádriceps y Tendón Rotuliano",
@@ -610,8 +706,6 @@ export const EXERCISE_VISUALS = {
     ],
     respiracion: "Respiración constante y controlada."
   },
-
-  // --- REHABILITACIÓN DE TOBILLO Y PIE ---
   "Dorsiflexión de Tobillo en Pared": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/1368-uL9CsKm.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/1368-uL9CsKm.jpg",
@@ -711,20 +805,60 @@ function normalize(str) {
   return str
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[()/-_,.]/g, " ")
-    .replace(/s+/g, " ")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\(\)\/\-_,\.]/g, " ")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
 export function getExerciseVisual(nombre, grupoMuscular = "General") {
   if (!nombre) return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
 
+  // 1. Coincidencia directa exacta
   if (EXERCISE_VISUALS[nombre]) {
     return EXERCISE_VISUALS[nombre];
   }
 
   const norm = normalize(nombre);
+
+  // --- ADUCTORES & ABDUCTORES ---
+  if (norm.includes("aductor") || norm.includes("adductor") || norm.includes("aduccion") || norm.includes("adduction")) {
+    return EXERCISE_VISUALS["Aductores en Máquina"];
+  }
+
+  // --- PANTORRILLAS / GEMELOS / SÓLEO ---
+  if (norm.includes("pantorrilla") || norm.includes("gemelo") || norm.includes("soleo") || norm.includes("pantorrillas") || norm.includes("gemelos") || norm.includes("calf")) {
+    if (norm.includes("prensa") || norm.includes("press") || norm.includes("sled") || norm.includes("45")) {
+      return EXERCISE_VISUALS["Pantorrilla en Prensa 45°"];
+    }
+    if (norm.includes("sentad") || norm.includes("seated") || norm.includes("banco")) {
+      return EXERCISE_VISUALS["Elevación de Talones Sentado (Sóleo)"];
+    }
+    return EXERCISE_VISUALS["Elevación de Talones (Gemelos de Pie)"];
+  }
+
+  // --- TRÍCEPS (CUALQUIER VARIACIÓN Y EJERCICIO CUSTOM) ---
+  if (norm.includes("tricep") || norm.includes("triceps") || norm.includes("triceps") || norm.includes("frances") || norm.includes("skull crusher") || norm.includes("pushdown") || norm.includes("copa")) {
+    if (norm.includes("copa") || norm.includes("cabeza") || norm.includes("overhead") || norm.includes("tras nuca") || norm.includes("nuca")) {
+      return EXERCISE_VISUALS["Extensión de Tríceps sobre la Cabeza (Copa)"];
+    }
+    if (norm.includes("frances") || norm.includes("french") || norm.includes("skull") || norm.includes("crusher") || norm.includes("rompecraneo")) {
+      return EXERCISE_VISUALS["Press Francés con Barra Z"];
+    }
+    if (norm.includes("patada") || norm.includes("kickback")) {
+      return EXERCISE_VISUALS["Patada de Tríceps con Mancuerna / Polea"];
+    }
+    if (norm.includes("fondo") || norm.includes("dip") || norm.includes("banco") || norm.includes("paralela")) {
+      return EXERCISE_VISUALS["Fondos entre Bancos para Tríceps"];
+    }
+    if (norm.includes("cerrado") || norm.includes("estrecho") || norm.includes("close grip")) {
+      return EXERCISE_VISUALS["Press de Banca Agarre Cerrado"];
+    }
+    if (norm.includes("barra") || norm.includes("recta") || norm.includes("v bar") || norm.includes("v-bar")) {
+      return EXERCISE_VISUALS["Extensiones de Tríceps en Polea (Barra Recta)"];
+    }
+    return EXERCISE_VISUALS["Extensiones de Tríceps en Polea (Cuerda)"];
+  }
 
   // --- GLÚTEOS ---
   if (norm.includes("kas") || norm.includes("kas bridge")) return EXERCISE_VISUALS["Kas Glute Bridge con Barra"];
@@ -732,15 +866,18 @@ export function getExerciseVisual(nombre, grupoMuscular = "General") {
   if (norm.includes("hip thrust")) return EXERCISE_VISUALS["Hip Thrust con Barra"];
   if (norm.includes("glute bridge") || norm.includes("puente")) return EXERCISE_VISUALS["Glute Bridge / Puente de Glúteo en Suelo"];
   if (norm.includes("bulgara") || norm.includes("split squat")) return EXERCISE_VISUALS["Sentadilla Búlgara Enfocada a Glúteo"];
-  if (norm.includes("kickback") || (norm.includes("patada") && norm.includes("gluteo"))) return EXERCISE_VISUALS["Patada de Glúteo en Polea (Cable Kickback)"];
+  if ((norm.includes("patada") || norm.includes("kickback")) && (norm.includes("gluteo") || norm.includes("pierna") || norm.includes("cadera"))) {
+    if (norm.includes("maquina") || norm.includes("cuadrupedia")) return EXERCISE_VISUALS["Patada de Glúteo en Máquina / Cuadrupedia"];
+    return EXERCISE_VISUALS["Patada de Glúteo en Polea (Cable Kickback)"];
+  }
   if (norm.includes("abducc") && norm.includes("maquina")) return EXERCISE_VISUALS["Abducciones de Cadera en Máquina"];
   if (norm.includes("abducc") && norm.includes("polea")) return EXERCISE_VISUALS["Abducciones de Cadera en Polea de Pie"];
-  if (norm.includes("abducc") || (norm.includes("abductor") && norm.includes("banda"))) return EXERCISE_VISUALS["Abducciones con Banda Elástica Sentada"];
+  if (norm.includes("abducc") || norm.includes("abductor")) return EXERCISE_VISUALS["Abducciones de Cadera en Máquina"];
   if (norm.includes("frog") || norm.includes("rana")) return EXERCISE_VISUALS["Frog Pumps con Mancuerna"];
   if (norm.includes("pull through") || norm.includes("pull-through")) return EXERCISE_VISUALS["Cable Pull-Through en Polea Baja"];
   if (norm.includes("b stance") || norm.includes("b-stance") || (norm.includes("rdl") && norm.includes("unilateral"))) return EXERCISE_VISUALS["Peso Muerto Rumano Unilateral (B-Stance RDL)"];
   if (norm.includes("sumo")) return EXERCISE_VISUALS["Sentadilla Sumo con Mancuerna / Kettlebell"];
-  if (norm.includes("step up") || norm.includes("step-up") || norm.includes("cajon")) return EXERCISE_VISUALS["Step-Ups en Cajón para Glúteo"];
+  if (norm.includes("step up") || norm.includes("step-up") || norm.includes("cajon") || norm.includes("banco subida")) return EXERCISE_VISUALS["Step-Ups en Cajón para Glúteo"];
   if (norm.includes("hiperextens")) return EXERCISE_VISUALS["Hiperextensiones a 45° Enfocadas a Glúteo"];
   if (norm.includes("zancada invertida") || norm.includes("lunge invertido")) return EXERCISE_VISUALS["Zancadas Invertidas para Glúteo"];
 
@@ -760,24 +897,21 @@ export function getExerciseVisual(nombre, grupoMuscular = "General") {
   if (norm.includes("fondo") || norm.includes("dip") || norm.includes("paralela")) return EXERCISE_VISUALS["Fondos en Paralelas (Dips)"];
   if (norm.includes("press") && (norm.includes("banca") || norm.includes("pecho") || norm.includes("plano") || norm.includes("barra"))) return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
 
-  // --- PIERNAS ---
+  // --- PIERNAS & CUÁDRICEPS ---
   if (norm.includes("prensa") || norm.includes("leg press")) return EXERCISE_VISUALS["Prensa de Piernas 45°"];
-  if (norm.includes("sentadilla") || norm.includes("squat")) return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
+  if (norm.includes("sentadilla") || norm.includes("squat") || norm.includes("hack")) return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
   if (norm.includes("peso muerto") || norm.includes("rdl") || norm.includes("rumano") || norm.includes("deadlift")) return EXERCISE_VISUALS["Peso Muerto Rumano (RDL)"];
   if (norm.includes("sillon") || (norm.includes("extension") && norm.includes("cuadriceps"))) return EXERCISE_VISUALS["Extensión de Cuádriceps"];
   if (norm.includes("femoral") || norm.includes("isquio")) return EXERCISE_VISUALS["Curl Femoral Tumbado / Sentado"];
-  if (norm.includes("gemelo") || norm.includes("talon") || norm.includes("pantorrilla")) return EXERCISE_VISUALS["Elevación de Talones (Gemelos)"];
 
   // --- HOMBROS ---
   if (norm.includes("lateral") || norm.includes("vuelo") || (norm.includes("elevacion") && norm.includes("hombro"))) return EXERCISE_VISUALS["Elevaciones Laterales"];
   if (norm.includes("pajaro") || norm.includes("face pull") || norm.includes("rear delt")) return EXERCISE_VISUALS["Pájaros / Face Pull en Polea"];
   if (norm.includes("militar") || (norm.includes("press") && norm.includes("hombro"))) return EXERCISE_VISUALS["Press Militar con Barra / Mancuernas"];
 
-  // --- BRAZOS ---
+  // --- BÍCEPS & ANTEBRAZOS ---
   if (norm.includes("martillo")) return EXERCISE_VISUALS["Curl Martillo con Mancuernas"];
   if (norm.includes("curl") || norm.includes("biceps")) return EXERCISE_VISUALS["Curl de Bíceps con Barra Z"];
-  if (norm.includes("frances") || norm.includes("skull crusher")) return EXERCISE_VISUALS["Press Francés con Barra Z"];
-  if (norm.includes("triceps") || norm.includes("pushdown") || norm.includes("cuerda polea")) return EXERCISE_VISUALS["Extensiones de Tríceps en Polea (Cuerda)"];
 
   // --- CORE ---
   if (norm.includes("plancha") || norm.includes("plank")) return EXERCISE_VISUALS["Plancha Abdominal"];
@@ -806,11 +940,11 @@ export function getExerciseVisual(nombre, grupoMuscular = "General") {
   if (grupoLow.includes("gluteo")) return EXERCISE_VISUALS["Hip Thrust con Barra"];
   if (grupoLow.includes("espalda")) return EXERCISE_VISUALS["Remo en Polea Baja (Gironda)"];
   if (grupoLow.includes("pecho")) return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
-  if (grupoLow.includes("pierna")) return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
+  if (grupoLow.includes("brazo") || grupoLow.includes("tricep")) return EXERCISE_VISUALS["Extensiones de Tríceps en Polea (Cuerda)"];
+  if (grupoLow.includes("biceps")) return EXERCISE_VISUALS["Curl de Bíceps con Barra Z"];
   if (grupoLow.includes("hombro")) return EXERCISE_VISUALS["Press Militar con Barra / Mancuernas"];
-  if (grupoLow.includes("brazo") || grupoLow.includes("biceps")) return EXERCISE_VISUALS["Curl de Bíceps con Barra Z"];
-  if (grupoLow.includes("triceps")) return EXERCISE_VISUALS["Extensiones de Tríceps en Polea (Cuerda)"];
   if (grupoLow.includes("core") || grupoLow.includes("abdom")) return EXERCISE_VISUALS["Plancha Abdominal"];
+  if (grupoLow.includes("pierna")) return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
 
   return EXERCISE_VISUALS["Press de Banca Plano con Barra"];
 }
