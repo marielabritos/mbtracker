@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Footprints, Trophy, Plus, Minus, Play, Pause, RotateCcw, 
-  Flame, MapPin, Target, Sparkles, X, CheckCircle2, ChevronRight, TrendingUp
+  Flame, MapPin, Target, Sparkles, X, CheckCircle2, ChevronRight, TrendingUp,
+  Activity, Sliders, Volume2, VolumeX, Smartphone
 } from 'lucide-react';
 
 const STORAGE_STEPS_KEY = 'mbtracker_steps_data';
 const STORAGE_GOAL_KEY = 'mbtracker_steps_goal';
+const STORAGE_SENSITIVITY_KEY = 'mbtracker_steps_sensitivity';
 
 export default function PasosTrackerModal({ isOpen, onClose }) {
   const getTodayStr = () => new Date().toISOString().split('T')[0];
@@ -16,6 +18,14 @@ export default function PasosTrackerModal({ isOpen, onClose }) {
       return saved ? parseInt(saved) : 10000;
     } catch (e) {
       return 10000;
+    }
+  });
+
+  const [sensitivity, setSensitivity] = useState(() => {
+    try {
+      return localStorage.getItem(STORAGE_SENSITIVITY_KEY) || 'alta';
+    } catch (e) {
+      return 'alta';
     }
   });
 
@@ -31,14 +41,30 @@ export default function PasosTrackerModal({ isOpen, onClose }) {
   const todayStr = getTodayStr();
   const currentTodaySteps = allStepsData[todayStr] || 0;
 
-  // Estado del sensor podómetro en vivo
+  // Estado del podómetro en tiempo real
   const [isTrackingLive, setIsTrackingLive] = useState(false);
   const [liveSessionSteps, setLiveSessionSteps] = useState(0);
-  const [sensorPermission, setSensorPermission] = useState('unknown'); // 'granted', 'denied', 'unsupported'
+  const [motionSignal, setMotionSignal] = useState(0);
+  const [sensorStatus, setSensorStatus] = useState('Esperando inicio');
   const [customInputVal, setCustomInputVal] = useState('');
+  const [vibrationEnabled, setVibrationEnabled] = useState(true);
 
-  const lastAccelRef = useRef({ x: 0, y: 0, z: 0 });
+  // Referencias para el algoritmo de detección
+  const gravityEMARef = useRef(9.8);
   const lastStepTimeRef = useRef(0);
+  const isTrackingLiveRef = useRef(isTrackingLive);
+  const sensitivityRef = useRef(sensitivity);
+
+  useEffect(() => {
+    isTrackingLiveRef.current = isTrackingLive;
+  }, [isTrackingLive]);
+
+  useEffect(() => {
+    sensitivityRef.current = sensitivity;
+    try {
+      localStorage.setItem(STORAGE_SENSITIVITY_KEY, sensitivity);
+    } catch (e) {}
+  }, [sensitivity]);
 
   useEffect(() => {
     try {
@@ -52,9 +78,11 @@ export default function PasosTrackerModal({ isOpen, onClose }) {
     } catch (e) {}
   }, [stepsGoal]);
 
-  // Manejar el podómetro en tiempo real con acelerómetro del móvil
+  // Algoritmo de Alta Sensibilidad con Filtro Exponencial Dinámico (EMA)
   useEffect(() => {
     if (!isTrackingLive) return;
+
+    let motionCount = 0;
 
     const handleMotion = (event) => {
       const acc = event.accelerationIncludingGravity || event.acceleration;
@@ -64,16 +92,41 @@ export default function PasosTrackerModal({ isOpen, onClose }) {
       const y = acc.y || 0;
       const z = acc.z || 0;
 
-      // Calcular magnitud del vector de aceleración
+      // Magnitud total del vector de aceleración
       const magnitude = Math.sqrt(x * x + y * y + z * z);
-      const delta = Math.abs(magnitude - 9.8); // Desviación respecto a la gravedad
+      if (isNaN(magnitude) || magnitude === 0) return;
+
+      motionCount++;
+      if (motionCount % 5 === 0) {
+        setSensorStatus('🟢 Sensor Activo • Detectando movimiento');
+      }
+
+      // Estimar la componente estática (gravedad) con filtro pasa-bajos
+      gravityEMARef.current = gravityEMARef.current * 0.88 + magnitude * 0.12;
+
+      // Señal dinámica del paso sin la gravedad estática
+      const delta = Math.abs(magnitude - gravityEMARef.current);
+      setMotionSignal(Math.min(100, Math.round(delta * 25)));
 
       const now = Date.now();
-      // Umbral de paso humano típico (delta > 3.0 m/s^2) y al menos 280ms entre pasos
-      if (delta > 2.8 && now - lastStepTimeRef.current > 280) {
+      // Umbrales calibrados para respuesta inmediata y natural:
+      // 'alta' (muy sensible para llevar en mano/bolsillo suave): 0.85 m/s²
+      // 'normal' (caminata estándar): 1.15 m/s²
+      // 'firme' (trote / running): 1.55 m/s²
+      const sens = sensitivityRef.current;
+      const threshold = sens === 'alta' ? 0.80 : sens === 'normal' ? 1.15 : 1.55;
+      const minInterval = sens === 'alta' ? 240 : 270;
+
+      if (delta > threshold && (now - lastStepTimeRef.current > minInterval)) {
         lastStepTimeRef.current = now;
         setLiveSessionSteps((prev) => prev + 1);
         addStepsToToday(1);
+
+        if (vibrationEnabled && typeof navigator !== 'undefined' && navigator.vibrate) {
+          try {
+            navigator.vibrate(20);
+          } catch (e) {}
+        }
       }
     };
 
@@ -81,27 +134,26 @@ export default function PasosTrackerModal({ isOpen, onClose }) {
     return () => {
       window.removeEventListener('devicemotion', handleMotion);
     };
-  }, [isTrackingLive]);
+  }, [isTrackingLive, vibrationEnabled]);
 
   const requestSensorPermissionAndStart = async () => {
-    // Para dispositivos iOS 13+ (Safari requiere permiso explícito para devicemotion)
+    // Permisos iOS 13+ Safari
     if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
       try {
         const response = await DeviceMotionEvent.requestPermission();
         if (response === 'granted') {
-          setSensorPermission('granted');
+          setSensorStatus('🟢 Sensor conectado');
           setIsTrackingLive(true);
         } else {
-          setSensorPermission('denied');
-          alert('Permiso de sensor denegado. Puedes sumar pasos manualmente.');
+          setSensorStatus('⚠️ Permiso denegado por el navegador');
+          alert('Permiso de movimiento denegado. Puedes sumar pasos manualmente o revisar los ajustes de Safari.');
         }
       } catch (err) {
-        console.warn('Sensor permission error', err);
+        console.warn('Sensor permission err', err);
         setIsTrackingLive(true);
       }
     } else {
-      // Android / navegadores estándar
-      setSensorPermission('granted');
+      setSensorStatus('🟢 Sensor conectado');
       setIsTrackingLive(true);
     }
   };
@@ -131,8 +183,8 @@ export default function PasosTrackerModal({ isOpen, onClose }) {
 
   // Cálculos derivados
   const percentComplete = Math.min(100, Math.round((currentTodaySteps / stepsGoal) * 100));
-  const kmEstimated = (currentTodaySteps * 0.00076).toFixed(2); // ~0.76 metros por paso promedio
-  const kcalEstimated = Math.round(currentTodaySteps * 0.04); // ~0.04 kcal por paso
+  const kmEstimated = (currentTodaySteps * 0.00076).toFixed(2);
+  const kcalEstimated = Math.round(currentTodaySteps * 0.04);
 
   // Últimos 7 días para historial
   const last7Days = [];
@@ -148,7 +200,7 @@ export default function PasosTrackerModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
       <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
         
         {/* Header */}
@@ -161,7 +213,7 @@ export default function PasosTrackerModal({ isOpen, onClose }) {
               <div className="flex items-center gap-2">
                 <h3 className="font-black text-white text-base">Podómetro & Pasos Diarios</h3>
                 <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-black border border-emerald-500/30">
-                  MB ACTIVIDAD
+                  ALTA PRECISIÓN
                 </span>
               </div>
               <p className="text-xs text-slate-400">Contador en tiempo real y registro de actividad diaria</p>
@@ -235,30 +287,67 @@ export default function PasosTrackerModal({ isOpen, onClose }) {
           </div>
 
           {/* Podómetro Activo en Tiempo Real */}
-          <div className="p-4 sm:p-5 rounded-3xl bg-slate-950 border border-slate-800 space-y-3">
+          <div className="p-4 sm:p-5 rounded-3xl bg-slate-950 border border-slate-800 space-y-3.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-                <h4 className="font-bold text-white text-sm">Podómetro en Vivo (Caminar con el Celular)</h4>
+                <span className={`w-2.5 h-2.5 rounded-full ${isTrackingLive ? 'bg-emerald-400 animate-ping' : 'bg-slate-600'}`} />
+                <h4 className="font-bold text-white text-sm">Podómetro en Vivo (Caminar con Celular)</h4>
               </div>
               {isTrackingLive && (
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30">
-                  Contando
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold border border-emerald-500/30">
+                  +{liveSessionSteps} pasos
                 </span>
               )}
             </div>
 
-            <p className="text-xs text-slate-400">
-              {isTrackingLive 
-                ? 'El sensor del celular está detectando tus pasos activamente mientras caminas o trotas.' 
-                : 'Activa el podómetro para que el teléfono cuente tus pasos automáticamente al moverte.'}
-            </p>
+            {/* Ajuste de Sensibilidad */}
+            <div className="flex items-center justify-between p-2.5 bg-slate-900/80 rounded-2xl border border-slate-800 text-xs">
+              <span className="text-slate-400 flex items-center gap-1.5 font-bold">
+                <Sliders className="w-3.5 h-3.5 text-sky-400" />
+                <span>Sensibilidad:</span>
+              </span>
+              <div className="flex items-center gap-1">
+                {[
+                  { id: 'alta', label: 'Alta (Mano/Bolsillo)', desc: 'Rápida' },
+                  { id: 'normal', label: 'Normal', desc: 'Estándar' },
+                  { id: 'firme', label: 'Firme (Trote)', desc: 'Firme' }
+                ].map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setSensitivity(s.id)}
+                    className={`px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all ${
+                      sensitivity === s.id
+                        ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/30'
+                        : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Diagnóstico de Movimiento en Vivo */}
+            {isTrackingLive && (
+              <div className="p-3 bg-slate-900/60 rounded-2xl border border-slate-800/80 space-y-1.5 text-xs">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-emerald-400 font-bold">{sensorStatus}</span>
+                  <span className="text-slate-400 font-mono">Intensidad: {motionSignal}%</span>
+                </div>
+                <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden">
+                  <div 
+                    className="bg-emerald-400 h-full rounded-full transition-all duration-150"
+                    style={{ width: `${motionSignal}%` }}
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center gap-2">
               {!isTrackingLive ? (
                 <button
                   onClick={requestSensorPermissionAndStart}
-                  className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-98 transition-all"
+                  className="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-98 transition-all hover:brightness-110"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   <span>Activar Podómetro en Vivo</span>
@@ -266,7 +355,7 @@ export default function PasosTrackerModal({ isOpen, onClose }) {
               ) : (
                 <button
                   onClick={() => setIsTrackingLive(false)}
-                  className="flex-1 py-3 rounded-2xl bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30 font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-98"
+                  className="flex-1 py-3.5 rounded-2xl bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30 font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-98"
                 >
                   <Pause className="w-4 h-4" />
                   <span>Pausar Podómetro</span>

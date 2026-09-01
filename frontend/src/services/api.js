@@ -624,26 +624,32 @@ export const api = {
     const updatedSesiones = [nuevaSesion, ...currentSesiones];
     setStored('sesiones', updatedSesiones);
 
-    // Actualizar PRs
-    const updatedPRs = [...currentPRs];
-    seriesProcessed.filter(s => s.es_pr).forEach(s => {
-      const idx = updatedPRs.findIndex(p => p.ejercicio_id === s.ejercicio_id);
-      const prObj = {
-        ejercicio_id: s.ejercicio_id,
-        nombre_ejercicio: s.ejercicio.nombre,
-        grupo_muscular: s.ejercicio.grupo_muscular,
-        peso_maximo_kg: s.peso_kg,
-        repeticiones: s.repeticiones,
-        fecha: new Date().toISOString(),
-        sesion_id: nuevaSesion.id
-      };
-      if (idx >= 0) {
-        updatedPRs[idx] = prObj;
-      } else {
-        updatedPRs.push(prObj);
-      }
-    });
-    setStored('prs', updatedPRs);
+    // Actualizar PRs de forma segura
+    try {
+      const updatedPRs = [...currentPRs];
+      seriesProcessed.filter(s => s.es_pr).forEach(s => {
+        const idx = updatedPRs.findIndex(p => p.ejercicio_id === s.ejercicio_id);
+        const ejNom = s.ejercicio?.nombre || s.nombre_ejercicio || 'Ejercicio';
+        const ejGrp = s.ejercicio?.grupo_muscular || 'General';
+        const prObj = {
+          ejercicio_id: s.ejercicio_id,
+          nombre_ejercicio: ejNom,
+          grupo_muscular: ejGrp,
+          peso_maximo_kg: s.peso_kg,
+          repeticiones: s.repeticiones,
+          fecha: new Date().toISOString(),
+          sesion_id: nuevaSesion.id
+        };
+        if (idx >= 0) {
+          updatedPRs[idx] = prObj;
+        } else {
+          updatedPRs.push(prObj);
+        }
+      });
+      setStored('prs', updatedPRs);
+    } catch (prErr) {
+      console.warn("PR update non-blocking error", prErr);
+    }
 
     try {
       await request('/api/sesiones', { method: 'POST', body: JSON.stringify(data) });
