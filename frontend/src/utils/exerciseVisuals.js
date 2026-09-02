@@ -15,15 +15,31 @@ export const EXERCISE_VISUALS = {
     respiracion: "Inhala al bajar la barra; exhala al empujar hacia arriba."
   },
   "Press de Banca Plano con Mancuernas": {
-    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0289-XpTj7B7.gif",
-    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0289-XpTj7B7.jpg",
-    musculo_principal: "Pectoral Mayor (Mayor rango de movimiento)",
-    musculos_secundarios: ["Deltoides Anterior", "Tríceps"],
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bench_Press/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bench_Press/0.jpg",
+    frames: ["Dumbbell_Bench_Press/0.jpg", "Dumbbell_Bench_Press/1.jpg"],
+    musculo_principal: "Pectoral Mayor (Medio e Inferior)",
+    musculos_secundarios: ["Deltoides Anterior", "Tríceps Braquial"],
     tips: [
-      "Baja las mancuernas sintiendo el estiramiento en el pecho.",
-      "Empuja hacia arriba en trayectoria ligeramente convergente sin chocar las pesas."
+      "Apoya los pies firmes y mantén las escápulas retraídas contra el banco.",
+      "Baja las mancuernas con los codos a 45°-60° del torso sintiendo el estiramiento en el pecho.",
+      "Empuja hacia arriba en trayectoria convergente sin chocar las pesas arriba."
     ],
-    respiracion: "Inhala al descender; exhala al empujar arriba."
+    respiracion: "Inhala al descender; exhala al presionar hacia arriba."
+  },
+  "Empuje en Polea para Pecho": {
+    gif: "/exercises/empuje_polea_pecho.png",
+    img: "/exercises/empuje_polea_pecho.png",
+    frames: ["Standing_Cable_Chest_Press/0.jpg", "Standing_Cable_Chest_Press/1.jpg", "/exercises/empuje_polea_pecho.png"],
+    musculo_principal: "Pectoral Mayor y Core",
+    musculos_secundarios: ["Deltoides Anterior", "Tríceps Braquial", "Core / Abdomen"],
+    tips: [
+      "Colócate de pie o de rodillas en el centro de las poleas con un pie adelante para máxima estabilidad.",
+      "Agarra las manijas a la altura media del pecho.",
+      "Empuja hacia adelante extendiendo los brazos y apretando el pecho al final del movimiento.",
+      "Vuelve controlando la tensión sin que los codos sobrepasen en exceso la línea de la espalda."
+    ],
+    respiracion: "Inhala al flexionar los codos; exhala al empujar hacia adelante."
   },
   "Press Inclinado con Barra": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0047-e16r95y.gif",
@@ -96,16 +112,31 @@ export const EXERCISE_VISUALS = {
 
   // --- ESPALDA ---
   "Jalón al Pecho en Polea": {
-    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/2330-LEprlgG.gif",
-    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/2330-LEprlgG.jpg",
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg",
+    frames: ["Wide-Grip_Lat_Pulldown/0.jpg", "Wide-Grip_Lat_Pulldown/1.jpg"],
     musculo_principal: "Dorsal Ancho (Amplitud de Espalda)",
-    musculos_secundarios: ["Bíceps", "Redondo Mayor", "Trapecio"],
+    musculos_secundarios: ["Bíceps", "Redondo Mayor", "Deltoides Posterior"],
     tips: [
-      "Pecho erguido mirando ligeramente hacia arriba.",
-      "Tira con los codos hacia abajo y adentro hasta la altura de la clavícula.",
-      "Controla la subida sintiendo el estiramiento dorsal completo."
+      "Siéntate firme y toma la barra con agarre prono más ancho que los hombros.",
+      "Tira de la barra hacia la clavícula sacando pecho y apretando las escápulas.",
+      "Evita balancear la espalda hacia atrás en exceso."
     ],
-    respiracion: "Exhala al bajar la barra al pecho; inhala al subir."
+    respiracion: "Inhala al estirar arriba; exhala al bajar la barra al pecho."
+  },
+  "Jalón al Pecho Agarre Supino / Estrecho": {
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Underhand_Cable_Pulldowns/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Underhand_Cable_Pulldowns/0.jpg",
+    frames: ["Underhand_Cable_Pulldowns/0.jpg", "Underhand_Cable_Pulldowns/1.jpg"],
+    musculo_principal: "Dorsal Ancho y Bíceps (Tracción Vertical)",
+    musculos_secundarios: ["Bíceps Braquial", "Redondo Mayor", "Trapecio Medio"],
+    tips: [
+      "Ajusta los rodillos para fijar bien los muslos y mantener el torso erguido con leve inclinación.",
+      "Toma la barra con agarre supino (palmas mirando hacia tu cuerpo) al ancho de hombros.",
+      "Tracciona hacia la parte alta del pecho guiando el movimiento con los codos hacia abajo y atrás.",
+      "Controla el ascenso extendiendo los brazos sin encoger los hombros."
+    ],
+    respiracion: "Exhala al traccionar la barra hacia el pecho; inhala al extender los brazos."
   },
   "Dominadas (Pull-ups)": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0652-3tP5t2H.gif",
@@ -535,15 +566,32 @@ export const EXERCISE_VISUALS = {
     respiracion: "Exhala al subir; inhala al bajar en 2 segundos."
   },
   "Pájaros / Face Pull en Polea": {
-    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/1022-tc5dYrf.gif",
-    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/1022-tc5dYrf.jpg",
+    gif: "/exercises/face_pull.png",
+    img: "/exercises/face_pull.png",
+    frames: ["Face_Pull/0.jpg", "Face_Pull/1.jpg", "/exercises/face_pull.png"],
     musculo_principal: "Deltoides Posterior y Manguito Rotador",
-    musculos_secundarios: ["Romboides", "Trapecio"],
+    musculos_secundarios: ["Trapecio Medio e Inferior", "Romboides"],
     tips: [
-      "Polea alta con cuerda. Tira hacia la frente separando los extremos de la cuerda.",
-      "Abre los codos y rota los hombros hacia afuera."
+      "Coloca la polea a la altura del rostro o superior con cuerda doble.",
+      "Agarre neutro con los pulgares hacia atrás.",
+      "Tira de la cuerda hacia la cara/ojos separando las manos y llevando los codos hacia afuera.",
+      "Aprieta los deltoides posteriores y escápulas 1 segundo antes de regresar."
     ],
-    respiracion: "Exhala al tirar hacia la cara; inhala al regresar."
+    respiracion: "Exhala al traccionar hacia la cara; inhala al volver a la posición inicial."
+  },
+  "Face Pull en Polea con Cuerda (Pull Face)": {
+    gif: "/exercises/face_pull.png",
+    img: "/exercises/face_pull.png",
+    frames: ["Face_Pull/0.jpg", "Face_Pull/1.jpg", "/exercises/face_pull.png"],
+    musculo_principal: "Deltoides Posterior y Manguito Rotador",
+    musculos_secundarios: ["Trapecio Medio e Inferior", "Romboides"],
+    tips: [
+      "Coloca la polea a la altura del rostro o superior con cuerda doble.",
+      "Agarre neutro con los pulgares hacia atrás.",
+      "Tira de la cuerda hacia la cara/ojos separando las manos y llevando los codos hacia afuera.",
+      "Aprieta los deltoides posteriores y escápulas 1 segundo antes de regresar."
+    ],
+    respiracion: "Exhala al traccionar hacia la cara; inhala al volver a la posición inicial."
   },
 
   // --- BÍCEPS & ANTEBRAZOS ---
@@ -885,10 +933,12 @@ export function getExerciseVisual(nombre, grupoMuscular = "General") {
   if (norm.includes("remo") && (norm.includes("polea") || norm.includes("gironda") || norm.includes("sentado") || norm.includes("baja"))) return EXERCISE_VISUALS["Remo en Polea Baja (Gironda)"];
   if (norm.includes("serrucho") || (norm.includes("remo") && (norm.includes("mancuerna") || norm.includes("unilateral")))) return EXERCISE_VISUALS["Remo Unilateral con Mancuerna (Serrucho)"];
   if (norm.includes("remo")) return EXERCISE_VISUALS["Remo con Barra"];
-  if (norm.includes("jalon") || (norm.includes("polea") && norm.includes("pecho")) || norm.includes("lat pulldown")) return EXERCISE_VISUALS["Jalón al Pecho en Polea"];
+  if (norm.includes("jalon") && (norm.includes("supino") || norm.includes("estrech") || norm.includes("cerrad") || norm.includes("chin"))) return EXERCISE_VISUALS["Jalón al Pecho Agarre Supino / Estrecho"];
+  if (norm.includes("jalon") || (norm.includes("polea") && norm.includes("pecho") && !norm.includes("empuje") && !norm.includes("press")) || norm.includes("lat pulldown")) return EXERCISE_VISUALS["Jalón al Pecho en Polea"];
   if (norm.includes("dominada") || norm.includes("pull up") || norm.includes("chin up")) return EXERCISE_VISUALS["Dominadas (Pull-ups)"];
 
   // --- PECHO ---
+  if ((norm.includes("empuje") || norm.includes("press")) && norm.includes("polea") && norm.includes("pecho")) return EXERCISE_VISUALS["Empuje en Polea para Pecho"];
   if (norm.includes("inclinad") && (norm.includes("press") || norm.includes("mancuerna") || norm.includes("pecho"))) return EXERCISE_VISUALS["Press Inclinado con Mancuernas"];
   if (norm.includes("mancuerna") && (norm.includes("press") || norm.includes("pecho"))) return EXERCISE_VISUALS["Press de Banca Plano con Mancuernas"];
   if (norm.includes("smith") || norm.includes("chest press")) return EXERCISE_VISUALS["Press en Máquina Smith / Chest Press"];
@@ -906,7 +956,7 @@ export function getExerciseVisual(nombre, grupoMuscular = "General") {
 
   // --- HOMBROS ---
   if (norm.includes("lateral") || norm.includes("vuelo") || (norm.includes("elevacion") && norm.includes("hombro"))) return EXERCISE_VISUALS["Elevaciones Laterales"];
-  if (norm.includes("pajaro") || norm.includes("face pull") || norm.includes("rear delt")) return EXERCISE_VISUALS["Pájaros / Face Pull en Polea"];
+  if (norm.includes("face pull") || norm.includes("pull face") || norm.includes("pajaro") || norm.includes("rear delt")) return EXERCISE_VISUALS["Face Pull en Polea con Cuerda (Pull Face)"] || EXERCISE_VISUALS["Pájaros / Face Pull en Polea"];
   if (norm.includes("militar") || (norm.includes("press") && norm.includes("hombro"))) return EXERCISE_VISUALS["Press Militar con Barra / Mancuernas"];
 
   // --- BÍCEPS & ANTEBRAZOS ---

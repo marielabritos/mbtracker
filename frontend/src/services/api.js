@@ -135,6 +135,8 @@ export const DEFAULT_EJERCICIOS = [
   { id: 112, nombre: "Estiramiento de Glúteo y Piramidal en Suelo", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
   { id: 113, nombre: "Estiramiento de Dorsales en Barra / Pared", grupo_muscular: "Estiramientos", equipo: "Peso Corporal", es_personalizado: false },
 
+    { id: 130, nombre: "Empuje en Polea para Pecho", grupo_muscular: "Pecho", equipo: "Polea", es_personalizado: false },
+  { id: 131, nombre: "Face Pull en Polea con Cuerda (Pull Face)", grupo_muscular: "Hombros", equipo: "Polea", es_personalizado: false },
   // --- CARDIO, RUNNING, BICICLETA & MONTAÑISMO ---
   { id: 114, nombre: "Carrera / Running Continuo", grupo_muscular: "Cardio", equipo: "Aire Libre / Cinta", es_personalizado: false },
   { id: 115, nombre: "Series de Velocidad / Intervalos Running", grupo_muscular: "Cardio", equipo: "Aire Libre", es_personalizado: false },
