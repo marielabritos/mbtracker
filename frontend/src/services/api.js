@@ -514,28 +514,48 @@ export const api = {
   },
 
   // --- RUTINAS ---
-        getRutinas: async () => {
+          getRutinas: async () => {
     const deletedIds = getStored('deleted_rutina_ids', []);
     let localRutinas = getStored('rutinas', null);
 
-    if (!localRutinas || !Array.isArray(localRutinas) || localRutinas.length === 0) {
-      localRutinas = DEFAULT_RUTINAS;
+    // Auto-migración para teléfonos con versión vieja en caché (que tenían 8 ejercicios)
+    const SYNC_KEY = "mbtracker_sync_fullbody_11_v7";
+    const synced = getStored('synced_version_key', null);
+
+    if (!localRutinas || !Array.isArray(localRutinas) || localRutinas.length === 0 || synced !== SYNC_KEY) {
+      if (localRutinas && Array.isArray(localRutinas)) {
+        localRutinas = localRutinas.map(r => {
+          if (r.id === 1002 || r.nombre?.toLowerCase().includes('full body')) {
+            return DEFAULT_RUTINAS[0]; // Actualizar a los 11 ejercicios oficiales
+          }
+          return r;
+        });
+        if (!localRutinas.some(r => r.id === 1002 || r.nombre?.toLowerCase().includes('full body'))) {
+          localRutinas.unshift(DEFAULT_RUTINAS[0]);
+        }
+      } else {
+        localRutinas = [...DEFAULT_RUTINAS];
+      }
+      setStored('synced_version_key', SYNC_KEY);
       setStored('rutinas', localRutinas);
-      return localRutinas.filter(r => !deletedIds.includes(r.id));
     }
 
-    // Mantener las personalizaciones del usuario como máxima prioridad
+    // Mantener las personalizaciones y asegurar que la rutina Full Body tenga sus 11 ejercicios
     const map = new Map();
-    // 1. Base oficial
     DEFAULT_RUTINAS.forEach(r => {
       if (!deletedIds.includes(r.id)) {
         map.set(r.id, r);
       }
     });
-    // 2. Rutinas guardadas y editadas por el usuario
+
     localRutinas.forEach(r => {
       if (!deletedIds.includes(r.id)) {
-        map.set(r.id, r);
+        // Si en el celular la rutina Full Body tiene menos de 11 ejercicios, actualizar a los 11 completos
+        if ((r.id === 1002 || r.nombre?.toLowerCase().includes('full body')) && (r.dias?.[0]?.ejercicios?.length || 0) < 11) {
+          map.set(1002, DEFAULT_RUTINAS[0]);
+        } else {
+          map.set(r.id, r);
+        }
       }
     });
 
