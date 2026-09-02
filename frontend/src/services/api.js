@@ -268,21 +268,27 @@ const getApiBase = () => {
 
 const API_BASE = getApiBase();
 
+const memoryStore = {};
+
 const getStored = (key, defaultVal) => {
   try {
-    const val = localStorage.getItem(`mbtracker_${key}`);
-    return val ? JSON.parse(val) : defaultVal;
-  } catch (e) {
-    return defaultVal;
-  }
+    if (typeof localStorage !== 'undefined') {
+      const val = localStorage.getItem(`mbtracker_${key}`);
+      return val ? JSON.parse(val) : defaultVal;
+    }
+  } catch (e) {}
+  return memoryStore[key] !== undefined ? memoryStore[key] : defaultVal;
 };
 
 const setStored = (key, val) => {
   try {
-    localStorage.setItem(`mbtracker_${key}`, JSON.stringify(val));
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(`mbtracker_${key}`, JSON.stringify(val));
+    }
   } catch (e) {
     console.warn("Storage full or blocked", e);
   }
+  memoryStore[key] = val;
 };
 
 async function request(endpoint, options = {}) {
@@ -508,29 +514,32 @@ export const api = {
   },
 
   // --- RUTINAS ---
-      getRutinas: async () => {
+        getRutinas: async () => {
     const deletedIds = getStored('deleted_rutina_ids', []);
     let localRutinas = getStored('rutinas', null);
 
     if (!localRutinas || !Array.isArray(localRutinas) || localRutinas.length === 0) {
       localRutinas = DEFAULT_RUTINAS;
+      setStored('rutinas', localRutinas);
+      return localRutinas.filter(r => !deletedIds.includes(r.id));
     }
 
-    // Auto-fusionar y actualizar rutinas oficiales completas (Full Body, Tren Inferior, etc.)
-    const mergedMap = new Map();
-    DEFAULT_RUTINAS.forEach(r => mergedMap.set(r.id, r));
+    // Mantener las personalizaciones del usuario como máxima prioridad
+    const map = new Map();
+    // 1. Base oficial
+    DEFAULT_RUTINAS.forEach(r => {
+      if (!deletedIds.includes(r.id)) {
+        map.set(r.id, r);
+      }
+    });
+    // 2. Rutinas guardadas y editadas por el usuario
     localRutinas.forEach(r => {
       if (!deletedIds.includes(r.id)) {
-        if (r.id === 1002 || r.nombre?.toLowerCase().includes('full body')) {
-          // Asegurar que la rutina Full Body tenga todos los 11 ejercicios oficiales
-          mergedMap.set(1002, DEFAULT_RUTINAS[0]);
-        } else {
-          mergedMap.set(r.id, { ...(mergedMap.get(r.id) || {}), ...r });
-        }
+        map.set(r.id, r);
       }
     });
 
-    const cleanList = Array.from(mergedMap.values()).filter(r => !deletedIds.includes(r.id));
+    const cleanList = Array.from(map.values()).filter(r => !deletedIds.includes(r.id));
     setStored('rutinas', cleanList);
     return cleanList;
   },
@@ -585,45 +594,45 @@ export const api = {
     return nuevaLocal;
   },
 
-  updateRutina: async (id, data) => {
+    updateRutina: async (id, data) => {
+    const targetId = parseInt(id) || id;
     const deletedIds = getStored('deleted_rutina_ids', []);
-    setStored('deleted_rutina_ids', deletedIds.filter(x => x !== parseInt(id)));
+    setStored('deleted_rutina_ids', deletedIds.filter(x => x !== targetId));
     setStored('has_custom_rutinas', true);
 
     const catalog = getStored('ejercicios', DEFAULT_EJERCICIOS);
     const current = getStored('rutinas', DEFAULT_RUTINAS);
     let found = false;
 
+    const formattedRutina = {
+      ...data,
+      id: targetId,
+      dias: (data.dias || []).map((d, dIdx) => ({
+        ...d,
+        id: d.id || Date.now() + dIdx + 1,
+        orden: dIdx + 1,
+        ejercicios: (d.ejercicios || []).map((e, eIdx) => {
+          const ejObj = e.ejercicio || catalog.find(x => x.id === e.ejercicio_id) || { id: e.ejercicio_id, nombre: e.nombre || 'Ejercicio', grupo_muscular: 'General' };
+          return {
+            ...e,
+            id: e.id || Date.now() + dIdx * 100 + eIdx + 1,
+            orden: eIdx + 1,
+            ejercicio: ejObj
+          };
+        })
+      }))
+    };
+
     const updatedList = current.map(r => {
-      if (r.id === parseInt(id) || String(r.id) === String(id)) {
+      if (r.id === targetId || String(r.id) === String(id) || (r.nombre && data.nombre && r.nombre.trim().toLowerCase() === data.nombre.trim().toLowerCase())) {
         found = true;
-        return {
-          ...r,
-          ...data,
-          dias: (data.dias || []).map((d, dIdx) => ({
-            ...d,
-            id: d.id || Date.now() + dIdx + 1,
-            orden: dIdx + 1,
-            ejercicios: (d.ejercicios || []).map((e, eIdx) => {
-              const ejObj = e.ejercicio || catalog.find(x => x.id === e.ejercicio_id) || { id: e.ejercicio_id, nombre: 'Ejercicio', grupo_muscular: 'General' };
-              return {
-                ...e,
-                id: e.id || Date.now() + dIdx * 100 + eIdx + 1,
-                orden: eIdx + 1,
-                ejercicio: ejObj
-              };
-            })
-          }))
-        };
+        return formattedRutina;
       }
       return r;
     });
 
     if (!found) {
-      updatedList.push({
-        ...data,
-        id: parseInt(id) || Date.now()
-      });
+      updatedList.unshift(formattedRutina);
     }
 
     setStored('rutinas', updatedList);
@@ -632,24 +641,7 @@ export const api = {
       await request(`/api/rutinas/${id}`, { method: 'PUT', body: JSON.stringify(data) });
     } catch (e) {}
 
-    return updatedList.find(r => r.id === parseInt(id) || String(r.id) === String(id));
-  },
-
-  deleteRutina: async (id) => {
-    setStored('has_custom_rutinas', true);
-    const deletedIds = getStored('deleted_rutina_ids', []);
-    if (!deletedIds.includes(parseInt(id))) {
-      setStored('deleted_rutina_ids', [...deletedIds, parseInt(id)]);
-    }
-
-    const current = getStored('rutinas', DEFAULT_RUTINAS);
-    const filtered = current.filter(r => r.id !== parseInt(id) && String(r.id) !== String(id));
-    setStored('rutinas', filtered);
-
-    try {
-      await request(`/api/rutinas/${id}`, { method: 'DELETE' });
-    } catch (e) {}
-    return { success: true };
+    return formattedRutina;
   },
 
   // --- SESIONES DE ENTRENAMIENTO (FINALIZAR & GUARDAR) ---
