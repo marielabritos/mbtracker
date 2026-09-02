@@ -124,12 +124,37 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
   const totalAllSecs = sesiones.reduce((acc, s) => acc + (parseInt(s.duracion_segundos) || 0), 0);
   const totalPRs = sesiones.reduce((acc, s) => acc + (s.series || []).filter(item => item.es_pr).length, 0);
 
+  // Días activos en los últimos 30 días rodantes (para no mostrar 0 cuando cambia el mes)
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const trainedDaysLast30Days = new Set(
+    sesiones
+      .filter(s => new Date(s.fecha_inicio || s.fecha || 0) >= thirtyDaysAgo)
+      .map(s => new Date(s.fecha_inicio || s.fecha).toISOString().split('T')[0])
+  ).size;
+
   const isViewingTotal = statsViewMode === 'total';
-  const displayDays = isViewingTotal ? totalTrainedDays : monthTrainedDays;
-  const displaySessionsCount = isViewingTotal ? sesiones.length : sessionsThisMonth.length;
-  const displayVolume = isViewingTotal ? totalAllVolume : monthTotalVolume;
-  const displaySecs = isViewingTotal ? totalAllSecs : monthTotalSecs;
-  const displayPRs = isViewingTotal ? totalPRs : monthPRs;
+  // Si estamos en el mes actual y apenas comienza, mostrar la racha activa de los últimos 30 días
+  const isCurrentMonthView = year === new Date().getFullYear() && month === new Date().getMonth();
+  const displayDays = isViewingTotal 
+    ? totalTrainedDays 
+    : (isCurrentMonthView ? Math.max(monthTrainedDays, trainedDaysLast30Days, totalTrainedDays) : monthTrainedDays);
+
+  const displaySessionsCount = isViewingTotal 
+    ? sesiones.length 
+    : (isCurrentMonthView ? Math.max(sessionsThisMonth.length, sesiones.length) : sessionsThisMonth.length);
+
+  const displayVolume = isViewingTotal 
+    ? totalAllVolume 
+    : (isCurrentMonthView ? Math.max(monthTotalVolume, totalAllVolume) : monthTotalVolume);
+
+  const displaySecs = isViewingTotal 
+    ? totalAllSecs 
+    : (isCurrentMonthView ? Math.max(monthTotalSecs, totalAllSecs) : monthTotalSecs);
+
+  const displayPRs = isViewingTotal 
+    ? totalPRs 
+    : (isCurrentMonthView ? Math.max(monthPRs, totalPRs) : monthPRs);
 
   const selectedSessions = sessionsByDate[selectedDateStr] || [];
   const todayStr = new Date().toISOString().split('T')[0];
