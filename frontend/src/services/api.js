@@ -150,6 +150,31 @@ export const DEFAULT_EJERCICIOS = [
 
 export const DEFAULT_RUTINAS = [
   {
+    id: 1002,
+    nombre: "Rutina Full Body (Cuerpo Completo)",
+    descripcion: "Fuerza, tono muscular e hipertrofia global con empuje en polea, jalón supino, face pull, hip thrust y piernas.",
+    duracion_semanas: "6 semanas",
+    duracion_estimada_minutos: 55,
+    activa: true,
+    dias: [
+      {
+        id: 2001,
+        nombre: "Día 1: Full Body Fuerza & Tren Superior/Inferior",
+        orden: 1,
+        ejercicios: [
+          { id: 201, ejercicio_id: 130, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 1, ejercicio: { id: 130, nombre: "Empuje en Polea para Pecho", grupo_muscular: "Pecho", equipo: "Polea" } },
+          { id: 202, ejercicio_id: 2, series_objetivo: 3, reps_objetivo: "8-10", descanso_segundos: 90, orden: 2, ejercicio: { id: 2, nombre: "Press de Banca Plano con Mancuernas", grupo_muscular: "Pecho", equipo: "Mancuerna" } },
+          { id: 203, ejercicio_id: 15, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 3, ejercicio: { id: 15, nombre: "Jalón al Pecho Agarre Supino / Estrecho", grupo_muscular: "Espalda", equipo: "Polea" } },
+          { id: 204, ejercicio_id: 131, series_objetivo: 3, reps_objetivo: "12-15", descanso_segundos: 60, orden: 4, ejercicio: { id: 131, nombre: "Face Pull en Polea con Cuerda (Pull Face)", grupo_muscular: "Hombros", equipo: "Polea" } },
+          { id: 205, ejercicio_id: 26, series_objetivo: 4, reps_objetivo: "8-10", descanso_segundos: 120, orden: 5, ejercicio: { id: 26, nombre: "Hip Thrust con Barra", grupo_muscular: "Glúteos", equipo: "Barra" } },
+          { id: 206, ejercicio_id: 48, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 6, ejercicio: { id: 48, nombre: "Prensa de Piernas 45°", grupo_muscular: "Piernas", equipo: "Máquina" } },
+          { id: 207, ejercicio_id: 77, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 7, ejercicio: { id: 77, nombre: "Extensiones de Tríceps en Polea (Cuerda)", grupo_muscular: "Brazos", equipo: "Polea" } },
+          { id: 208, ejercicio_id: 84, series_objetivo: 3, reps_objetivo: "45s", descanso_segundos: 60, orden: 8, ejercicio: { id: 84, nombre: "Plancha Abdominal", grupo_muscular: "Core", equipo: "Peso Corporal" } }
+        ]
+      }
+    ]
+  },
+  {
     id: 10,
     nombre: "Tren Inferior - Glúteos, cuadriceps, pantorillas",
     descripcion: "Hipertrofia y carga progresiva",
@@ -224,9 +249,11 @@ export const DEFAULT_RUTINAS = [
 ];
 
 const getApiBase = () => {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
+  try {
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) {
+      return import.meta.env.VITE_API_URL;
+    }
+  } catch (e) {}
   if (typeof window !== 'undefined' && window.location.hostname) {
     const host = window.location.hostname;
     if (host !== 'localhost' && host !== '127.0.0.1' && !host.includes('vercel.app')) {
@@ -478,35 +505,26 @@ export const api = {
   },
 
   // --- RUTINAS ---
-  getRutinas: async () => {
+    getRutinas: async () => {
     const deletedIds = getStored('deleted_rutina_ids', []);
-    const localRutinas = getStored('rutinas', null);
+    let localRutinas = getStored('rutinas', null);
 
-    if (localRutinas && Array.isArray(localRutinas) && localRutinas.length > 0) {
-      let cleanLocal = localRutinas.filter(r => !deletedIds.includes(r.id));
-      
-      // Auto-sincronizar: Si falta la rutina oficial de Tren Inferior, la incorporamos
-      const hasTrenInferior = cleanLocal.some(r => r.nombre.includes('Tren Inferior') || r.id === 10);
-      if (!hasTrenInferior && !deletedIds.includes(10)) {
-        cleanLocal = [DEFAULT_RUTINAS[0], ...cleanLocal];
-        setStored('rutinas', cleanLocal);
-      }
-      
-      request('/api/rutinas').catch(() => {});
-      return cleanLocal;
+    if (!localRutinas || !Array.isArray(localRutinas) || localRutinas.length === 0) {
+      localRutinas = DEFAULT_RUTINAS;
     }
 
-    try {
-      const data = await request('/api/rutinas');
-      if (Array.isArray(data) && data.length > 0) {
-        const cleanData = data.filter(r => !deletedIds.includes(r.id));
-        setStored('rutinas', cleanData);
-        return cleanData;
+    // Auto-fusionar rutinas oficiales (Full Body, Tren Inferior, etc.)
+    const mergedMap = new Map();
+    DEFAULT_RUTINAS.forEach(r => mergedMap.set(r.id, r));
+    localRutinas.forEach(r => {
+      if (!deletedIds.includes(r.id)) {
+        mergedMap.set(r.id, { ...(mergedMap.get(r.id) || {}), ...r });
       }
-    } catch (e) {}
+    });
 
-    setStored('rutinas', DEFAULT_RUTINAS);
-    return DEFAULT_RUTINAS.filter(r => !deletedIds.includes(r.id));
+    const cleanList = Array.from(mergedMap.values()).filter(r => !deletedIds.includes(r.id));
+    setStored('rutinas', cleanList);
+    return cleanList;
   },
 
   resetRutinasToOfficial: async () => {
