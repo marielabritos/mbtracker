@@ -22,6 +22,7 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
   const [sesiones, setSesiones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedSessionId, setExpandedSessionId] = useState(null);
+  const [statsViewMode, setStatsViewMode] = useState('mes'); // 'mes' | 'total'
 
   useEffect(() => {
     loadSesiones();
@@ -115,6 +116,21 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
   const monthTotalSecs = sessionsThisMonth.reduce((acc, s) => acc + (parseInt(s.duracion_segundos) || 0), 0);
   const monthPRs = sessionsThisMonth.reduce((acc, s) => acc + (s.series || []).filter(item => item.es_pr).length, 0);
 
+  // Métricas globales / todos los tiempos (desde 26-08)
+  const totalTrainedDays = new Set(sesiones.map(s => new Date(s.fecha_inicio || s.fecha).toISOString().split('T')[0])).size;
+  const totalAllVolume = sesiones.reduce((acc, s) => {
+    return acc + (s.series || []).reduce((sAcc, item) => sAcc + ((parseFloat(item.peso_kg) || 0) * (parseInt(item.repeticiones) || 0)), 0);
+  }, 0);
+  const totalAllSecs = sesiones.reduce((acc, s) => acc + (parseInt(s.duracion_segundos) || 0), 0);
+  const totalPRs = sesiones.reduce((acc, s) => acc + (s.series || []).filter(item => item.es_pr).length, 0);
+
+  const isViewingTotal = statsViewMode === 'total';
+  const displayDays = isViewingTotal ? totalTrainedDays : monthTrainedDays;
+  const displaySessionsCount = isViewingTotal ? sesiones.length : sessionsThisMonth.length;
+  const displayVolume = isViewingTotal ? totalAllVolume : monthTotalVolume;
+  const displaySecs = isViewingTotal ? totalAllSecs : monthTotalSecs;
+  const displayPRs = isViewingTotal ? totalPRs : monthPRs;
+
   const selectedSessions = sessionsByDate[selectedDateStr] || [];
   const todayStr = new Date().toISOString().split('T')[0];
 
@@ -131,6 +147,7 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
 
   return (
     <div className="max-w-4xl mx-auto px-3 sm:px-4 py-6 space-y-6 pb-28 font-sans">
+      
       {/* Encabezado Principal */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -145,16 +162,66 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
           </div>
         </div>
 
+        <div className="flex items-center gap-2">
+          {/* Switcher Mes Actual vs Racha Total */}
+          <div className="flex items-center p-1 bg-slate-900 rounded-2xl border border-slate-800 text-xs">
+            <button
+              onClick={() => setStatsViewMode('mes')}
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+                !isViewingTotal ? 'bg-sky-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              {MONTH_NAMES[month]}
+            </button>
+            <button
+              onClick={() => setStatsViewMode('total')}
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+                isViewingTotal ? 'bg-sky-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Racha Total (26-08)
+            </button>
+          </div>
+
+          <button
+            onClick={handleGoToday}
+            className="px-3.5 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all w-fit"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+            <span>Ir a Hoy</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Banner de Racha Activa y Próximo Día */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-sky-950/50 border border-emerald-500/40 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/20 shrink-0">
+            🔥
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="font-black text-white text-base">¡Llevas 3 días completados de gimnasio!</h3>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black border border-emerald-500/30">
+                INICIO: 26-08
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 mt-0.5">
+              Completaste los días <strong>26-08, 28-08 y 31-08</strong>. ¡Hoy cuando entrenes será tu <strong>Día 4</strong>! 💪
+            </p>
+          </div>
+        </div>
+
         <button
-          onClick={handleGoToday}
-          className="px-4 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all w-fit"
+          onClick={() => onStartWorkout && onStartWorkout({ tipo: 'gimnasio', nombre: 'Día 4: Entrenamiento de Fuerza & Glúteos' })}
+          className="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all shrink-0"
         >
-          <Sparkles className="w-3.5 h-3.5 text-sky-400" />
-          <span>Ir a Hoy</span>
+          <Play className="w-4 h-4 fill-current" />
+          <span>Iniciar Día 4 de Hoy</span>
         </button>
       </div>
 
-      {/* Resumen Mensual de Constancia */}
+      {/* Resumen Mensual / Global de Constancia */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 space-y-1">
           <div className="flex items-center justify-between text-slate-400 text-xs font-bold">
@@ -162,41 +229,41 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="flex items-baseline gap-1 pt-1">
-            <span className="text-2xl sm:text-3xl font-black text-white font-mono">{monthTrainedDays}</span>
-            <span className="text-xs text-slate-500 font-bold">/ {daysInMonth} días</span>
+            <span className="text-2xl sm:text-3xl font-black text-white font-mono">{displayDays}</span>
+            <span className="text-xs text-slate-500 font-bold">/ {isViewingTotal ? '30 días' : `${daysInMonth} días`}</span>
           </div>
           <span className="text-[10px] text-emerald-400 font-bold block">
-            {Math.round((monthTrainedDays / daysInMonth) * 100)}% de constancia
+            {isViewingTotal ? 'Racha activa desde 26-08' : `${Math.round((displayDays / daysInMonth) * 100)}% de constancia`}
           </span>
         </div>
 
         <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 space-y-1">
           <div className="flex items-center justify-between text-slate-400 text-xs font-bold">
-            <span>Sesiones Mes</span>
+            <span>Sesiones {isViewingTotal ? 'Totales' : 'Mes'}</span>
             <Dumbbell className="w-4 h-4 text-sky-400" />
           </div>
           <div className="flex items-baseline gap-1 pt-1">
-            <span className="text-2xl sm:text-3xl font-black text-white font-mono">{sessionsThisMonth.length}</span>
+            <span className="text-2xl sm:text-3xl font-black text-white font-mono">{displaySessionsCount}</span>
             <span className="text-xs text-slate-500 font-bold">completadas</span>
           </div>
           <span className="text-[10px] text-sky-400 font-bold block">
-            {Math.round(monthTotalSecs / 3600 * 10) / 10} horas totales
+            {Math.round(displaySecs / 3600 * 10) / 10} horas totales
           </span>
         </div>
 
         <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 space-y-1">
           <div className="flex items-center justify-between text-slate-400 text-xs font-bold">
-            <span>Volumen Mensual</span>
+            <span>Volumen {isViewingTotal ? 'Total' : 'Mensual'}</span>
             <TrendingUp className="w-4 h-4 text-amber-400" />
           </div>
           <div className="flex items-baseline gap-1 pt-1">
             <span className="text-2xl sm:text-3xl font-black text-white font-mono">
-              {Math.round(monthTotalVolume / 1000)}k
+              {(displayVolume / 1000).toFixed(1)}k
             </span>
             <span className="text-xs text-slate-500 font-bold">kg</span>
           </div>
           <span className="text-[10px] text-amber-400 font-bold block">
-            {monthTotalVolume.toLocaleString('es-ES')} kg levantados
+            {displayVolume.toLocaleString('es-ES')} kg levantados
           </span>
         </div>
 
@@ -206,11 +273,11 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
             <Trophy className="w-4 h-4 text-amber-400 fill-amber-400" />
           </div>
           <div className="flex items-baseline gap-1 pt-1">
-            <span className="text-2xl sm:text-3xl font-black text-amber-400 font-mono">{monthPRs}</span>
-            <span className="text-xs text-slate-500 font-bold">nuevas marcas</span>
+            <span className="text-2xl sm:text-3xl font-black text-amber-400 font-mono">{displayPRs}</span>
+            <span className="text-xs text-slate-500 font-bold">marcas</span>
           </div>
           <span className="text-[10px] text-slate-400 font-bold block">
-            en {MONTH_NAMES[month]} {year}
+            {isViewingTotal ? 'Fuerza en ascenso' : `en ${MONTH_NAMES[month]} ${year}`}
           </span>
         </div>
       </div>
@@ -218,94 +285,115 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
       {/* Tarjeta Calendario Mensual */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 sm:p-6 space-y-4 shadow-xl">
         {/* Selector de Mes */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CalendarIcon className="w-5 h-5 text-sky-400" />
-            <h3 className="font-black text-lg sm:text-xl text-white tracking-tight">
+            <h3 className="font-black text-lg sm:text-xl text-white">
               {MONTH_NAMES[month]} <span className="text-sky-400 font-mono">{year}</span>
             </h3>
+            {monthTrainedDays > 0 && (
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-bold">
+                {monthTrainedDays} días entrenados
+              </span>
+            )}
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-2xl border border-slate-800">
             <button
               onClick={handlePrevMonth}
-              className="p-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-all active:scale-95"
-              title="Mes Anterior"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              title="Mes anterior"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={handleNextMonth}
-              className="p-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-all active:scale-95"
-              title="Mes Siguiente"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              title="Mes siguiente"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Encabezado Días de la Semana */}
-        <div className="grid grid-cols-7 gap-1 text-center text-xs font-black uppercase text-slate-500 tracking-wider pb-1">
-          {DAY_NAMES.map((d) => (
-            <div key={d} className="py-1">{d}</div>
+        {/* Encabezados Días de la Semana */}
+        <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center text-xs font-bold text-slate-400 uppercase tracking-wider py-1 border-b border-slate-800">
+          {DAY_NAMES.map((d, i) => (
+            <div key={i} className={i === 0 || i === 6 ? 'text-rose-400/80' : ''}>
+              {d}
+            </div>
           ))}
         </div>
 
-        {/* Cuadrícula de Días */}
+        {/* Días del Calendario */}
         <div className="grid grid-cols-7 gap-1 sm:gap-2">
           {calendarDays.map((item, idx) => {
+            const hasSessions = !!sessionsByDate[item.dateStr];
+            const isSelected = selectedDateStr === item.dateStr;
             const isToday = item.dateStr === todayStr;
-            const isSelected = item.dateStr === selectedDateStr;
             const daySessions = sessionsByDate[item.dateStr] || [];
-            const hasWorkout = daySessions.length > 0;
+            const dayVol = daySessions.reduce((acc, s) => {
+              return acc + (s.series || []).reduce((sAcc, it) => sAcc + ((parseFloat(it.peso_kg) || 0) * (parseInt(it.repeticiones) || 0)), 0);
+            }, 0);
 
             return (
               <button
                 key={idx}
-                type="button"
                 onClick={() => setSelectedDateStr(item.dateStr)}
-                className={`min-h-[60px] sm:min-h-[76px] p-1.5 sm:p-2 rounded-2xl flex flex-col justify-between items-start transition-all relative text-left select-none ${
-                  !item.isCurrentMonth ? 'opacity-30 bg-slate-950/40' : 'bg-slate-950/80 hover:bg-slate-800/60 border border-slate-800/80'
-                } ${
-                  isSelected ? 'ring-2 ring-sky-400 bg-sky-500/10 border-sky-500/50' : ''
-                } ${
-                  isToday ? 'border-amber-500/50 bg-amber-500/5' : ''
+                className={`min-h-[64px] sm:min-h-[82px] p-1.5 sm:p-2 rounded-2xl border flex flex-col justify-between text-left transition-all relative group ${
+                  isSelected
+                    ? 'border-sky-400 bg-sky-950/40 shadow-lg shadow-sky-500/10'
+                    : isToday
+                      ? 'border-amber-400/60 bg-amber-500/10'
+                      : hasSessions
+                        ? 'border-emerald-500/40 bg-emerald-950/20 hover:border-emerald-400'
+                        : item.isCurrentMonth
+                          ? 'border-slate-800/80 bg-slate-950/50 hover:border-slate-700'
+                          : 'border-transparent bg-slate-950/20 opacity-30'
                 }`}
               >
-                {/* Número del día + Indicador Hoy */}
-                <div className="w-full flex items-center justify-between">
-                  <span className={`text-xs sm:text-sm font-mono font-black ${
-                    isToday ? 'text-amber-400' : isSelected ? 'text-sky-300' : item.isCurrentMonth ? 'text-white' : 'text-slate-500'
-                  }`}>
+                <div className="flex items-center justify-between w-full">
+                  <span
+                    className={`text-xs sm:text-sm font-mono font-bold ${
+                      isToday
+                        ? 'px-1.5 py-0.5 rounded-md bg-amber-400 text-slate-950 font-black'
+                        : hasSessions
+                          ? 'text-emerald-400'
+                          : item.isCurrentMonth
+                            ? 'text-slate-300'
+                            : 'text-slate-600'
+                    }`}
+                  >
                     {item.dayNum}
                   </span>
-                  {isToday && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+
+                  {hasSessions && (
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   )}
                 </div>
 
-                {/* Badges de entrenamientos en ese día */}
-                <div className="w-full mt-1 flex flex-wrap gap-1 items-center">
-                  {daySessions.slice(0, 2).map((s, sIdx) => (
-                    <span 
-                      key={sIdx} 
-                      className="text-[11px] sm:text-xs" 
-                      title={s.nombre}
-                    >
-                      {getSportIcon(s)}
-                    </span>
-                  ))}
-                  {daySessions.length > 2 && (
-                    <span className="text-[9px] font-mono font-bold text-sky-400">
-                      +{daySessions.length - 2}
-                    </span>
-                  )}
-                </div>
+                {/* Badges de Sesión en la casilla */}
+                {hasSessions && (
+                  <div className="space-y-0.5 mt-1">
+                    {daySessions.slice(0, 1).map((s, sIdx) => (
+                      <div
+                        key={sIdx}
+                        className="text-[9px] sm:text-[10px] font-bold text-emerald-300 bg-emerald-500/20 border border-emerald-500/30 px-1.5 py-0.5 rounded-lg truncate flex items-center gap-1"
+                      >
+                        <span>{getSportIcon(s)}</span>
+                        <span className="truncate">{s.nombre}</span>
+                      </div>
+                    ))}
+                    {dayVol > 0 && (
+                      <span className="text-[8px] sm:text-[9px] text-slate-400 font-mono block truncate">
+                        {(dayVol / 1000).toFixed(1)}k kg
+                      </span>
+                    )}
+                  </div>
+                )}
 
-                {/* Barra de estado inferior */}
-                {hasWorkout && (
-                  <div className="w-full mt-auto pt-1">
-                    <div className="w-full h-1 rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 shadow-sm" />
+                {isToday && !hasSessions && (
+                  <div className="text-[9px] text-amber-300 font-bold truncate">
+                    ⭐ Hoy (Día 4)
                   </div>
                 )}
               </button>
@@ -315,156 +403,112 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
       </div>
 
       {/* Detalle del Día Seleccionado */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 space-y-4 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+      <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3 flex-wrap gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-xl">📋</span>
+            <span className="text-2xl">📋</span>
             <div>
-              <h3 className="font-bold text-base sm:text-lg text-white">
-                Entrenamientos del {new Date(selectedDateStr + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+              <h3 className="font-bold text-white text-base sm:text-lg">
+                Sesiones del {new Date(`${selectedDateStr}T12:00:00`).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
               </h3>
-              <span className="text-xs text-slate-400 font-mono">
-                {selectedSessions.length === 0 ? 'Sin sesiones registradas en esta fecha' : `${selectedSessions.length} sesión(es) completada(s)`}
-              </span>
+              <p className="text-xs text-slate-400">
+                {selectedSessions.length === 0
+                  ? 'No hay registros guardados en esta fecha'
+                  : `${selectedSessions.length} sesión(es) completada(s)`}
+              </p>
             </div>
           </div>
 
-          {onStartWorkout && (
-            <button
-              onClick={() => onStartWorkout({ nombre: 'Entrenamiento Libre', tipo: 'gimnasio' })}
-              className="px-4 py-2 rounded-2xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all w-fit"
-            >
-              <Plus className="w-4 h-4 stroke-[3]" />
-              <span>Registrar Entrenamiento</span>
-            </button>
-          )}
+          <button
+            onClick={() => onStartWorkout && onStartWorkout({ tipo: 'gimnasio', nombre: 'Entrenamiento del Día' })}
+            className="px-3.5 py-2 rounded-2xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all"
+          >
+            <Plus className="w-4 h-4 stroke-[3]" />
+            <span>Entrenar Este Día</span>
+          </button>
         </div>
 
         {selectedSessions.length === 0 ? (
-          <div className="p-8 text-center bg-slate-950/40 rounded-2xl border border-slate-800/60 space-y-2">
-            <CalendarIcon className="w-8 h-8 text-slate-600 mx-auto" />
-            <p className="text-sm font-bold text-slate-300">No hay sesiones en esta fecha</p>
-            <p className="text-xs text-slate-500">Toca "Registrar Entrenamiento" o realiza una sesión para verla aquí.</p>
+          <div className="p-8 text-center space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto text-xl text-slate-400">
+              ☕
+            </div>
+            <p className="text-xs sm:text-sm text-slate-400 max-w-sm mx-auto">
+              Día de descanso o sin sesión registrada. Toca "Entrenar Este Día" para iniciar tu sesión.
+            </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {selectedSessions.map((sesion) => {
-              const isExpanded = expandedSessionId === sesion.id;
-              const isOutdoor = sesion.tipo === 'outdoor_cardio' || sesion.deporte;
-              const totalVol = (sesion.series || []).reduce((acc, s) => acc + ((parseFloat(s.peso_kg) || 0) * (parseInt(s.repeticiones) || 0)), 0);
+          <div className="space-y-3">
+            {selectedSessions.map((s, idx) => {
+              const isExpanded = expandedSessionId === s.id;
+              const hasPR = (s.series || []).some(item => item.es_pr);
+              const vol = (s.series || []).reduce((acc, it) => acc + ((parseFloat(it.peso_kg) || 0) * (parseInt(it.repeticiones) || 0)), 0);
 
               return (
-                <div
-                  key={sesion.id}
-                  className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3 shadow-md"
-                >
-                  <div 
-                    onClick={() => setExpandedSessionId(isExpanded ? null : sesion.id)}
-                    className="flex items-center justify-between gap-3 cursor-pointer"
+                <div key={s.id || idx} className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden">
+                  <div
+                    onClick={() => setExpandedSessionId(isExpanded ? null : s.id)}
+                    className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-900/50 transition-colors"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-xl shrink-0">
-                        {getSportIcon(sesion)}
+                    <div className="flex items-center gap-3 min-w-0 pr-2">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-xl shrink-0">
+                        {getSportIcon(s)}
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="font-black text-white text-base">{sesion.nombre}</h4>
-                          {sesion.animo && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-[10px] font-bold text-amber-300">
-                              <span>{sesion.animo.emoji || '🔥'}</span>
-                              <span>{sesion.animo.label || sesion.animo}</span>
+                          <h4 className="font-bold text-white text-sm sm:text-base truncate">{s.nombre}</h4>
+                          {hasPR && (
+                            <span className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 text-[10px] font-bold">
+                              🏆 PR
+                            </span>
+                          )}
+                          {s.animo && (
+                            <span className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-bold">
+                              {s.animo.emoji || '🔥'} {s.animo.label || s.animo}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3 text-xs text-slate-400 font-mono mt-0.5">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5 text-sky-400" />
-                            {Math.round((sesion.duracion_segundos || 0) / 60)} min
-                          </span>
-                          {!isOutdoor && totalVol > 0 && (
-                            <span className="flex items-center gap-1 text-emerald-400">
-                              <Dumbbell className="w-3.5 h-3.5" />
-                              {Math.round(totalVol)} kg
+
+                        <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
+                          {s.duracion_segundos > 0 && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3.5 h-3.5" />
+                              {Math.round(s.duracion_segundos / 60)} min
                             </span>
                           )}
-                          {isOutdoor && (
-                            <span className="flex items-center gap-1 text-amber-400">
-                              <MapPin className="w-3.5 h-3.5" />
-                              {sesion.distancia_km} km
+                          {vol > 0 && (
+                            <span className="flex items-center gap-1 font-mono text-emerald-400 font-bold">
+                              <Dumbbell className="w-3.5 h-3.5" />
+                              {vol.toLocaleString('es-ES')} kg
                             </span>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        className="p-2 rounded-xl text-slate-400 hover:text-white"
-                      >
-                        {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                      </button>
+                    <div className="text-slate-400 p-1">
+                      {isExpanded ? <ChevronUp className="w-5 h-5 text-sky-400" /> : <ChevronDown className="w-5 h-5" />}
                     </div>
                   </div>
 
-                  {/* Detalle desplegable de series / ejercicios */}
-                  {isExpanded && (
-                    <div className="pt-3 border-t border-slate-800 space-y-3 animate-in fade-in duration-200">
-                      {isOutdoor ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-900/60 p-3 rounded-2xl border border-slate-800 text-xs font-mono">
-                          <div>
-                            <span className="text-slate-400 block text-[10px] uppercase">Ritmo / Velocidad</span>
-                            <span className="font-black text-white">{sesion.ritmo_min_km || `${sesion.velocidad_kmh} km/h`}</span>
+                  {isExpanded && s.series && s.series.length > 0 && (
+                    <div className="border-t border-slate-800 p-4 bg-slate-900/60 space-y-2">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                        Series Registradas ({s.series.length}):
+                      </span>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {s.series.map((item, itIdx) => (
+                          <div
+                            key={itIdx}
+                            className={`p-2 rounded-xl border text-xs font-mono flex items-center justify-between ${
+                              item.es_pr ? 'bg-amber-950/20 border-amber-500/40 text-amber-300' : 'bg-slate-950 border-slate-800 text-slate-300'
+                            }`}
+                          >
+                            <span className="truncate max-w-[120px] font-sans font-bold">{item.ejercicio?.nombre || item.nombre_ejercicio || `Serie #${item.numero_serie}`}</span>
+                            <span className="font-bold shrink-0">{item.peso_kg}kg × {item.repeticiones}</span>
                           </div>
-                          <div>
-                            <span className="text-slate-400 block text-[10px] uppercase">Calorías</span>
-                            <span className="font-black text-amber-400">{sesion.calorias_quemadas || 0} kcal</span>
-                          </div>
-                          <div>
-                            <span className="text-slate-400 block text-[10px] uppercase">Desnivel</span>
-                            <span className="font-black text-emerald-400">+{sesion.desnivel_positivo_m || 0} m</span>
-                          </div>
-                          <div>
-                            <span className="text-slate-400 block text-[10px] uppercase">Pulsaciones</span>
-                            <span className="font-black text-rose-400">{sesion.frecuencia_cardiaca_media || '--'} bpm</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          {(sesion.series || []).map((serie, sIdx) => (
-                            <div
-                              key={sIdx}
-                              className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/70 border border-slate-800/80 text-xs"
-                            >
-                              <div className="flex items-center gap-2">
-                                <span className="w-5 h-5 rounded-md bg-slate-800 text-slate-300 font-mono font-bold flex items-center justify-center text-[10px] shrink-0">
-                                  {serie.numero_serie || sIdx + 1}
-                                </span>
-                                <div>
-                                  <span className="font-bold text-white block">
-                                    {serie.ejercicio?.nombre || serie.nombre_ejercicio || 'Ejercicio'}
-                                  </span>
-                                  {serie.notas && (
-                                    <span className="text-[10px] text-amber-300/90 font-medium block mt-0.5">
-                                      📝 {serie.notas}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-
-                              <div className="flex items-center gap-3 font-mono font-bold">
-                                <span className="text-sky-400">{serie.peso_kg} kg</span>
-                                <span className="text-slate-400">× {serie.repeticiones} reps</span>
-                                {serie.es_pr && (
-                                  <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] font-black border border-amber-500/30">
-                                    PR
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -473,6 +517,7 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
           </div>
         )}
       </div>
+
     </div>
   );
 }

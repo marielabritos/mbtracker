@@ -280,6 +280,80 @@ async function request(endpoint, options = {}) {
   }
 }
 
+export const DEFAULT_SESIONES_HISTORIAL = [
+  {
+    id: 1724700000000,
+    nombre: "Rutina Full Body (Cuerpo Completo)",
+    tipo: "gimnasio",
+    fecha_inicio: "2026-08-26T18:00:00.000Z",
+    fecha_fin: "2026-08-26T18:50:00.000Z",
+    duracion_segundos: 3000,
+    duracion_minutos: 50,
+    animo: { emoji: "🔥", label: "A tope", nivel: 5 },
+    energia: 5,
+    checkin_notas: "Inicio de ciclo de entrenamiento en gimnasio (26-08)",
+    completado: true,
+    series: [
+      { id: 1, ejercicio_id: 130, numero_serie: 1, peso_kg: 20, repeticiones: 12, completada: true, es_pr: true, ejercicio: { id: 130, nombre: "Empuje en Polea para Pecho", grupo_muscular: "Pecho" } },
+      { id: 2, ejercicio_id: 130, numero_serie: 2, peso_kg: 25, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 130, nombre: "Empuje en Polea para Pecho", grupo_muscular: "Pecho" } },
+      { id: 3, ejercicio_id: 2, numero_serie: 1, peso_kg: 12, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 2, nombre: "Press de Banca Plano con Mancuernas", grupo_muscular: "Pecho" } },
+      { id: 4, ejercicio_id: 2, numero_serie: 2, peso_kg: 14, repeticiones: 8, completada: true, es_pr: true, ejercicio: { id: 2, nombre: "Press de Banca Plano con Mancuernas", grupo_muscular: "Pecho" } },
+      { id: 5, ejercicio_id: 15, numero_serie: 1, peso_kg: 35, repeticiones: 12, completada: true, es_pr: true, ejercicio: { id: 15, nombre: "Jalón al Pecho Agarre Supino / Estrecho", grupo_muscular: "Espalda" } },
+      { id: 6, ejercicio_id: 15, numero_serie: 2, peso_kg: 40, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 15, nombre: "Jalón al Pecho Agarre Supino / Estrecho", grupo_muscular: "Espalda" } },
+      { id: 7, ejercicio_id: 131, numero_serie: 1, peso_kg: 15, repeticiones: 15, completada: true, es_pr: true, ejercicio: { id: 131, nombre: "Face Pull en Polea con Cuerda (Pull Face)", grupo_muscular: "Hombros" } },
+      { id: 8, ejercicio_id: 26, numero_serie: 1, peso_kg: 50, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 26, nombre: "Hip Thrust con Barra", grupo_muscular: "Glúteos" } },
+      { id: 9, ejercicio_id: 26, numero_serie: 2, peso_kg: 60, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 26, nombre: "Hip Thrust con Barra", grupo_muscular: "Glúteos" } },
+      { id: 10, ejercicio_id: 48, numero_serie: 1, peso_kg: 80, repeticiones: 12, completada: true, es_pr: true, ejercicio: { id: 48, nombre: "Prensa de Piernas 45°", grupo_muscular: "Piernas" } },
+      { id: 11, ejercicio_id: 48, numero_serie: 2, peso_kg: 100, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 48, nombre: "Prensa de Piernas 45°", grupo_muscular: "Piernas" } }
+    ]
+  },
+  {
+    id: 1724872800000,
+    nombre: "Rutina Push / Pull (Fuerza & Tren Superior)",
+    tipo: "gimnasio",
+    fecha_inicio: "2026-08-28T18:00:00.000Z",
+    fecha_fin: "2026-08-28T18:55:00.000Z",
+    duracion_segundos: 3300,
+    duracion_minutos: 55,
+    animo: { emoji: "⚡", label: "Con energía", nivel: 4 },
+    energia: 4,
+    checkin_notas: "Día 2: Buen foco en empuje y tracción (28-08)",
+    completado: true,
+    series: [
+      { id: 12, ejercicio_id: 1, numero_serie: 1, peso_kg: 30, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 1, nombre: "Press de Banca Plano con Barra", grupo_muscular: "Pecho" } },
+      { id: 13, ejercicio_id: 1, numero_serie: 2, peso_kg: 35, repeticiones: 8, completada: true, es_pr: true, ejercicio: { id: 1, nombre: "Press de Banca Plano con Barra", grupo_muscular: "Pecho" } },
+      { id: 14, ejercicio_id: 60, numero_serie: 1, peso_kg: 10, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 60, nombre: "Press Militar con Mancuernas", grupo_muscular: "Hombros" } },
+      { id: 15, ejercicio_id: 63, numero_serie: 1, peso_kg: 6, repeticiones: 12, completada: true, es_pr: true, ejercicio: { id: 63, nombre: "Elevaciones Laterales con Mancuernas", grupo_muscular: "Hombros" } },
+      { id: 16, ejercicio_id: 18, numero_serie: 1, peso_kg: 35, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 18, nombre: "Remo con Barra", grupo_muscular: "Espalda" } },
+      { id: 17, ejercicio_id: 77, numero_serie: 1, peso_kg: 15, repeticiones: 12, completada: true, es_pr: true, ejercicio: { id: 77, nombre: "Extensiones de Tríceps en Polea (Cuerda)", grupo_muscular: "Brazos" } }
+    ]
+  },
+  {
+    id: 1725132000000,
+    nombre: "Tren Inferior - Glúteos, cuadriceps, pantorillas",
+    tipo: "gimnasio",
+    fecha_inicio: "2026-08-31T18:00:00.000Z",
+    fecha_fin: "2026-08-31T18:52:00.000Z",
+    duracion_segundos: 3120,
+    duracion_minutos: 52,
+    animo: { emoji: "🔥", label: "A tope", nivel: 5 },
+    energia: 5,
+    checkin_notas: "Día 3: Gran congestión de glúteos y cuádriceps (31-08)",
+    completado: true,
+    series: [
+      { id: 18, ejercicio_id: 48, numero_serie: 1, peso_kg: 80, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 48, nombre: "Prensa de Piernas 45°", grupo_muscular: "Piernas" } },
+      { id: 19, ejercicio_id: 48, numero_serie: 2, peso_kg: 100, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 48, nombre: "Prensa de Piernas 45°", grupo_muscular: "Piernas" } },
+      { id: 20, ejercicio_id: 120, numero_serie: 1, peso_kg: 60, repeticiones: 12, completada: true, es_pr: true, ejercicio: { id: 120, nombre: "Pantorrilla en Prensa 45°", grupo_muscular: "Piernas" } },
+      { id: 21, ejercicio_id: 26, numero_serie: 1, peso_kg: 60, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 26, nombre: "Hip Thrust con Barra", grupo_muscular: "Glúteos" } },
+      { id: 22, ejercicio_id: 26, numero_serie: 2, peso_kg: 70, repeticiones: 8, completada: true, es_pr: true, ejercicio: { id: 26, nombre: "Hip Thrust con Barra", grupo_muscular: "Glúteos" } },
+      { id: 23, ejercicio_id: 33, numero_serie: 1, peso_kg: 50, repeticiones: 12, completada: true, es_pr: true, ejercicio: { id: 33, nombre: "Abducciones de Cadera en Máquina", grupo_muscular: "Glúteos" } },
+      { id: 24, ejercicio_id: 58, numero_serie: 1, peso_kg: 40, repeticiones: 12, completada: true, es_pr: true, ejercicio: { id: 58, nombre: "Elevación de Talones (Gemelos de Pie)", grupo_muscular: "Piernas" } },
+      { id: 25, ejercicio_id: 77, numero_serie: 1, peso_kg: 17.5, repeticiones: 10, completada: true, es_pr: true, ejercicio: { id: 77, nombre: "Extensiones de Tríceps en Polea (Cuerda)", grupo_muscular: "Brazos" } },
+      { id: 26, ejercicio_id: 81, numero_serie: 1, peso_kg: 0, repeticiones: 12, completada: true, es_pr: true, ejercicio: { id: 81, nombre: "Fondos entre Bancos para Tríceps", grupo_muscular: "Brazos" } }
+    ]
+  }
+];
+
 export const api = {
   // --- ESTADÍSTICAS & DASHBOARD ---
   getDashboardStats: async () => {
@@ -554,7 +628,18 @@ export const api = {
 
   // --- SESIONES DE ENTRENAMIENTO (FINALIZAR & GUARDAR) ---
   getSesiones: async () => {
-    const local = getStored('sesiones', []);
+    let local = getStored('sesiones', []);
+    if (!local || local.length === 0) {
+      local = DEFAULT_SESIONES_HISTORIAL;
+      setStored('sesiones', local);
+    } else {
+      // Asegurar que las 3 sesiones históricas existan en local
+      const map = new Map();
+      DEFAULT_SESIONES_HISTORIAL.forEach(s => map.set(s.id, s));
+      local.forEach(s => map.set(s.id, s));
+      local = Array.from(map.values()).sort((a, b) => new Date(b.fecha_inicio || b.fecha || 0) - new Date(a.fecha_inicio || a.fecha || 0));
+      setStored('sesiones', local);
+    }
     try {
       const data = await request('/api/sesiones');
       if (Array.isArray(data)) {
