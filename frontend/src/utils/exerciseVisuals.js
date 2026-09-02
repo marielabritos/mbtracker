@@ -447,16 +447,60 @@ export const EXERCISE_VISUALS = {
     ],
     respiracion: "Exhala al subir; inhala al bajar."
   },
-  "Curl Femoral Tumbado / Sentado": {
-    gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0586-17lJ1kr.gif",
-    img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0586-17lJ1kr.jpg",
-    musculo_principal: "Isquiosurales (Femoral)",
+    "Press Pallof en Polea": {
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pallof_Press/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pallof_Press/0.jpg",
+    frames: ["Pallof_Press/0.jpg", "Pallof_Press/1.jpg"],
+    musculo_principal: "Core y Abdomen (Anti-rotación del Torso)",
+    musculos_secundarios: ["Oblicuos", "Transverso del Abdomen", "Glúteos"],
+    tips: [
+      "Coloca la polea a la altura del pecho y sitúate de costado al cable.",
+      "Sujeta la manija pegada al pecho con ambas manos, rodillas semiflexionadas y abdomen activo.",
+      "Extiende los brazos al frente de forma controlada resistiendo la fuerza del cable sin rotar el torso.",
+      "Mantén la posición 2 segundos y regresa al pecho con control."
+    ],
+    respiracion: "Inhala con las manos pegadas al pecho; exhala mientras extiendes los brazos al frente."
+  },
+  "Caminata de Granjero con Mancuernas (Farmer's Walk)": {
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Farmers_Walk/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Farmers_Walk/0.jpg",
+    frames: ["Farmers_Walk/0.jpg", "Farmers_Walk/1.jpg"],
+    musculo_principal: "Fuerza Global de Agarre, Antebrazos y Core",
+    musculos_secundarios: ["Trapecio", "Core / Oblicuos", "Glúteos y Piernas"],
+    tips: [
+      "Toma un par de mancuernas pesadas manteniendo los hombros hacia atrás y el pecho erguido.",
+      "Camina con pasos cortos, firmes y controlados sin balancear el torso.",
+      "Mantén el abdomen contraído y la mirada al frente durante todo el recorrido."
+    ],
+    respiracion: "Respira de forma continua y rítmica sin aguantar el aire."
+  },
+  "Curl Femoral Sentado en Máquina": {
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Leg_Curl/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Leg_Curl/0.jpg",
+    frames: ["Seated_Leg_Curl/0.jpg", "Seated_Leg_Curl/1.jpg"],
+    musculo_principal: "Isquiosurales (Femoral Sentado)",
     musculos_secundarios: ["Gemelos"],
     tips: [
-      "Mantén la cadera pegada al banco.",
-      "Flexiona las rodillas llevando el rodillo hacia los glúteos."
+      "Ajusta el respaldo para que la articulación de la rodilla coincida con el eje de la máquina.",
+      "Fija bien el rodillo superior sobre los muslos y el rodillo inferior detrás de los tobillos.",
+      "Flexiona las piernas hacia abajo y atrás apretando los isquiosurales al final.",
+      "Regresa controlando el movimiento sin dejar caer las placas de peso."
     ],
-    respiracion: "Exhala al flexionar; inhala al descender."
+    respiracion: "Exhala al flexionar las rodillas hacia abajo; inhala al retornar arriba."
+  },
+  "Curl Femoral Tumbado en Máquina": {
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/0.jpg",
+    frames: ["Lying_Leg_Curls/0.jpg", "Lying_Leg_Curls/1.jpg"],
+    musculo_principal: "Isquiosurales (Femoral Tumbado)",
+    musculos_secundarios: ["Gemelos", "Glúteos"],
+    tips: [
+      "Túmbate boca abajo con el rodillo apoyado sobre los tendones de Aquiles.",
+      "Mantén la pelvis pegada al banco en todo momento.",
+      "Flexiona las rodillas llevando los talones hacia los glúteos.",
+      "Desciende de forma lenta y controlada."
+    ],
+    respiracion: "Exhala al subir el rodillo; inhala al descender."
   },
 
   // --- TRÍCEPS DEDICADOS Y PRECISOS ---
@@ -952,7 +996,10 @@ export function getExerciseVisual(nombre, grupoMuscular = "General") {
   if (norm.includes("sentadilla") || norm.includes("squat") || norm.includes("hack")) return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
   if (norm.includes("peso muerto") || norm.includes("rdl") || norm.includes("rumano") || norm.includes("deadlift")) return EXERCISE_VISUALS["Peso Muerto Rumano (RDL)"];
   if (norm.includes("sillon") || (norm.includes("extension") && norm.includes("cuadriceps"))) return EXERCISE_VISUALS["Extensión de Cuádriceps"];
-  if (norm.includes("femoral") || norm.includes("isquio")) return EXERCISE_VISUALS["Curl Femoral Tumbado / Sentado"];
+  if ((norm.includes("femoral") || norm.includes("isquio") || norm.includes("leg curl")) && norm.includes("sentad")) return EXERCISE_VISUALS["Curl Femoral Sentado en Máquina"];
+  if (norm.includes("femoral") || norm.includes("isquio") || norm.includes("leg curl")) return EXERCISE_VISUALS["Curl Femoral Tumbado en Máquina"];
+  if (norm.includes("pallof")) return EXERCISE_VISUALS["Press Pallof en Polea"];
+  if (norm.includes("granjero") || norm.includes("farmer")) return EXERCISE_VISUALS["Caminata de Granjero con Mancuernas (Farmer's Walk)"];
 
   // --- HOMBROS ---
   if (norm.includes("lateral") || norm.includes("vuelo") || (norm.includes("elevacion") && norm.includes("hombro"))) return EXERCISE_VISUALS["Elevaciones Laterales"];

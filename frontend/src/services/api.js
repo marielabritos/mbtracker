@@ -137,6 +137,8 @@ export const DEFAULT_EJERCICIOS = [
 
     { id: 130, nombre: "Empuje en Polea para Pecho", grupo_muscular: "Pecho", equipo: "Polea", es_personalizado: false },
   { id: 131, nombre: "Face Pull en Polea con Cuerda (Pull Face)", grupo_muscular: "Hombros", equipo: "Polea", es_personalizado: false },
+    { id: 132, nombre: "Press Pallof en Polea", grupo_muscular: "Core", equipo: "Polea", es_personalizado: false },
+  { id: 133, nombre: "Caminata de Granjero con Mancuernas (Farmer's Walk)", grupo_muscular: "Core", equipo: "Mancuerna", es_personalizado: false },
   // --- CARDIO, RUNNING, BICICLETA & MONTAÑISMO ---
   { id: 114, nombre: "Carrera / Running Continuo", grupo_muscular: "Cardio", equipo: "Aire Libre / Cinta", es_personalizado: false },
   { id: 115, nombre: "Series de Velocidad / Intervalos Running", grupo_muscular: "Cardio", equipo: "Aire Libre", es_personalizado: false },
@@ -349,6 +351,11 @@ export const api = {
     const custom = local.filter(e => e.es_personalizado);
     const mergedMap = new Map();
     DEFAULT_EJERCICIOS.forEach(e => mergedMap.set(e.id, e));
+    DEFAULT_EJERCICIOS.forEach(e => {
+      // También mapear por nombre para sincronizar ejercicios existentes
+      const match = Array.from(mergedMap.values()).find(x => x.nombre.trim().toLowerCase() === e.nombre.trim().toLowerCase());
+      if (match) mergedMap.set(match.id, { ...match, ...e });
+    });
     custom.forEach(e => mergedMap.set(e.id, e));
     const all = Array.from(mergedMap.values());
     setStored('ejercicios', all);
