@@ -152,14 +152,14 @@ export const DEFAULT_RUTINAS = [
   {
     id: 1002,
     nombre: "Rutina Full Body (Cuerpo Completo)",
-    descripcion: "Fuerza, tono muscular e hipertrofia global con empuje en polea, jalón supino, face pull, hip thrust y piernas.",
+    descripcion: "Fuerza, tono y masa muscular global con empuje en polea, press mancuernas, jalón supino, face pull, hip thrust, femoral sentado, pallof y caminata de granjero.",
     duracion_semanas: "6 semanas",
-    duracion_estimada_minutos: 55,
+    duracion_estimada_minutos: 60,
     activa: true,
     dias: [
       {
         id: 2001,
-        nombre: "Día 1: Full Body Fuerza & Tren Superior/Inferior",
+        nombre: "Día 1: Full Body Fuerza, Tren Superior & Inferior Completo",
         orden: 1,
         ejercicios: [
           { id: 201, ejercicio_id: 130, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 1, ejercicio: { id: 130, nombre: "Empuje en Polea para Pecho", grupo_muscular: "Pecho", equipo: "Polea" } },
@@ -168,8 +168,11 @@ export const DEFAULT_RUTINAS = [
           { id: 204, ejercicio_id: 131, series_objetivo: 3, reps_objetivo: "12-15", descanso_segundos: 60, orden: 4, ejercicio: { id: 131, nombre: "Face Pull en Polea con Cuerda (Pull Face)", grupo_muscular: "Hombros", equipo: "Polea" } },
           { id: 205, ejercicio_id: 26, series_objetivo: 4, reps_objetivo: "8-10", descanso_segundos: 120, orden: 5, ejercicio: { id: 26, nombre: "Hip Thrust con Barra", grupo_muscular: "Glúteos", equipo: "Barra" } },
           { id: 206, ejercicio_id: 48, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 6, ejercicio: { id: 48, nombre: "Prensa de Piernas 45°", grupo_muscular: "Piernas", equipo: "Máquina" } },
-          { id: 207, ejercicio_id: 77, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 7, ejercicio: { id: 77, nombre: "Extensiones de Tríceps en Polea (Cuerda)", grupo_muscular: "Brazos", equipo: "Polea" } },
-          { id: 208, ejercicio_id: 84, series_objetivo: 3, reps_objetivo: "45s", descanso_segundos: 60, orden: 8, ejercicio: { id: 84, nombre: "Plancha Abdominal", grupo_muscular: "Core", equipo: "Peso Corporal" } }
+          { id: 207, ejercicio_id: 56, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 7, ejercicio: { id: 56, nombre: "Curl Femoral Sentado en Máquina", grupo_muscular: "Piernas", equipo: "Máquina" } },
+          { id: 208, ejercicio_id: 132, series_objetivo: 3, reps_objetivo: "12-15", descanso_segundos: 60, orden: 8, ejercicio: { id: 132, nombre: "Press Pallof en Polea", grupo_muscular: "Core", equipo: "Polea" } },
+          { id: 209, ejercicio_id: 133, series_objetivo: 3, reps_objetivo: "40-50m", descanso_segundos: 60, orden: 9, ejercicio: { id: 133, nombre: "Caminata de Granjero con Mancuernas (Farmer's Walk)", grupo_muscular: "Core", equipo: "Mancuerna" } },
+          { id: 210, ejercicio_id: 77, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 10, ejercicio: { id: 77, nombre: "Extensiones de Tríceps en Polea (Cuerda)", grupo_muscular: "Brazos", equipo: "Polea" } },
+          { id: 211, ejercicio_id: 84, series_objetivo: 3, reps_objetivo: "45s", descanso_segundos: 60, orden: 11, ejercicio: { id: 84, nombre: "Plancha Abdominal", grupo_muscular: "Core", equipo: "Peso Corporal" } }
         ]
       }
     ]
@@ -505,7 +508,7 @@ export const api = {
   },
 
   // --- RUTINAS ---
-    getRutinas: async () => {
+      getRutinas: async () => {
     const deletedIds = getStored('deleted_rutina_ids', []);
     let localRutinas = getStored('rutinas', null);
 
@@ -513,12 +516,17 @@ export const api = {
       localRutinas = DEFAULT_RUTINAS;
     }
 
-    // Auto-fusionar rutinas oficiales (Full Body, Tren Inferior, etc.)
+    // Auto-fusionar y actualizar rutinas oficiales completas (Full Body, Tren Inferior, etc.)
     const mergedMap = new Map();
     DEFAULT_RUTINAS.forEach(r => mergedMap.set(r.id, r));
     localRutinas.forEach(r => {
       if (!deletedIds.includes(r.id)) {
-        mergedMap.set(r.id, { ...(mergedMap.get(r.id) || {}), ...r });
+        if (r.id === 1002 || r.nombre?.toLowerCase().includes('full body')) {
+          // Asegurar que la rutina Full Body tenga todos los 11 ejercicios oficiales
+          mergedMap.set(1002, DEFAULT_RUTINAS[0]);
+        } else {
+          mergedMap.set(r.id, { ...(mergedMap.get(r.id) || {}), ...r });
+        }
       }
     });
 
