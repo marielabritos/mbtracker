@@ -1,7 +1,11 @@
-import React from 'react';
-import { Home, Dumbbell, Calendar, History, TrendingUp, Play, User, LogOut, Lock, Zap, CalendarDays, Layers } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Home, Dumbbell, Calendar, History, TrendingUp, Play, User, LogOut, Lock, Zap, CalendarDays, Layers, Cloud, RefreshCw } from 'lucide-react';
+import { api } from '../services/api';
 
 export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLogout }) {
+  const [isSyncingCloud, setIsSyncingCloud] = useState(false);
+  const [syncStatusText, setSyncStatusText] = useState('');
+
   const navItems = [
     { id: 'dashboard', label: 'Inicio', icon: Home },
     { id: 'entrenar', label: 'Entrenar', icon: isWorkoutActive ? Play : Dumbbell, highlight: isWorkoutActive },
@@ -12,6 +16,37 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
     { id: 'historial', label: 'Historial', icon: History },
     { id: 'perfil', label: 'Perfil', icon: User },
   ];
+
+  useEffect(() => {
+    // Sincronización automática al cargar y al cambiar de pestaña
+    api.cloudSync.pullFromCloud();
+
+    const handleSynced = (e) => {
+      setSyncStatusText(e.detail?.direction === 'push' ? 'Nube actualizada' : 'Sincronizado con PC/Móvil');
+      setTimeout(() => setSyncStatusText(''), 3000);
+    };
+
+    window.addEventListener('mbtracker:cloud-synced', handleSynced);
+    window.addEventListener('focus', () => api.cloudSync.pullFromCloud());
+
+    return () => {
+      window.removeEventListener('mbtracker:cloud-synced', handleSynced);
+    };
+  }, []);
+
+  const handleManualSync = async () => {
+    if (isSyncingCloud) return;
+    try {
+      setIsSyncingCloud(true);
+      await api.cloudSync.syncNow();
+      setSyncStatusText('✓ Sincronización exitosa');
+      setTimeout(() => setSyncStatusText(''), 3500);
+    } catch (e) {
+      setSyncStatusText('Error de red');
+    } finally {
+      setIsSyncingCloud(false);
+    }
+  };
 
   return (
     <>
@@ -30,6 +65,18 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Botón Sincronización Móvil */}
+          <button
+            type="button"
+            onClick={handleManualSync}
+            disabled={isSyncingCloud}
+            className="px-2.5 py-1.5 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-400 text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all"
+            title="Sincronizar datos entre Computadora y Celular"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin text-sky-300' : ''}`} />
+            <span className="text-[11px]">{syncStatusText || (isSyncingCloud ? 'Sincronizando...' : 'Sincronizar')}</span>
+          </button>
+
           {isWorkoutActive && (
             <button
               onClick={() => setActiveTab('entrenar')}
@@ -89,6 +136,18 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
             );
           })}
 
+          {/* Botón Sincronización Desktop */}
+          <button
+            type="button"
+            onClick={handleManualSync}
+            disabled={isSyncingCloud}
+            className="ml-2 px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-slate-700 text-sky-400 text-xs font-bold flex items-center gap-1.5 transition-all shadow-md active:scale-95"
+            title="Sincronizar instantáneamente con tu celular"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin' : ''}`} />
+            <span>{syncStatusText || (isSyncingCloud ? 'Sincronizando...' : 'Nube PC ↔ Celular')}</span>
+          </button>
+
           {onLogout && (
             <button
               onClick={onLogout}
@@ -102,40 +161,35 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
         </nav>
       </header>
 
-      {/* Mobile Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800/80 px-1 py-1 pb-safe">
-        <div className="flex items-center justify-between min-w-full px-0.5">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`flex flex-col items-center justify-center py-1 px-1 rounded-2xl transition-all relative flex-1 min-w-0 ${
-                  isActive
-                    ? 'text-sky-400 font-black'
-                    : 'text-slate-400 hover:text-slate-200'
+      {/* Mobile Fixed Bottom Navigation Bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 px-2 py-2 flex items-center justify-around shadow-2xl">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all relative ${
+                isActive
+                  ? 'text-sky-400 font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <div
+                className={`p-1.5 rounded-xl transition-all ${
+                  isActive ? 'bg-sky-500/20 scale-110 shadow-lg shadow-sky-500/20' : ''
                 }`}
               >
-                <div
-                  className={`p-1.5 rounded-xl transition-all ${
-                    isActive ? 'bg-sky-500/20 text-sky-400' : ''
-                  } ${item.highlight ? 'bg-emerald-500/20 text-emerald-400' : ''}`}
-                >
-                  <Icon className={`w-4 h-4 ${item.highlight ? 'animate-pulse' : ''}`} />
-                </div>
-                <span className="text-[9px] sm:text-[10px] font-bold mt-0.5 tracking-tight truncate max-w-full">
-                  {item.label}
-                </span>
-
-                {item.highlight && (
-                  <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                )}
-              </button>
-            );
-          })}
-        </div>
+                <Icon className={`w-5 h-5 ${item.highlight ? 'animate-pulse text-emerald-400' : ''}`} />
+              </div>
+              <span className="text-[10px] tracking-tight">{item.label}</span>
+              {item.highlight && (
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping absolute top-1 right-2" />
+              )}
+            </button>
+          );
+        })}
       </nav>
     </>
   );

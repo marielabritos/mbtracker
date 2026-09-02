@@ -1,3 +1,4 @@
+import { cloudSync } from './cloudSyncService';
 // Cliente API Offline-First para MBTracker con persistencia dual (Local + Nube)
 
 export const DEFAULT_EJERCICIOS = [
@@ -391,6 +392,8 @@ export const DEFAULT_SESIONES_HISTORIAL = [
 ];
 
 export const api = {
+  cloudSync,
+
   // --- ESTADÍSTICAS & DASHBOARD ---
   getDashboardStats: async () => {
     const sesiones = getStored('sesiones', []);
@@ -606,7 +609,7 @@ export const api = {
 
     const updated = [nuevaLocal, ...current];
     setStored('rutinas', updated);
-
+    cloudSync.pushToCloud();
     try {
       await request('/api/rutinas', { method: 'POST', body: JSON.stringify(data) });
     } catch (e) {}
@@ -656,7 +659,7 @@ export const api = {
     }
 
     setStored('rutinas', updatedList);
-
+    cloudSync.pushToCloud();
     try {
       await request(`/api/rutinas/${id}`, { method: 'PUT', body: JSON.stringify(data) });
     } catch (e) {}
