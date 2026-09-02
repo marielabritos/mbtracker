@@ -5,6 +5,8 @@ export const EXERCISE_VISUALS = {
   "Press de Banca Plano con Barra": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0025-EIeI8Vf.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0025-EIeI8Vf.jpg",
+    frames: ["Barbell_Bench_Press/0.jpg","Barbell_Bench_Press/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Bench_Press/0.jpg",
     musculo_principal: "Pectoral Mayor (Medio e Inferior)",
     musculos_secundarios: ["Deltoides Anterior", "Tríceps Braquial"],
     tips: [
@@ -44,6 +46,8 @@ export const EXERCISE_VISUALS = {
   "Press Inclinado con Barra": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0047-e16r95y.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0047-e16r95y.jpg",
+    frames: ["Incline_Barbell_Bench_Press/0.jpg","Incline_Barbell_Bench_Press/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Barbell_Bench_Press/0.jpg",
     musculo_principal: "Pectoral Superior (Clavicular)",
     musculos_secundarios: ["Deltoides Anterior", "Tríceps"],
     tips: [
@@ -56,6 +60,8 @@ export const EXERCISE_VISUALS = {
   "Press Inclinado con Mancuernas": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0314-a9K07N2.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0314-a9K07N2.jpg",
+    frames: ["Incline_Dumbbell_Bench_Press/0.jpg","Incline_Dumbbell_Bench_Press/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Dumbbell_Bench_Press/0.jpg",
     musculo_principal: "Pectoral Superior (Clavicular)",
     musculos_secundarios: ["Deltoides Anterior", "Tríceps"],
     tips: [
@@ -152,6 +158,8 @@ export const EXERCISE_VISUALS = {
   "Remo con Barra": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0027-eZyBC3j.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0027-eZyBC3j.jpg",
+    frames: ["Bent_Over_Two-Arm_Long_Bar_Row/0.jpg","Bent_Over_Two-Arm_Long_Bar_Row/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Two-Arm_Long_Bar_Row/0.jpg",
     musculo_principal: "Dorsal Ancho y Espalda Media (Grosor)",
     musculos_secundarios: ["Bíceps", "Trapecio", "Erectores Espinales"],
     tips: [
@@ -189,6 +197,8 @@ export const EXERCISE_VISUALS = {
   "Hip Thrust con Barra": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/1409-qKBpF7I.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/1409-qKBpF7I.jpg",
+    frames: ["Barbell_Hip_Thrust/0.jpg","Barbell_Hip_Thrust/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Hip_Thrust/0.jpg",
     musculo_principal: "Glúteo Mayor (Fuerza e Hipertrofia)",
     musculos_secundarios: ["Isquiosurales", "Cuádriceps", "Core"],
     tips: [
@@ -234,6 +244,8 @@ export const EXERCISE_VISUALS = {
   "Sentadilla Búlgara Enfocada a Glúteo": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0410-qx4fgX7.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0410-qx4fgX7.jpg",
+    frames: ["Single_Leg_Squat/0.jpg","Single_Leg_Squat/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Single_Leg_Squat/0.jpg",
     musculo_principal: "Glúteo Mayor y Cuádriceps",
     musculos_secundarios: ["Isquiotibiales", "Aductores"],
     tips: [
@@ -416,6 +428,8 @@ export const EXERCISE_VISUALS = {
   "Prensa de Piernas 45°": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0739-10Z2DXU.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0739-10Z2DXU.jpg",
+    frames: ["Leg_Press/0.jpg","Leg_Press/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Press/0.jpg",
     musculo_principal: "Cuádriceps y Glúteos",
     musculos_secundarios: ["Isquiosurales"],
     tips: [
@@ -439,6 +453,8 @@ export const EXERCISE_VISUALS = {
   "Extensión de Cuádriceps": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0585-my33uHU.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0585-my33uHU.jpg",
+    frames: ["Leg_Extensions/0.jpg","Leg_Extensions/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg",
     musculo_principal: "Cuádriceps (Aislamiento)",
     musculos_secundarios: ["Tendón Rotuliano"],
     tips: [
@@ -566,6 +582,8 @@ export const EXERCISE_VISUALS = {
   "Fondos entre Bancos para Tríceps": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0019-J60bN17.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0019-J60bN17.jpg",
+    frames: ["Bench_Dips/0.jpg","Bench_Dips/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bench_Dips/0.jpg",
     musculo_principal: "Tríceps y Pectoral",
     musculos_secundarios: ["Deltoides Anterior"],
     tips: [
@@ -590,6 +608,8 @@ export const EXERCISE_VISUALS = {
   "Press Militar con Barra / Mancuernas": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0405-znQUdHY.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0405-znQUdHY.jpg",
+    frames: ["Seated_Barbell_Military_Press/0.jpg","Seated_Barbell_Military_Press/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Barbell_Military_Press/0.jpg",
     musculo_principal: "Deltoides Anterior y Medio",
     musculos_secundarios: ["Tríceps", "Trapecio", "Core"],
     tips: [
@@ -642,6 +662,8 @@ export const EXERCISE_VISUALS = {
   "Curl de Bíceps con Barra Z": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0447-6TG6x2w.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0447-6TG6x2w.jpg",
+    frames: ["EZ-Bar_Curl/0.jpg","EZ-Bar_Curl/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/EZ-Bar_Curl/0.jpg",
     musculo_principal: "Bíceps Braquial",
     musculos_secundarios: ["Braquial Anterior", "Antebrazos"],
     tips: [
@@ -653,6 +675,8 @@ export const EXERCISE_VISUALS = {
   "Curl Martillo con Mancuernas": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0313-slDvUAU.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0313-slDvUAU.jpg",
+    frames: ["Hammer_Curls/0.jpg","Hammer_Curls/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hammer_Curls/0.jpg",
     musculo_principal: "Braquial y Braquiorradial (Grosor del Brazo)",
     musculos_secundarios: ["Bíceps"],
     tips: [
@@ -666,6 +690,8 @@ export const EXERCISE_VISUALS = {
   "Plancha Abdominal": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0464-CosupLu.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0464-CosupLu.jpg",
+    frames: ["Plank/0.jpg","Plank/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/0.jpg",
     musculo_principal: "Core y Recto Abdominal",
     musculos_secundarios: ["Hombros", "Glúteos"],
     tips: [
@@ -677,6 +703,8 @@ export const EXERCISE_VISUALS = {
   "Elevación de Piernas Colgado": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0012-UGhRD1A.gif",
     img: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/img/0012-UGhRD1A.jpg",
+    frames: ["Hanging_Leg_Raise/0.jpg","Hanging_Leg_Raise/1.jpg"],
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hanging_Leg_Raise/0.jpg",
     musculo_principal: "Abdomen Inferior y Flexores de Cadera",
     musculos_secundarios: ["Antebrazos", "Dorsales"],
     tips: [

@@ -10,18 +10,25 @@ export default function RealHumanExercisePlayer({ exerciseName, muscleGroup, fra
   const [photoError, setPhotoError] = useState(false);
   const [viewMode, setViewMode] = useState('gif'); // 'gif' | 'photo'
 
+  // Resetear estados cuando cambia de ejercicio
+  useEffect(() => {
+    setImgError(false);
+    setPhotoError(false);
+    setCurrentFrame(0);
+    setIsPlaying(true);
+  }, [exerciseName, gifUrl, imgUrl]);
+
   const images = frames && frames.length > 0 
     ? frames.map(f => f.startsWith('http') || f.startsWith('/') ? f : `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${f}`)
     : [];
 
-  const isRealGif = gifUrl && gifUrl.toLowerCase().endsWith('.gif') && !gifUrl.includes('arvids-unavailable') && !imgError;
-  const validProvidedImg = imgUrl && !imgUrl.includes('arvids-unavailable') && !photoError ? imgUrl : null;
-  const effectivePhoto = validProvidedImg || (images.length > 0 ? images[currentFrame % images.length] : null);
+  const hasWorkingGif = gifUrl && !imgError;
+  const effectivePhoto = (!photoError && imgUrl) ? imgUrl : (images.length > 0 ? images[currentFrame % images.length] : (hasWorkingGif ? gifUrl : null));
 
-  // Bucle de animación continua con fotogramas si estamos en modo GIF
+  // Bucle de animación continua con fotogramas si estamos en modo Animación y no hay GIF nativo o si el GIF falló
   useEffect(() => {
     if (!isPlaying || images.length < 2) return;
-    if (isRealGif && viewMode === 'gif') return;
+    if (hasWorkingGif && viewMode === 'gif') return;
 
     const interval = setInterval(() => {
       setCurrentFrame((prev) => {
@@ -37,7 +44,7 @@ export default function RealHumanExercisePlayer({ exerciseName, muscleGroup, fra
     }, 900);
 
     return () => clearInterval(interval);
-  }, [isPlaying, images, isRealGif, viewMode]);
+  }, [isPlaying, images, hasWorkingGif, viewMode]);
 
   return (
     <div className="w-full bg-slate-950 rounded-2xl border border-slate-800 p-3 sm:p-4 space-y-3 shadow-2xl overflow-hidden relative select-none">
@@ -80,8 +87,9 @@ export default function RealHumanExercisePlayer({ exerciseName, muscleGroup, fra
 
       {/* Contenedor Visual de Alta Definición */}
       <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-800/80 flex items-center justify-center shadow-inner group">
-        {isRealGif && viewMode === 'gif' ? (
+        {hasWorkingGif && viewMode === 'gif' ? (
           <img
+            key={gifUrl}
             src={gifUrl}
             alt={exerciseName}
             referrerPolicy="no-referrer"
@@ -104,6 +112,7 @@ export default function RealHumanExercisePlayer({ exerciseName, muscleGroup, fra
           </div>
         ) : effectivePhoto ? (
           <img
+            key={effectivePhoto}
             src={effectivePhoto}
             alt={exerciseName}
             referrerPolicy="no-referrer"
@@ -151,7 +160,7 @@ export default function RealHumanExercisePlayer({ exerciseName, muscleGroup, fra
         )}
 
         {/* Overlay con fase de movimiento en Modo GIF */}
-        {viewMode === 'gif' && images.length > 1 && (
+        {viewMode === 'gif' && images.length > 1 && !hasWorkingGif && (
           <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-sm border border-slate-800 text-[10px] font-mono text-emerald-400 font-bold">
             {phase} • Paso {currentFrame + 1}/{images.length}
           </div>
@@ -162,7 +171,7 @@ export default function RealHumanExercisePlayer({ exerciseName, muscleGroup, fra
       <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
         <span className="flex items-center gap-1.5 text-slate-300 font-medium">
           <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span>Visuales Biomecánicos HD</span>
+          <span>Demostración Biomecánica HD</span>
         </span>
         <span className="font-mono text-xs text-emerald-400 font-bold">
           {viewMode === 'gif' ? (isPlaying ? '▶ Repetición' : '⏸ Pausado') : '📷 Foto HD'}
