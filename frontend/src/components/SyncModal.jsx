@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, QrCode, Copy, Check, Smartphone, Monitor, Download, Upload, Sparkles, RefreshCw } from 'lucide-react';
-import { api } from '../services/api';
+import { X, Copy, Check, Smartphone, Download, Upload, RefreshCw, Sparkles, CheckCircle2 } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 
 export default function SyncModal({ isOpen, onClose }) {
   const [copiedLink, setCopiedLink] = useState(false);
@@ -9,7 +9,6 @@ export default function SyncModal({ isOpen, onClose }) {
   const [importSuccess, setImportSuccess] = useState(false);
   const [syncUrl, setSyncUrl] = useState('');
   const [syncCode, setSyncCode] = useState('');
-  const [qrUrl, setQrUrl] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -19,6 +18,7 @@ export default function SyncModal({ isOpen, onClose }) {
         const perfil = JSON.parse(localStorage.getItem('mbtracker_perfil') || '{}');
         const prs = JSON.parse(localStorage.getItem('mbtracker_prs') || '[]');
 
+        // Compactar payload para que el QR sea super nítido y rápido de escanear
         const payload = {
           rutinas,
           sesiones,
@@ -34,10 +34,6 @@ export default function SyncModal({ isOpen, onClose }) {
         const currentOrigin = window.location.origin;
         const fullUrl = `${currentOrigin}/?sync=${encodeURIComponent(base64)}`;
         setSyncUrl(fullUrl);
-
-        // Generar QR usando quickchart / qrserver
-        const qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(fullUrl)}`;
-        setQrUrl(qrImage);
       } catch (e) {
         console.error("Error generating sync payload", e);
       }
@@ -66,10 +62,10 @@ export default function SyncModal({ isOpen, onClose }) {
       const decodedJson = decodeURIComponent(escape(atob(importCodeText.trim())));
       const parsed = JSON.parse(decodedJson);
 
-      if (parsed.rutinas && Array.isArray(parsed.rutinas)) {
+      if (parsed.rutinas && Array.isArray(parsed.rutinas) && parsed.rutinas.length > 0) {
         localStorage.setItem('mbtracker_rutinas', JSON.stringify(parsed.rutinas));
       }
-      if (parsed.sesiones && Array.isArray(parsed.sesiones)) {
+      if (parsed.sesiones && Array.isArray(parsed.sesiones) && parsed.sesiones.length > 0) {
         localStorage.setItem('mbtracker_sesiones', JSON.stringify(parsed.sesiones));
       }
       if (parsed.perfil) {
@@ -82,24 +78,24 @@ export default function SyncModal({ isOpen, onClose }) {
       setImportSuccess(true);
       setTimeout(() => {
         window.location.reload();
-      }, 1200);
+      }, 1000);
     } catch (e) {
-      alert("Código de sincronización inválido o corrupto: " + e.message);
+      alert("Código de sincronización inválido o incompleto: " + e.message);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl space-y-5 my-6 max-h-[92vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-400">
-              <RefreshCw className="w-5 h-5 animate-spin-slow" />
+              <Smartphone className="w-5 h-5 text-sky-400" />
             </div>
             <div>
-              <h3 className="font-black text-lg text-white">Sincronizar PC ↔ Celular</h3>
-              <p className="text-xs text-sky-400 font-medium">Pasa todas tus rutinas y entrenamientos en 1 segundo</p>
+              <h3 className="font-black text-lg text-white">Sincronizar con tu Celular</h3>
+              <p className="text-xs text-sky-400 font-medium">Pasa todas tus rutinas y series en 1 segundo</p>
             </div>
           </div>
           <button
@@ -110,22 +106,32 @@ export default function SyncModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Opción 1: Código QR para escanear con el Celular */}
+        {/* Opción 1: Código QR SVG Instantáneo */}
         <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-center space-y-3">
           <div className="flex items-center justify-center gap-2 text-xs font-bold text-sky-400 uppercase tracking-wider">
             <Smartphone className="w-4 h-4" /> Opción 1: Escanear con tu Celular
           </div>
           <p className="text-xs text-slate-300">
-            Abre la cámara de tu celular y apunta a este código QR para abrir y actualizar tu app al instante:
+            Abre la cámara de tu celular y apunta a este código QR para actualizar tu app al instante:
           </p>
 
-          <div className="flex justify-center p-3 bg-white rounded-2xl w-fit mx-auto shadow-xl">
-            {qrUrl ? (
-              <img src={qrUrl} alt="QR Sincronización" className="w-48 h-48 sm:w-52 sm:h-52 object-contain" />
+          <div className="flex justify-center p-3 sm:p-4 bg-white rounded-3xl w-fit mx-auto shadow-2xl border-4 border-white">
+            {syncUrl ? (
+              <QRCodeSVG
+                value={syncUrl}
+                size={220}
+                level="L"
+                includeMargin={false}
+              />
             ) : (
-              <div className="w-48 h-48 flex items-center justify-center text-slate-400 text-xs">Generando QR...</div>
+              <div className="w-52 h-52 flex items-center justify-center text-slate-400 text-xs">
+                Generando QR...
+              </div>
             )}
           </div>
+          <p className="text-[11px] text-slate-400">
+            Toca el enlace que detecta la cámara de tu celular para abrir MBTracker sincronizado.
+          </p>
         </div>
 
         {/* Opción 2: Copiar Enlace Directo */}
@@ -144,7 +150,7 @@ export default function SyncModal({ isOpen, onClose }) {
             </button>
           </div>
           <p className="text-xs text-slate-400">
-            Puedes enviarte este enlace por WhatsApp o Telegram a tu celular y abrirlo con 1 toque.
+            Puedes enviarte este enlace por WhatsApp a ti misma y abrirlo en tu celular con 1 toque.
           </p>
         </div>
 
@@ -178,7 +184,7 @@ export default function SyncModal({ isOpen, onClose }) {
             disabled={!importCodeText.trim() || importSuccess}
             className="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:opacity-30 text-slate-950 font-black text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-sky-500/20"
           >
-            {importSuccess ? <Check className="w-4 h-4" /> : <Download className="w-4 h-4" />}
+            {importSuccess ? <CheckCircle2 className="w-4 h-4" /> : <Download className="w-4 h-4" />}
             <span>{importSuccess ? '¡Datos Importados! Recargando...' : 'Restaurar y Aplicar en este dispositivo'}</span>
           </button>
         </div>
