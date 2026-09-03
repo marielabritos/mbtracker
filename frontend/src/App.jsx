@@ -5,6 +5,7 @@ import ChatbotCoach from './components/ChatbotCoach';
 import PasosTrackerModal from './components/PasosTrackerModal';
 import HIITTimerModal from './components/HIITTimerModal';
 import SpotifyPlayerModal from './components/SpotifyPlayerModal';
+import SyncModal from './components/SyncModal';
 import Dashboard from './pages/Dashboard';
 import Rutinas from './pages/Rutinas';
 import Entrenar from './pages/Entrenar';
@@ -13,7 +14,7 @@ import Progreso from './pages/Progreso';
 import Perfil from './pages/Perfil';
 import Calculadora1RM from './pages/Calculadora1RM';
 import Calendario from './pages/Calendario';
-import { Bot, MessageSquare, Sparkles } from 'lucide-react';
+import { Bot, MessageSquare, Sparkles, CheckCircle2 } from 'lucide-react';
 
 const STORAGE_KEY = 'mbtracker_active_workout';
 const AUTH_KEY = 'mbtracker_auth_user';
@@ -33,11 +34,49 @@ export default function App() {
   const [isStepsModalOpen, setIsStepsModalOpen] = useState(false);
   const [isHIITModalOpen, setIsHIITModalOpen] = useState(false);
   const [isSpotifyModalOpen, setIsSpotifyModalOpen] = useState(false);
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [syncToast, setSyncToast] = useState('');
 
   const [activeWorkout, setActiveWorkout] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : null;
   });
+
+  // Escuchar si se abre la app con un enlace de sincronización (?sync=...)
+  useEffect(() => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      let syncParam = urlParams.get('sync');
+      if (!syncParam && window.location.hash) {
+        const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'));
+        syncParam = hashParams.get('sync');
+      }
+
+      if (syncParam) {
+        const decodedJson = decodeURIComponent(escape(atob(syncParam)));
+        const parsed = JSON.parse(decodedJson);
+
+        if (parsed.rutinas && Array.isArray(parsed.rutinas) && parsed.rutinas.length > 0) {
+          localStorage.setItem('mbtracker_rutinas', JSON.stringify(parsed.rutinas));
+        }
+        if (parsed.sesiones && Array.isArray(parsed.sesiones) && parsed.sesiones.length > 0) {
+          localStorage.setItem('mbtracker_sesiones', JSON.stringify(parsed.sesiones));
+        }
+        if (parsed.perfil) {
+          localStorage.setItem('mbtracker_perfil', JSON.stringify(parsed.perfil));
+        }
+        if (parsed.prs) {
+          localStorage.setItem('mbtracker_prs', JSON.stringify(parsed.prs));
+        }
+
+        setSyncToast(`✨ ¡Sincronizado con éxito! (${parsed.rutinas?.length || 0} Rutinas, ${parsed.sesiones?.length || 0} Sesiones cargadas)`);
+        window.history.replaceState({}, document.title, window.location.pathname);
+        setTimeout(() => setSyncToast(''), 6000);
+      }
+    } catch (e) {
+      console.error("Error reading sync parameter from URL", e);
+    }
+  }, []);
 
   useEffect(() => {
     if (activeWorkout) {
@@ -82,6 +121,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans relative">
+      {/* Toast Banner de Sincronización Exitosa */}
+      {syncToast && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-slate-950 px-5 py-3 rounded-2xl shadow-2xl font-black text-xs sm:text-sm flex items-center gap-2 animate-bounce border-2 border-white">
+          <CheckCircle2 className="w-5 h-5" />
+          <span>{syncToast}</span>
+        </div>
+      )}
+
       {/* Barra de navegación superior (Desktop) y fija inferior (Móvil) */}
       <Navbar
         activeTab={activeTab}
@@ -91,6 +138,7 @@ export default function App() {
         onOpenCoach={() => setIsCoachOpen(true)}
         onOpenSpotify={() => setIsSpotifyModalOpen(true)}
         onOpenHIIT={() => setIsHIITModalOpen(true)}
+        onOpenSync={() => setIsSyncModalOpen(true)}
       />
 
       {/* Contenido Principal */}
@@ -120,6 +168,7 @@ export default function App() {
         {activeTab === 'rutinas' && (
           <Rutinas
             onStartWorkout={handleStartWorkout}
+            onOpenSync={() => setIsSyncModalOpen(true)}
           />
         )}
 
@@ -160,6 +209,12 @@ export default function App() {
         </div>
         <span className="hidden sm:inline text-xs font-black tracking-tight">Coach MB • Ánimo</span>
       </button>
+
+      {/* Modal de Sincronización QR / Enlace PC ↔ Móvil */}
+      <SyncModal
+        isOpen={isSyncModalOpen}
+        onClose={() => setIsSyncModalOpen(false)}
+      />
 
       {/* Modal / Drawer del Chatbot Coach */}
       <ChatbotCoach

@@ -1,4 +1,4 @@
-import { cloudSync } from './cloudSyncService';
+import { cloudSync } from './cloudSyncService.js';
 // Cliente API Offline-First para MBTracker con persistencia dual (Local + Nube)
 
 export const DEFAULT_EJERCICIOS = [

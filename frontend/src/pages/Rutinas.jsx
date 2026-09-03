@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, Trash2, Edit3, ChevronDown, ChevronUp, Dumbbell, 
-  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, Calendar, CheckCircle2, Save, Sparkles, Eye, Info, RefreshCw, RotateCcw, FileText 
+  Play, Search, X, Check, Clock, ArrowUp, ArrowDown, Calendar, CheckCircle2, Save, Sparkles, Eye, Info, RefreshCw, RotateCcw, FileText, Smartphone 
 } from 'lucide-react';
 import { api } from '../services/api';
 import ExerciseModal from '../components/ExerciseModal';
 
-export default function Rutinas({ onStartWorkout }) {
+export default function Rutinas({ onStartWorkout, onOpenSync }) {
   const [rutinas, setRutinas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedRutina, setExpandedRutina] = useState(null);
@@ -278,38 +278,51 @@ export default function Rutinas({ onStartWorkout }) {
     if (!formRutina.nombre.trim()) return alert("Por favor ingresa un nombre para la rutina");
 
     const payload = {
-      nombre: formRutina.nombre,
-      descripcion: formRutina.descripcion,
+      nombre: formRutina.nombre.trim(),
+      descripcion: formRutina.descripcion || '',
       duracion_semanas: formRutina.duracion_semanas || '4 semanas',
       duracion_estimada_minutos: parseInt(formRutina.duracion_estimada_minutos) || 50,
       activa: true,
       dias: formRutina.dias.map((d, dIdx) => ({
+        id: d.id || Date.now() + dIdx + 1,
         nombre: d.nombre,
         orden: dIdx + 1,
-        ejercicios: d.ejercicios.map((e, eIdx) => ({
-          ejercicio_id: e.ejercicio_id,
-          series_objetivo: parseInt(e.series_objetivo) || 3,
-          reps_objetivo: String(e.reps_objetivo || "8-12"),
-          descanso_segundos: parseInt(e.descanso_segundos) || 90,
-          orden: eIdx + 1,
-          notas: e.notas || null,
-          ejercicio: e.ejercicio
-        }))
+        ejercicios: d.ejercicios.map((ej, eIdx) => {
+          const ejNombre = ej.ejercicio?.nombre || ej.nombre || 'Ejercicio';
+          const ejGrupo = ej.ejercicio?.grupo_muscular || ej.grupo_muscular || 'General';
+          const ejEquipo = ej.ejercicio?.equipo || ej.equipo || 'Mancuerna';
+          return {
+            id: ej.id || Date.now() + dIdx * 100 + eIdx + 1,
+            ejercicio_id: ej.ejercicio_id || ej.ejercicio?.id || (1000 + eIdx),
+            nombre: ejNombre,
+            series_objetivo: parseInt(ej.series_objetivo) || 3,
+            reps_objetivo: String(ej.reps_objetivo || "8-12"),
+            descanso_segundos: parseInt(ej.descanso_segundos) || 90,
+            orden: eIdx + 1,
+            notas: ej.notas || null,
+            ejercicio: {
+              id: ej.ejercicio_id || ej.ejercicio?.id || (1000 + eIdx),
+              nombre: ejNombre,
+              grupo_muscular: ejGrupo,
+              equipo: ejEquipo
+            }
+          };
+        })
       }))
     };
 
     try {
+      let saved;
       if (editingRutinaId) {
-        const updated = await api.updateRutina(editingRutinaId, payload);
-        setRutinas(prev => prev.map(r => r.id === editingRutinaId ? (updated || { ...r, ...payload }) : r));
-        showToast("✓ Rutina actualizada y guardada correctamente");
+        saved = await api.updateRutina(editingRutinaId, payload);
       } else {
-        const created = await api.createRutina(payload);
-        setRutinas(prev => [created, ...prev]);
-        showToast("✓ Nueva rutina creada con éxito");
+        saved = await api.createRutina(payload);
       }
       setIsModalOpen(false);
-      loadData();
+      setExpandedRutina(saved.id);
+      const allRutinas = await api.getRutinas();
+      setRutinas(allRutinas);
+      showToast(`✓ Rutina "${saved.nombre}" guardada con éxito (${payload.dias[0]?.ejercicios?.length || 0} ejercicios)`);
     } catch (err) {
       alert("Error al guardar la rutina: " + err.message);
     }
@@ -318,12 +331,9 @@ export default function Rutinas({ onStartWorkout }) {
   const handleDeleteRutina = async (rutinaId) => {
     if (!confirm("¿Seguro que deseas eliminar esta rutina de forma permanente?")) return;
     try {
-      // 1. Eliminación visual inmediata en pantalla
       setRutinas(prev => prev.filter(r => r.id !== rutinaId));
       if (expandedRutina === rutinaId) setExpandedRutina(null);
       showToast("✓ Rutina eliminada permanentemente");
-
-      // 2. Persistencia en storage y backend
       await api.deleteRutina(rutinaId);
     } catch (err) {
       alert("Error al eliminar la rutina: " + err.message);
@@ -350,12 +360,24 @@ export default function Rutinas({ onStartWorkout }) {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Mis Rutinas</h2>
           <p className="text-sm text-slate-400">Organiza, edita y planifica tus ciclos de entrenamiento</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {onOpenSync && (
+            <button
+              type="button"
+              onClick={onOpenSync}
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-400 text-xs font-black transition-all shadow-md active:scale-95"
+              title="Sincronizar rutinas entre Computadora y Celular con QR o Enlace"
+            >
+              <Smartphone className="w-3.5 h-3.5 text-sky-400" />
+              <span>Sincronizar Celular</span>
+            </button>
+          )}
+
           <button
             type="button"
             onClick={handleResetRutinas}
@@ -363,7 +385,7 @@ export default function Rutinas({ onStartWorkout }) {
             title="Limpiar ejercicios duplicados y restablecer rutinas oficiales limpias"
           >
             <RotateCcw className="w-3.5 h-3.5 text-sky-400" />
-            <span className="hidden sm:inline">Reparar / Limpiar Rutinas</span>
+            <span className="hidden sm:inline">Reparar / Limpiar</span>
           </button>
 
           <button

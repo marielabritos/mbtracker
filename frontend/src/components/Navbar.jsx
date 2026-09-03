@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Dumbbell, Calendar, History, TrendingUp, Play, User, LogOut, Lock, Zap, CalendarDays, Layers, Cloud, RefreshCw } from 'lucide-react';
+import { Home, Dumbbell, Calendar, History, TrendingUp, Play, User, LogOut, Lock, Zap, CalendarDays, Layers, RefreshCw, Smartphone } from 'lucide-react';
 import { api } from '../services/api';
 
-export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLogout }) {
+export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLogout, onOpenSync }) {
   const [isSyncingCloud, setIsSyncingCloud] = useState(false);
   const [syncStatusText, setSyncStatusText] = useState('');
 
@@ -18,11 +18,11 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
   ];
 
   useEffect(() => {
-    // Sincronización automática al cargar y al cambiar de pestaña
+    // Sincronización automática silenciosa al cargar
     api.cloudSync.pullFromCloud();
 
     const handleSynced = (e) => {
-      setSyncStatusText(e.detail?.direction === 'push' ? 'Nube actualizada' : 'Sincronizado con PC/Móvil');
+      setSyncStatusText(e.detail?.direction === 'push' ? 'Nube OK' : 'Sincronizado');
       setTimeout(() => setSyncStatusText(''), 3000);
     };
 
@@ -34,17 +34,11 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
     };
   }, []);
 
-  const handleManualSync = async () => {
-    if (isSyncingCloud) return;
-    try {
-      setIsSyncingCloud(true);
-      await api.cloudSync.syncNow();
-      setSyncStatusText('✓ Sincronización exitosa');
-      setTimeout(() => setSyncStatusText(''), 3500);
-    } catch (e) {
-      setSyncStatusText('Error de red');
-    } finally {
-      setIsSyncingCloud(false);
+  const handleSyncClick = () => {
+    if (onOpenSync) {
+      onOpenSync();
+    } else {
+      api.cloudSync.syncNow();
     }
   };
 
@@ -68,13 +62,12 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
           {/* Botón Sincronización Móvil */}
           <button
             type="button"
-            onClick={handleManualSync}
-            disabled={isSyncingCloud}
-            className="px-2.5 py-1.5 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-400 text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all"
+            onClick={handleSyncClick}
+            className="px-2.5 py-1.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-400 text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all shadow-sm"
             title="Sincronizar datos entre Computadora y Celular"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin text-sky-300' : ''}`} />
-            <span className="text-[11px]">{syncStatusText || (isSyncingCloud ? 'Sincronizando...' : 'Sincronizar')}</span>
+            <Smartphone className="w-3.5 h-3.5 text-sky-400" />
+            <span className="text-[11px] font-black">Sincronizar</span>
           </button>
 
           {isWorkoutActive && (
@@ -139,13 +132,12 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
           {/* Botón Sincronización Desktop */}
           <button
             type="button"
-            onClick={handleManualSync}
-            disabled={isSyncingCloud}
-            className="ml-2 px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-slate-700 text-sky-400 text-xs font-bold flex items-center gap-1.5 transition-all shadow-md active:scale-95"
-            title="Sincronizar instantáneamente con tu celular"
+            onClick={handleSyncClick}
+            className="ml-2 px-3.5 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-400 text-xs font-black flex items-center gap-2 transition-all shadow-md active:scale-95"
+            title="Sincronizar instantáneamente con tu celular (QR o Enlace)"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin' : ''}`} />
-            <span>{syncStatusText || (isSyncingCloud ? 'Sincronizando...' : 'Nube PC ↔ Celular')}</span>
+            <Smartphone className="w-4 h-4 text-sky-400" />
+            <span>Sincronizar Celular</span>
           </button>
 
           {onLogout && (
