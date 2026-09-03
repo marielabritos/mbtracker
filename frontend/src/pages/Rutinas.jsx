@@ -170,6 +170,40 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
     });
   };
 
+  const handleUpdateExerciseField = (diaIdx, ejIdx, field, value) => {
+    setFormRutina(prev => {
+      const newDias = prev.dias.map((d, dI) => {
+        if (dI !== diaIdx) return d;
+        const newEjercicios = d.ejercicios.map((ej, eI) => {
+          if (eI !== ejIdx) return ej;
+          if (field === 'nombre') {
+            return {
+              ...ej,
+              nombre: value,
+              ejercicio: { ...(ej.ejercicio || {}), nombre: value }
+            };
+          }
+          return { ...ej, [field]: value };
+        });
+        return { ...d, ejercicios: newEjercicios };
+      });
+      return { ...prev, dias: newDias };
+    });
+  };
+
+  const handleRemoveExercise = (diaIdx, ejIdx) => {
+    setFormRutina(prev => {
+      const newDias = prev.dias.map((d, dI) => {
+        if (dI !== diaIdx) return d;
+        const newEjercicios = d.ejercicios
+          .filter((_, eI) => eI !== ejIdx)
+          .map((e, idx) => ({ ...e, orden: idx + 1 }));
+        return { ...d, ejercicios: newEjercicios };
+      });
+      return { ...prev, dias: newDias };
+    });
+  };
+
   const handleAddExerciseToDay = (ejercicio) => {
     if (exerciseSelectorTarget === null) return;
     const { diaIndex, replaceIndex } = exerciseSelectorTarget;
@@ -786,12 +820,7 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
 
                               <button
                                 type="button"
-                                onClick={() => {
-                                  const newDias = [...formRutina.dias];
-                                  newDias[diaIdx].ejercicios = newDias[diaIdx].ejercicios.filter((_, idx) => idx !== ejIdx);
-                                  newDias[diaIdx].ejercicios.forEach((e, i) => { e.orden = i + 1; });
-                                  setFormRutina({ ...formRutina, dias: newDias });
-                                }}
+                                onClick={() => handleRemoveExercise(diaIdx, ejIdx)}
                                 className="p-1.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-colors ml-0.5"
                                 title="Quitar ejercicio"
                               >
@@ -804,15 +833,8 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
                           <div>
                             <input
                               type="text"
-                              value={ej.ejercicio?.nombre || ''}
-                              onChange={(e) => {
-                                const newDias = [...formRutina.dias];
-                                newDias[diaIdx].ejercicios[ejIdx].ejercicio = {
-                                  ...newDias[diaIdx].ejercicios[ejIdx].ejercicio,
-                                  nombre: e.target.value
-                                };
-                                setFormRutina({ ...formRutina, dias: newDias });
-                              }}
+                              value={ej.ejercicio?.nombre || ej.nombre || ''}
+                              onChange={(e) => handleUpdateExerciseField(diaIdx, ejIdx, 'nombre', e.target.value)}
                               placeholder="Nombre del ejercicio..."
                               className="w-full bg-slate-950 border border-slate-700/90 focus:border-sky-400 rounded-2xl px-3.5 py-2.5 font-bold text-white text-sm sm:text-base focus:outline-none shadow-inner"
                             />
@@ -823,14 +845,16 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
                             <div className="bg-slate-950 p-2 rounded-2xl border border-slate-800 text-center">
                               <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Series</span>
                               <input
-                                type="number"
-                                min="1"
-                                max="20"
-                                value={ej.series_objetivo}
+                                type="text"
+                                inputMode="numeric"
+                                value={ej.series_objetivo !== undefined ? ej.series_objetivo : 3}
                                 onChange={(e) => {
-                                  const newDias = [...formRutina.dias];
-                                  newDias[diaIdx].ejercicios[ejIdx].series_objetivo = parseInt(e.target.value) || 1;
-                                  setFormRutina({ ...formRutina, dias: newDias });
+                                  const val = e.target.value.replace(/[^0-9]/g, '');
+                                  handleUpdateExerciseField(diaIdx, ejIdx, 'series_objetivo', val);
+                                }}
+                                onBlur={(e) => {
+                                  const num = parseInt(e.target.value);
+                                  handleUpdateExerciseField(diaIdx, ejIdx, 'series_objetivo', isNaN(num) || num < 1 ? 1 : num);
                                 }}
                                 className="w-full bg-transparent text-center text-white font-mono font-black text-sm focus:outline-none"
                               />
@@ -840,12 +864,8 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
                               <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Reps</span>
                               <input
                                 type="text"
-                                value={ej.reps_objetivo}
-                                onChange={(e) => {
-                                  const newDias = [...formRutina.dias];
-                                  newDias[diaIdx].ejercicios[ejIdx].reps_objetivo = e.target.value;
-                                  setFormRutina({ ...formRutina, dias: newDias });
-                                }}
+                                value={ej.reps_objetivo !== undefined ? ej.reps_objetivo : '8-12'}
+                                onChange={(e) => handleUpdateExerciseField(diaIdx, ejIdx, 'reps_objetivo', e.target.value)}
                                 className="w-full bg-transparent text-center text-white font-mono font-black text-sm focus:outline-none"
                               />
                             </div>
@@ -854,13 +874,16 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
                               <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Descanso</span>
                               <div className="flex items-center justify-center gap-0.5">
                                 <input
-                                  type="number"
-                                  step="15"
-                                  value={ej.descanso_segundos}
+                                  type="text"
+                                  inputMode="numeric"
+                                  value={ej.descanso_segundos !== undefined ? ej.descanso_segundos : 60}
                                   onChange={(e) => {
-                                    const newDias = [...formRutina.dias];
-                                    newDias[diaIdx].ejercicios[ejIdx].descanso_segundos = parseInt(e.target.value) || 60;
-                                    setFormRutina({ ...formRutina, dias: newDias });
+                                    const val = e.target.value.replace(/[^0-9]/g, '');
+                                    handleUpdateExerciseField(diaIdx, ejIdx, 'descanso_segundos', val);
+                                  }}
+                                  onBlur={(e) => {
+                                    const num = parseInt(e.target.value);
+                                    handleUpdateExerciseField(diaIdx, ejIdx, 'descanso_segundos', isNaN(num) || num < 0 ? 60 : num);
                                   }}
                                   className="w-12 bg-transparent text-center text-white font-mono font-black text-sm focus:outline-none"
                                 />
@@ -877,11 +900,7 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
                                 type="text"
                                 placeholder="Observaciones / Alternativa (Ej: Si está ocupada, cambiar por...)"
                                 value={ej.notas || ''}
-                                onChange={(e) => {
-                                  const newDias = [...formRutina.dias];
-                                  newDias[diaIdx].ejercicios[ejIdx].notas = e.target.value;
-                                  setFormRutina({ ...formRutina, dias: newDias });
-                                }}
+                                onChange={(e) => handleUpdateExerciseField(diaIdx, ejIdx, 'notas', e.target.value)}
                                 className="w-full bg-slate-950/90 border border-slate-800 focus:border-amber-400/80 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none"
                               />
                             </div>

@@ -517,53 +517,18 @@ export const api = {
   },
 
   // --- RUTINAS ---
-          getRutinas: async () => {
+            getRutinas: async () => {
     const deletedIds = getStored('deleted_rutina_ids', []);
     let localRutinas = getStored('rutinas', null);
 
-    // Auto-migración para teléfonos con versión vieja en caché (que tenían 8 ejercicios)
-    const SYNC_KEY = "mbtracker_sync_fullbody_11_v7";
-    const synced = getStored('synced_version_key', null);
-
-    if (!localRutinas || !Array.isArray(localRutinas) || localRutinas.length === 0 || synced !== SYNC_KEY) {
-      if (localRutinas && Array.isArray(localRutinas)) {
-        localRutinas = localRutinas.map(r => {
-          if (r.id === 1002 || r.nombre?.toLowerCase().includes('full body')) {
-            return DEFAULT_RUTINAS[0]; // Actualizar a los 11 ejercicios oficiales
-          }
-          return r;
-        });
-        if (!localRutinas.some(r => r.id === 1002 || r.nombre?.toLowerCase().includes('full body'))) {
-          localRutinas.unshift(DEFAULT_RUTINAS[0]);
-        }
-      } else {
-        localRutinas = [...DEFAULT_RUTINAS];
-      }
-      setStored('synced_version_key', SYNC_KEY);
+    if (!localRutinas || !Array.isArray(localRutinas) || localRutinas.length === 0) {
+      localRutinas = DEFAULT_RUTINAS;
       setStored('rutinas', localRutinas);
+      return localRutinas.filter(r => !deletedIds.includes(r.id));
     }
 
-    // Mantener las personalizaciones y asegurar que la rutina Full Body tenga sus 11 ejercicios
-    const map = new Map();
-    DEFAULT_RUTINAS.forEach(r => {
-      if (!deletedIds.includes(r.id)) {
-        map.set(r.id, r);
-      }
-    });
-
-    localRutinas.forEach(r => {
-      if (!deletedIds.includes(r.id)) {
-        // Si en el celular la rutina Full Body tiene menos de 11 ejercicios, actualizar a los 11 completos
-        if ((r.id === 1002 || r.nombre?.toLowerCase().includes('full body')) && (r.dias?.[0]?.ejercicios?.length || 0) < 11) {
-          map.set(1002, DEFAULT_RUTINAS[0]);
-        } else {
-          map.set(r.id, r);
-        }
-      }
-    });
-
-    const cleanList = Array.from(map.values()).filter(r => !deletedIds.includes(r.id));
-    setStored('rutinas', cleanList);
+    // Devolver las rutinas locales tal cual las guardó o editó el usuario
+    const cleanList = localRutinas.filter(r => !deletedIds.includes(r.id));
     return cleanList;
   },
 
@@ -617,7 +582,7 @@ export const api = {
     return nuevaLocal;
   },
 
-    updateRutina: async (id, data) => {
+      updateRutina: async (id, data) => {
     const targetId = parseInt(id) || id;
     const deletedIds = getStored('deleted_rutina_ids', []);
     setStored('deleted_rutina_ids', deletedIds.filter(x => x !== targetId));
@@ -635,12 +600,25 @@ export const api = {
         id: d.id || Date.now() + dIdx + 1,
         orden: dIdx + 1,
         ejercicios: (d.ejercicios || []).map((e, eIdx) => {
-          const ejObj = e.ejercicio || catalog.find(x => x.id === e.ejercicio_id) || { id: e.ejercicio_id, nombre: e.nombre || 'Ejercicio', grupo_muscular: 'General' };
+          const ejNombre = e.ejercicio?.nombre || e.nombre || 'Ejercicio';
+          const ejGrupo = e.ejercicio?.grupo_muscular || e.grupo_muscular || 'General';
+          const ejEquipo = e.ejercicio?.equipo || e.equipo || 'Mancuerna';
           return {
             ...e,
             id: e.id || Date.now() + dIdx * 100 + eIdx + 1,
+            ejercicio_id: e.ejercicio_id || (1000 + eIdx),
+            nombre: ejNombre,
+            series_objetivo: parseInt(e.series_objetivo) || 1,
+            reps_objetivo: String(e.reps_objetivo || "8-12"),
+            descanso_segundos: parseInt(e.descanso_segundos) || 60,
             orden: eIdx + 1,
-            ejercicio: ejObj
+            notas: e.notas || null,
+            ejercicio: {
+              id: e.ejercicio_id || (1000 + eIdx),
+              nombre: ejNombre,
+              grupo_muscular: ejGrupo,
+              equipo: ejEquipo
+            }
           };
         })
       }))
@@ -660,6 +638,7 @@ export const api = {
 
     setStored('rutinas', updatedList);
     cloudSync.pushToCloud();
+
     try {
       await request(`/api/rutinas/${id}`, { method: 'PUT', body: JSON.stringify(data) });
     } catch (e) {}
