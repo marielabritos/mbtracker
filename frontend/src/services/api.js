@@ -138,8 +138,12 @@ export const DEFAULT_EJERCICIOS = [
 
     { id: 130, nombre: "Empuje en Polea para Pecho", grupo_muscular: "Pecho", equipo: "Polea", es_personalizado: false },
   { id: 131, nombre: "Face Pull en Polea con Cuerda (Pull Face)", grupo_muscular: "Hombros", equipo: "Polea", es_personalizado: false },
-    { id: 132, nombre: "Press Pallof en Polea", grupo_muscular: "Core", equipo: "Polea", es_personalizado: false },
+        { id: 132, nombre: "Press Pallof en Polea", grupo_muscular: "Core", equipo: "Polea", es_personalizado: false },
   { id: 133, nombre: "Caminata de Granjero con Mancuernas (Farmer's Walk)", grupo_muscular: "Core", equipo: "Mancuerna", es_personalizado: false },
+  { id: 134, nombre: "Bicho Muerto (Dead Bug)", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 135, nombre: "Silla de Cuádriceps", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
+  { id: 136, nombre: "Bicho Muerto", grupo_muscular: "Core", equipo: "Peso Corporal", es_personalizado: false },
+  { id: 137, nombre: "Silla de Cuádriceps (Extensión en Máquina)", grupo_muscular: "Piernas", equipo: "Máquina", es_personalizado: false },
   // --- CARDIO, RUNNING, BICICLETA & MONTAÑISMO ---
   { id: 114, nombre: "Carrera / Running Continuo", grupo_muscular: "Cardio", equipo: "Aire Libre / Cinta", es_personalizado: false },
   { id: 115, nombre: "Series de Velocidad / Intervalos Running", grupo_muscular: "Cardio", equipo: "Aire Libre", es_personalizado: false },

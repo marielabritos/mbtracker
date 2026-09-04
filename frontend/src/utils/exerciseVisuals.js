@@ -1,6 +1,91 @@
 // Base de datos de Demostraciones Visuales con GIFs e Imágenes Reales de OpenGym
 
 export const EXERCISE_VISUALS = {
+  "Bicho Muerto": {
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dead_Bug/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dead_Bug/0.jpg",
+    frames: ["Dead_Bug/0.jpg", "Dead_Bug/1.jpg"],
+    musculo_principal: "Core / Abdomen Profundo (Transverso Abdominal)",
+    musculos_secundarios: ["Recto Abdominal", "Oblicuos", "Flexores de Cadera"],
+    tips: [
+      "Acuéstate boca arriba con los brazos apuntando al techo y las rodillas a 90°.",
+      "Pega la zona lumbar firmemente contra la colchoneta sin que se arquee la espalda.",
+      "Extiende simultáneamente el brazo derecho hacia atrás y la pierna izquierda hacia adelante rozando el suelo.",
+      "Vuelve al centro de forma controlada y alterna con el otro lado manteniendo el abdomen bien duro."
+    ],
+    respiracion: "Inhala en el centro; exhala al extender brazo y pierna activando el core."
+  },
+  "Bicho Muerto (Dead Bug)": {
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dead_Bug/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dead_Bug/0.jpg",
+    frames: ["Dead_Bug/0.jpg", "Dead_Bug/1.jpg"],
+    musculo_principal: "Core / Abdomen Profundo (Transverso Abdominal)",
+    musculos_secundarios: ["Recto Abdominal", "Oblicuos", "Flexores de Cadera"],
+    tips: [
+      "Acuéstate boca arriba con los brazos apuntando al techo y las rodillas a 90°.",
+      "Pega la zona lumbar firmemente contra la colchoneta sin que se arquee la espalda.",
+      "Extiende simultáneamente el brazo derecho hacia atrás y la pierna izquierda hacia adelante rozando el suelo.",
+      "Vuelve al centro de forma controlada y alterna con el otro lado manteniendo el abdomen bien duro."
+    ],
+    respiracion: "Inhala en el centro; exhala al extender brazo y pierna activando el core."
+  },
+  "Dead Bug": {
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dead_Bug/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dead_Bug/0.jpg",
+    frames: ["Dead_Bug/0.jpg", "Dead_Bug/1.jpg"],
+    musculo_principal: "Core / Abdomen Profundo (Transverso Abdominal)",
+    musculos_secundarios: ["Recto Abdominal", "Oblicuos", "Flexores de Cadera"],
+    tips: [
+      "Acuéstate boca arriba con los brazos apuntando al techo y las rodillas a 90°.",
+      "Pega la zona lumbar firmemente contra la colchoneta sin que se arquee la espalda.",
+      "Extiende simultáneamente el brazo derecho hacia atrás y la pierna izquierda hacia adelante rozando el suelo.",
+      "Vuelve al centro de forma controlada y alterna con el otro lado manteniendo el abdomen bien duro."
+    ],
+    respiracion: "Inhala en el centro; exhala al extender brazo y pierna activando el core."
+  },
+  "Silla de Cuádriceps": {
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg",
+    frames: ["Leg_Extensions/0.jpg", "Leg_Extensions/1.jpg"],
+    musculo_principal: "Cuádriceps (Recto Femoral y Vastos)",
+    musculos_secundarios: ["Tendón Rotuliano", "Tibial Anterior"],
+    tips: [
+      "Ajusta el respaldo para que la flexión de las rodillas coincida con el eje de la máquina.",
+      "Coloca el cojín acolchado justo por encima del empeine / tobillos.",
+      "Extiende las piernas hacia arriba contrayendo fuerte los cuádriceps 1 segundo en el punto máximo.",
+      "Baja el peso de forma lenta y controlada sintiendo el estiramiento muscular."
+    ],
+    respiracion: "Inhala al bajar el peso; exhala con potencia al extender las piernas arriba."
+  },
+  "Silla de Cuádriceps (Extensión en Máquina)": {
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg",
+    frames: ["Leg_Extensions/0.jpg", "Leg_Extensions/1.jpg"],
+    musculo_principal: "Cuádriceps (Recto Femoral y Vastos)",
+    musculos_secundarios: ["Tendón Rotuliano", "Tibial Anterior"],
+    tips: [
+      "Ajusta el respaldo para que la flexión de las rodillas coincida con el eje de la máquina.",
+      "Coloca el cojín acolchado justo por encima del empeine / tobillos.",
+      "Extiende las piernas hacia arriba contrayendo fuerte los cuádriceps 1 segundo en el punto máximo.",
+      "Baja el peso de forma lenta y controlada sintiendo el estiramiento muscular."
+    ],
+    respiracion: "Inhala al bajar el peso; exhala con potencia al extender las piernas arriba."
+  },
+  "Silla Cuádriceps": {
+    gif: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg",
+    img: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg",
+    frames: ["Leg_Extensions/0.jpg", "Leg_Extensions/1.jpg"],
+    musculo_principal: "Cuádriceps (Recto Femoral y Vastos)",
+    musculos_secundarios: ["Tendón Rotuliano", "Tibial Anterior"],
+    tips: [
+      "Ajusta el respaldo para que la flexión de las rodillas coincida con el eje de la máquina.",
+      "Coloca el cojín acolchado justo por encima del empeine / tobillos.",
+      "Extiende las piernas hacia arriba contrayendo fuerte los cuádriceps 1 segundo en el punto máximo.",
+      "Baja el peso de forma lenta y controlada sintiendo el estiramiento muscular."
+    ],
+    respiracion: "Inhala al bajar el peso; exhala con potencia al extender las piernas arriba."
+  },
+
   // --- PECHO ---
   "Press de Banca Plano con Barra": {
     gif: "https://raw.githubusercontent.com/arvids-unavailable/openGym/main/media/gif/0025-EIeI8Vf.gif",
@@ -1023,6 +1108,9 @@ export function getExerciseVisual(nombre, grupoMuscular = "General") {
   if (norm.includes("prensa") || norm.includes("leg press")) return EXERCISE_VISUALS["Prensa de Piernas 45°"];
   if (norm.includes("sentadilla") || norm.includes("squat") || norm.includes("hack")) return EXERCISE_VISUALS["Sentadilla con Barra (Back Squat)"];
   if (norm.includes("peso muerto") || norm.includes("rdl") || norm.includes("rumano") || norm.includes("deadlift")) return EXERCISE_VISUALS["Peso Muerto Rumano (RDL)"];
+  if (norm.includes("bicho") || norm.includes("dead bug") || norm.includes("deadbug")) return EXERCISE_VISUALS["Bicho Muerto (Dead Bug)"];
+  if (norm.includes("silla") && (norm.includes("cuadricep") || norm.includes("pierna") || norm.includes("extension"))) return EXERCISE_VISUALS["Silla de Cuádriceps"];
+  if (norm.includes("silla cuadriceps") || norm.includes("silla de cuadriceps")) return EXERCISE_VISUALS["Silla de Cuádriceps"];
   if (norm.includes("sillon") || (norm.includes("extension") && norm.includes("cuadriceps"))) return EXERCISE_VISUALS["Extensión de Cuádriceps"];
   if ((norm.includes("femoral") || norm.includes("isquio") || norm.includes("leg curl")) && norm.includes("sentad")) return EXERCISE_VISUALS["Curl Femoral Sentado en Máquina"];
   if (norm.includes("femoral") || norm.includes("isquio") || norm.includes("leg curl")) return EXERCISE_VISUALS["Curl Femoral Tumbado en Máquina"];
