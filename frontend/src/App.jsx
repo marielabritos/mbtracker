@@ -53,7 +53,8 @@ export default function App() {
       }
 
       if (syncParam) {
-        const decodedJson = decodeURIComponent(escape(atob(syncParam)));
+        const cleanBase64 = syncParam.replace(/ /g, '+');
+        const decodedJson = decodeURIComponent(escape(atob(cleanBase64)));
         const parsed = JSON.parse(decodedJson);
 
         if (parsed.rutinas && Array.isArray(parsed.rutinas) && parsed.rutinas.length > 0) {

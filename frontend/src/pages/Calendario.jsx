@@ -62,11 +62,16 @@ export default function Calendario({ onStartWorkout, onNavigateTab }) {
   sesiones.forEach(s => {
     const rawDate = s.fecha_inicio || s.fecha;
     if (rawDate) {
-      const dStr = new Date(rawDate).toISOString().split('T')[0];
-      if (!sessionsByDate[dStr]) {
-        sessionsByDate[dStr] = [];
-      }
-      sessionsByDate[dStr].push(s);
+      try {
+        const parsedDate = new Date(rawDate);
+        if (!isNaN(parsedDate.getTime())) {
+          const dStr = parsedDate.toISOString().split('T')[0];
+          if (!sessionsByDate[dStr]) {
+            sessionsByDate[dStr] = [];
+          }
+          sessionsByDate[dStr].push(s);
+        }
+      } catch (e) {}
     }
   });
 

@@ -134,7 +134,7 @@ export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach, 
       ]);
       setStats(statsData);
       setRutinas(rutinasData);
-      if (rutinasData.length > 0 && rutinasData[0].dias.length > 0) {
+      if (rutinasData && rutinasData.length > 0 && rutinasData[0]?.dias?.length > 0) {
         setSelectedRutinaId(rutinasData[0].id);
         setSelectedDiaId(rutinasData[0].dias[0].id);
       }
@@ -148,7 +148,7 @@ export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach, 
   const handleRutinaChange = (rutinaId) => {
     setSelectedRutinaId(rutinaId);
     const rutina = rutinas.find(r => r.id === parseInt(rutinaId));
-    if (rutina && rutina.dias.length > 0) {
+    if (rutina && rutina.dias && rutina.dias.length > 0) {
       setSelectedDiaId(rutina.dias[0].id);
     } else {
       setSelectedDiaId('');
