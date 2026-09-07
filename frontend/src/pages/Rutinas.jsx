@@ -962,18 +962,20 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
       {/* Modal Selector & Creador de Ejercicios */}
       {exerciseSelectorTarget !== null && (
         <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 w-full max-w-lg shadow-2xl space-y-3.5 max-h-[88vh] flex flex-col">
+            {/* Header Modal */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3 shrink-0">
               <div>
-                <h3 className="font-bold text-lg text-white">Seleccionar Ejercicio</h3>
-                <p className="text-xs text-slate-400">Elige del catálogo o crea uno personalizado</p>
+                <h3 className="font-black text-lg text-white">Seleccionar Ejercicio</h3>
+                <p className="text-xs text-sky-400 font-medium">Elige del catálogo o crea uno nuevo</p>
               </div>
               <button
+                type="button"
                 onClick={() => {
                   setExerciseSelectorTarget(null);
                   setShowCreateCustomExercise(false);
                 }}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-white"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -981,88 +983,144 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
 
             {!showCreateCustomExercise ? (
               <>
-                <div className="flex items-center gap-2">
+                {/* Buscador de Ejercicios */}
+                <div className="flex items-center gap-2 shrink-0">
                   <div className="relative flex-1">
                     <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                     <input
                       type="text"
-                      placeholder="Buscar por nombre..."
+                      placeholder="Buscar por nombre o músculo..."
                       value={searchEj}
                       onChange={(e) => setSearchEj(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500"
+                      className="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 rounded-2xl pl-10 pr-9 py-2.5 text-sm text-white focus:outline-none placeholder:text-slate-500 shadow-inner"
                     />
+                    {searchEj && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchEj('')}
+                        className="absolute right-3 top-2.5 p-0.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+                        title="Limpiar búsqueda"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                   <button
+                    type="button"
                     onClick={() => setShowCreateCustomExercise(true)}
-                    className="flex items-center gap-1 px-3 py-2.5 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-400 font-bold text-xs whitespace-nowrap hover:bg-sky-500/25"
+                    className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-400 font-bold text-xs whitespace-nowrap hover:bg-sky-500/25 active:scale-95 transition-all shrink-0"
                   >
-                    <Plus className="w-3.5 h-3.5" /> + Crear
+                    <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                    <span>+ Crear</span>
                   </button>
                 </div>
 
-                <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                  {muscleGroups.map((group) => (
-                    <button
-                      key={group}
-                      onClick={() => setSelectedMuscle(group)}
-                      className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
-                        selectedMuscle === group
-                          ? 'bg-sky-500 text-slate-950'
-                          : 'bg-slate-800 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {group}
-                    </button>
-                  ))}
+                {/* Selector de Categorías / Músculos */}
+                <div className="shrink-0 space-y-1">
+                  <div className="flex items-center justify-between px-0.5">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                      Categorías / Músculo:
+                    </span>
+                    {selectedMuscle !== 'Todos' && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedMuscle('Todos')}
+                        className="text-[11px] font-bold text-sky-400 hover:underline"
+                      >
+                        Ver Todos
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Pills Horizontales con Altura Fija y shrink-0 */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto py-1.5 w-full">
+                    {muscleGroups.map((group) => {
+                      const isSelected = selectedMuscle === group;
+                      return (
+                        <button
+                          key={group}
+                          type="button"
+                          onClick={() => setSelectedMuscle(group)}
+                          className={`shrink-0 inline-flex items-center justify-center px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all select-none cursor-pointer ${
+                            isSelected
+                              ? 'bg-sky-500 text-slate-950 font-black shadow-md shadow-sky-500/30 ring-2 ring-sky-400'
+                              : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:text-white'
+                          }`}
+                        >
+                          {group}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
-                  {filteredEjercicios.map((ej) => (
-                    <div
-                      key={ej.id}
-                      className="p-3 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800/80 hover:border-sky-500/40 flex items-center justify-between transition-all"
-                    >
-                      <div 
-                        onClick={() => handleAddExerciseToDay(ej)}
-                        className="flex-1 cursor-pointer"
+                {/* Lista de Ejercicios Filtrados */}
+                <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-0">
+                  {filteredEjercicios.length === 0 ? (
+                    <div className="p-8 text-center text-slate-400 text-xs space-y-3 bg-slate-950/60 rounded-2xl border border-slate-800/60">
+                      <p>No se encontraron ejercicios con "{searchEj}" en la categoría "{selectedMuscle}".</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchEj('');
+                          setSelectedMuscle('Todos');
+                        }}
+                        className="px-4 py-2 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-400 font-bold text-xs hover:bg-sky-500/25 transition-all"
                       >
-                        <h4 className="font-bold text-white text-sm">{ej.nombre}</h4>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[10px] text-sky-400 font-semibold">{ej.grupo_muscular}</span>
-                          {ej.equipo && <span className="text-[10px] text-slate-500">• {ej.equipo}</span>}
+                        Ver todos los ejercicios
+                      </button>
+                    </div>
+                  ) : (
+                    filteredEjercicios.map((ej) => (
+                      <div
+                        key={ej.id}
+                        className="p-3 rounded-2xl bg-slate-950 hover:bg-sky-500/10 border border-slate-800/80 hover:border-sky-500/40 flex items-center justify-between gap-2 transition-all group"
+                      >
+                        <div 
+                          onClick={() => handleAddExerciseToDay(ej)}
+                          className="flex-1 cursor-pointer min-w-0"
+                        >
+                          <h4 className="font-bold text-white text-sm group-hover:text-sky-300 truncate">{ej.nombre}</h4>
+                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                            <span className="text-[10px] text-sky-400 font-bold bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">
+                              {ej.grupo_muscular}
+                            </span>
+                            {ej.equipo && <span className="text-[10px] text-slate-400">• {ej.equipo}</span>}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedVisualExercise(ej)}
+                            className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-400 border border-slate-800 transition-colors"
+                            title="Ver demostración GIF"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                          
+                          <button
+                            type="button"
+                            onClick={(e) => handleDeleteCatalogExercise(e, ej.id)}
+                            className="p-2 rounded-xl bg-slate-900 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 border border-slate-800 transition-colors"
+                            title="Eliminar del catálogo"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleAddExerciseToDay(ej)}
+                            className="p-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs flex items-center gap-1 shadow-md shadow-sky-500/20 active:scale-95 transition-all"
+                            title="Seleccionar este ejercicio"
+                          >
+                            <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                            <span>Elegir</span>
+                          </button>
                         </div>
                       </div>
-
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedVisualExercise(ej)}
-                          className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-400 border border-slate-800"
-                          title="Ver demostración GIF"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                        </button>
-                        
-                        <button
-                          type="button"
-                          onClick={(e) => handleDeleteCatalogExercise(e, ej.id)}
-                          className="p-2 rounded-xl bg-slate-900 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 border border-slate-800 transition-colors"
-                          title="Eliminar del catálogo"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleAddExerciseToDay(ej)}
-                          className="p-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold shadow-md shadow-sky-500/20"
-                          title="Seleccionar este ejercicio"
-                        >
-                          <Plus className="w-4 h-4 stroke-[3]" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </>
             ) : (
