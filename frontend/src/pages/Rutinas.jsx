@@ -375,12 +375,29 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
     }
   };
 
-  const muscleGroups = ['Todos', 'Glúteos', 'Pecho', 'Espalda', 'Piernas', 'Hombros', 'Brazos', 'Core', 'Calentamiento', 'Rehabilitación', 'Estiramientos', 'Cardio', 'Montañismo'];
+    const muscleGroups = ['Todos', 'Brazos', 'Pecho', 'Espalda', 'Piernas', 'Glúteos', 'Hombros', 'Core', 'Calentamiento', 'Rehabilitación', 'Estiramientos', 'Cardio', 'Montañismo'];
 
   const filteredEjercicios = catalogEjercicios.filter(e => {
-    const matchesGroup = selectedMuscle === 'Todos' || e.grupo_muscular === selectedMuscle;
-    const matchesSearch = e.nombre.toLowerCase().includes(searchEj.toLowerCase());
-    return matchesGroup && matchesSearch;
+    const query = searchEj.trim().toLowerCase();
+    const group = selectedMuscle;
+
+    const matchesGroup = group === 'Todos' || e.grupo_muscular === group;
+
+    if (!query) {
+      return matchesGroup;
+    }
+
+    const nameLow = (e.nombre || '').toLowerCase();
+    const groupLow = (e.grupo_muscular || '').toLowerCase();
+    const equipoLow = (e.equipo || '').toLowerCase();
+
+    const matchesSearch = nameLow.includes(query) || groupLow.includes(query) || equipoLow.includes(query);
+
+    if (group === 'Todos') {
+      return matchesSearch;
+    }
+
+    return matchesGroup && (nameLow.includes(query) || matchesSearch);
   });
 
   return (
