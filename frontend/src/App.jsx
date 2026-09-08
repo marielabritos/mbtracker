@@ -61,18 +61,34 @@ export default function App() {
           localStorage.setItem('mbtracker_rutinas', JSON.stringify(parsed.rutinas));
         }
         if (parsed.sesiones && Array.isArray(parsed.sesiones) && parsed.sesiones.length > 0) {
-          localStorage.setItem('mbtracker_sesiones', JSON.stringify(parsed.sesiones));
+          const localSesiones = JSON.parse(localStorage.getItem('mbtracker_sesiones') || '[]');
+          const sMap = new Map();
+          localSesiones.forEach(s => sMap.set(s.id, s));
+          parsed.sesiones.forEach(s => sMap.set(s.id, { ...(sMap.get(s.id) || {}), ...s }));
+          const merged = Array.from(sMap.values()).sort((a, b) => {
+            const tA = new Date(a.fecha_inicio || a.fecha || 0).getTime();
+            const tB = new Date(b.fecha_inicio || b.fecha || 0).getTime();
+            return tB - tA;
+          });
+          localStorage.setItem('mbtracker_sesiones', JSON.stringify(merged));
         }
         if (parsed.perfil) {
           localStorage.setItem('mbtracker_perfil', JSON.stringify(parsed.perfil));
         }
-        if (parsed.prs) {
-          localStorage.setItem('mbtracker_prs', JSON.stringify(parsed.prs));
+        if (parsed.prs && Array.isArray(parsed.prs) && parsed.prs.length > 0) {
+          const localPrs = JSON.parse(localStorage.getItem('mbtracker_prs') || '[]');
+          const pMap = new Map();
+          localPrs.forEach(p => pMap.set(p.ejercicio_id || p.id, p));
+          parsed.prs.forEach(p => pMap.set(p.ejercicio_id || p.id, p));
+          localStorage.setItem('mbtracker_prs', JSON.stringify(Array.from(pMap.values())));
         }
 
-        setSyncToast(`✨ ¡Sincronizado con éxito! (${parsed.rutinas?.length || 0} Rutinas, ${parsed.sesiones?.length || 0} Sesiones cargadas)`);
+        setSyncToast(`✨ ¡Sincronizado con éxito! (${parsed.sesiones?.length || 0} Entrenamientos cargados)`);
         window.history.replaceState({}, document.title, window.location.pathname);
-        setTimeout(() => setSyncToast(''), 6000);
+        setTimeout(() => {
+          setSyncToast('');
+          window.location.reload();
+        }, 1200);
       }
     } catch (e) {
       console.error("Error reading sync parameter from URL", e);
