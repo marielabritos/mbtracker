@@ -5,9 +5,10 @@ export function compactPayload(raw) {
   const cleanRutinas = (raw.rutinas || []).map(r => ({
     id: r.id,
     nombre: r.nombre,
+    descripcion: r.descripcion || '',
     duracion_semanas: r.duracion_semanas,
     duracion_estimada_minutos: r.duracion_estimada_minutos,
-    activa: r.activa,
+    activa: r.activa !== false,
     dias: (r.dias || []).map(d => ({
       id: d.id,
       nombre: d.nombre,
@@ -15,10 +16,12 @@ export function compactPayload(raw) {
       ejercicios: (d.ejercicios || []).map(e => ({
         id: e.id,
         ejercicio_id: e.ejercicio_id || e.ejercicio?.id,
-        nombre: e.nombre || e.ejercicio?.nombre,
-        series_objetivo: e.series_objetivo,
-        reps_objetivo: e.reps_objetivo,
-        descanso_segundos: e.descanso_segundos,
+        nombre: e.ejercicio?.nombre || e.nombre || 'Ejercicio',
+        grupo_muscular: e.ejercicio?.grupo_muscular || e.grupo_muscular || 'General',
+        equipo: e.ejercicio?.equipo || e.equipo || 'Mancuerna',
+        series_objetivo: e.series_objetivo || 3,
+        reps_objetivo: e.reps_objetivo || '8-12',
+        descanso_segundos: e.descanso_segundos || 60,
         notas: e.notas || undefined
       }))
     }))
@@ -62,8 +65,51 @@ export function compactPayload(raw) {
 
 export function expandPayload(compact) {
   // Soporta formato compacto { r, s, p, pr } y formato legacy { rutinas, sesiones, perfil, prs }
-  const rutinas = compact.r || compact.rutinas || [];
-  const sesiones = compact.s || compact.sesiones || [];
+  const rawRutinas = compact.r || compact.rutinas || [];
+  const rutinas = rawRutinas.map(r => ({
+    ...r,
+    dias: (r.dias || []).map(d => ({
+      ...d,
+      ejercicios: (d.ejercicios || []).map(e => {
+        const ejNombre = e.ejercicio?.nombre || e.nombre || 'Ejercicio';
+        const ejGrupo = e.ejercicio?.grupo_muscular || e.grupo_muscular || 'General';
+        const ejEquipo = e.ejercicio?.equipo || e.equipo || 'Mancuerna';
+        const ejId = e.ejercicio_id || e.ejercicio?.id || e.id;
+        return {
+          ...e,
+          id: e.id,
+          ejercicio_id: ejId,
+          nombre: ejNombre,
+          grupo_muscular: ejGrupo,
+          equipo: ejEquipo,
+          series_objetivo: e.series_objetivo || 3,
+          reps_objetivo: e.reps_objetivo || '8-12',
+          descanso_segundos: e.descanso_segundos || 60,
+          notas: e.notas || '',
+          ejercicio: e.ejercicio || {
+            id: ejId,
+            nombre: ejNombre,
+            grupo_muscular: ejGrupo,
+            equipo: ejEquipo
+          }
+        };
+      })
+    }))
+  }));
+
+  const rawSesiones = compact.s || compact.sesiones || [];
+  const sesiones = rawSesiones.map(s => ({
+    ...s,
+    fecha_inicio: s.fecha_inicio || s.fecha,
+    series: (s.series || []).map(item => ({
+      ...item,
+      ejercicio: item.ejercicio || {
+        id: item.ejercicio_id,
+        nombre: item.nombre || 'Ejercicio'
+      }
+    }))
+  }));
+
   const perfil = compact.p || compact.perfil || {};
   const prs = compact.pr || compact.prs || [];
 

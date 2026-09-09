@@ -60,7 +60,27 @@ export default function App() {
         const parsed = expandPayload(rawParsed);
 
         if (parsed.rutinas && Array.isArray(parsed.rutinas) && parsed.rutinas.length > 0) {
-          localStorage.setItem('mbtracker_rutinas', JSON.stringify(parsed.rutinas));
+          const localRutinas = JSON.parse(localStorage.getItem('mbtracker_rutinas') || '[]');
+          const rMap = new Map();
+          localRutinas.forEach(r => {
+            if (r.id) rMap.set(String(r.id), r);
+          });
+          parsed.rutinas.forEach(incoming => {
+            const matchKey = Array.from(rMap.keys()).find(k => {
+              const existing = rMap.get(k);
+              return String(existing.id) === String(incoming.id) || 
+                     (existing.nombre && incoming.nombre && existing.nombre.trim().toLowerCase() === incoming.nombre.trim().toLowerCase());
+            });
+            if (matchKey) {
+              const existing = rMap.get(matchKey);
+              rMap.set(matchKey, { ...existing, ...incoming });
+            } else {
+              rMap.set(String(incoming.id || Date.now() + Math.random()), incoming);
+            }
+          });
+          const uniqueRutinas = Array.from(rMap.values());
+          localStorage.setItem('mbtracker_rutinas', JSON.stringify(uniqueRutinas));
+          localStorage.setItem('mbtracker_has_custom_rutinas', 'true');
         }
         if (parsed.sesiones && Array.isArray(parsed.sesiones) && parsed.sesiones.length > 0) {
           const localSesiones = JSON.parse(localStorage.getItem('mbtracker_sesiones') || '[]');
@@ -85,7 +105,9 @@ export default function App() {
           localStorage.setItem('mbtracker_prs', JSON.stringify(Array.from(pMap.values())));
         }
 
-        setSyncToast(`✨ ¡Sincronizado con éxito! (${parsed.sesiones?.length || 0} Entrenamientos cargados)`);
+        const rCount = parsed.rutinas?.length || 0;
+        const sCount = parsed.sesiones?.length || 0;
+        setSyncToast(`✨ ¡Sincronizado con éxito! (${rCount} Rutinas y ${sCount} Entrenamientos cargados)`);
         window.history.replaceState({}, document.title, window.location.pathname);
         setTimeout(() => {
           setSyncToast('');

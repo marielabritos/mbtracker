@@ -594,15 +594,15 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
                                     #{index + 1}
                                   </span>
                                   <span className="font-bold text-white text-xs sm:text-sm">
-                                    {ej.ejercicio?.nombre}
+                                    {ej.ejercicio?.nombre || ej.nombre || 'Ejercicio'}
                                   </span>
                                   <span className="px-2 py-0.5 rounded-md bg-slate-900 text-[10px] text-sky-300 font-semibold border border-slate-800 shrink-0">
-                                    {ej.ejercicio?.grupo_muscular}
+                                    {ej.ejercicio?.grupo_muscular || ej.grupo_muscular || 'General'}
                                   </span>
                                   
                                   <button
                                     type="button"
-                                    onClick={() => setSelectedVisualExercise(ej.ejercicio)}
+                                    onClick={() => setSelectedVisualExercise(ej.ejercicio || { id: ej.ejercicio_id || ej.id, nombre: ej.nombre || ej.ejercicio?.nombre, grupo_muscular: ej.grupo_muscular || ej.ejercicio?.grupo_muscular || 'General', equipo: ej.equipo || ej.ejercicio?.equipo || 'Mancuerna' })}
                                     className="p-1 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20 shrink-0"
                                     title="Ver animación / GIF y técnica"
                                   >

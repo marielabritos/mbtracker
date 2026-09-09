@@ -253,6 +253,32 @@ export const DEFAULT_RUTINAS = [
         ]
       }
     ]
+  },
+  {
+    id: 1003,
+    nombre: "Rutina Tren Superior (Torso / Upper Body)",
+    descripcion: "Fuerza y volumen de pecho, espalda, hombros, brazos y core con empujes y tracciones.",
+    duracion_semanas: "6 semanas",
+    duracion_estimada_minutos: 55,
+    activa: true,
+    dias: [
+      {
+        id: 3001,
+        nombre: "Día 1: Tren Superior (Pecho, Espalda, Hombros & Brazos)",
+        orden: 1,
+        ejercicios: [
+          { id: 301, ejercicio_id: 130, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 1, ejercicio: { id: 130, nombre: "Empuje en Polea para Pecho", grupo_muscular: "Pecho", equipo: "Polea" } },
+          { id: 302, ejercicio_id: 2, series_objetivo: 3, reps_objetivo: "8-10", descanso_segundos: 90, orden: 2, ejercicio: { id: 2, nombre: "Press de Banca Plano con Mancuernas", grupo_muscular: "Pecho", equipo: "Mancuerna" } },
+          { id: 303, ejercicio_id: 15, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 3, ejercicio: { id: 15, nombre: "Jalón al Pecho Agarre Supino / Estrecho", grupo_muscular: "Espalda", equipo: "Polea" } },
+          { id: 304, ejercicio_id: 19, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 4, ejercicio: { id: 19, nombre: "Remo Unilateral con Mancuerna (Serrucho)", grupo_muscular: "Espalda", equipo: "Mancuerna" } },
+          { id: 305, ejercicio_id: 60, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 5, ejercicio: { id: 60, nombre: "Press Militar con Barra / Mancuernas", grupo_muscular: "Hombros", equipo: "Mancuerna" } },
+          { id: 306, ejercicio_id: 131, series_objetivo: 3, reps_objetivo: "12-15", descanso_segundos: 60, orden: 6, ejercicio: { id: 131, nombre: "Face Pull en Polea con Cuerda (Pull Face)", grupo_muscular: "Hombros", equipo: "Polea" } },
+          { id: 307, ejercicio_id: 70, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 7, ejercicio: { id: 70, nombre: "Curl de Bíceps con Barra Z", grupo_muscular: "Brazos", equipo: "Barra" } },
+          { id: 308, ejercicio_id: 77, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 8, ejercicio: { id: 77, nombre: "Extensiones de Tríceps en Polea (Cuerda)", grupo_muscular: "Brazos", equipo: "Polea" } },
+          { id: 309, ejercicio_id: 134, series_objetivo: 3, reps_objetivo: "12 reps", descanso_segundos: 60, orden: 9, ejercicio: { id: 134, nombre: "Bicho Muerto (Dead Bug)", grupo_muscular: "Core", equipo: "Peso Corporal" } }
+        ]
+      }
+    ]
   }
 ];
 
