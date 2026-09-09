@@ -15,6 +15,7 @@ import Perfil from './pages/Perfil';
 import Calculadora1RM from './pages/Calculadora1RM';
 import Calendario from './pages/Calendario';
 import { Bot, MessageSquare, Sparkles, CheckCircle2 } from 'lucide-react';
+import { expandPayload } from './utils/syncCompressor';
 
 const STORAGE_KEY = 'mbtracker_active_workout';
 const AUTH_KEY = 'mbtracker_auth_user';
@@ -55,7 +56,8 @@ export default function App() {
       if (syncParam) {
         const cleanBase64 = syncParam.replace(/ /g, '+');
         const decodedJson = decodeURIComponent(escape(atob(cleanBase64)));
-        const parsed = JSON.parse(decodedJson);
+        const rawParsed = JSON.parse(decodedJson);
+        const parsed = expandPayload(rawParsed);
 
         if (parsed.rutinas && Array.isArray(parsed.rutinas) && parsed.rutinas.length > 0) {
           localStorage.setItem('mbtracker_rutinas', JSON.stringify(parsed.rutinas));

@@ -1,6 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { X, Copy, Check, Smartphone, Monitor, Download, Upload, RefreshCw, Sparkles, CheckCircle2, MessageSquare, ArrowRightLeft } from 'lucide-react';
+import { X, Copy, Check, Smartphone, Monitor, Download, Upload, Sparkles, CheckCircle2, MessageSquare, ArrowRightLeft, ShieldCheck } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { compactPayload, expandPayload } from '../utils/syncCompressor';
+
+function SafeQRCode({ value, size = 190 }) {
+  // Los códigos QR estándar tienen límite estricto de capacidad. Si el valor supera ~1800 caracteres, mostramos alternativa elegante
+  if (!value || value.length > 1800) {
+    return (
+      <div className="w-48 h-48 sm:w-52 sm:h-52 p-4 text-center text-xs text-slate-700 bg-slate-100 rounded-3xl flex flex-col items-center justify-center space-y-2.5 shadow-inner border border-slate-300">
+        <div className="w-10 h-10 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-600">
+          <Smartphone className="w-5 h-5" />
+        </div>
+        <div className="font-black text-slate-900 text-xs">Historial completo listo</div>
+        <p className="text-[11px] text-slate-600 leading-tight">
+          Toca <strong>Copiar Enlace Directo</strong> o <strong>WhatsApp</strong> abajo para transferir todo con 1 toque.
+        </p>
+      </div>
+    );
+  }
+
+  try {
+    return (
+      <QRCodeSVG
+        value={value}
+        size={size}
+        level="L"
+        includeMargin={false}
+      />
+    );
+  } catch (e) {
+    return (
+      <div className="w-48 h-48 p-4 text-center text-xs text-slate-600 bg-slate-100 rounded-3xl flex flex-col items-center justify-center space-y-2">
+        <p className="font-bold">Usa el Enlace Directo abajo</p>
+      </div>
+    );
+  }
+}
 
 export default function SyncModal({ isOpen, onClose }) {
   const [copiedLink, setCopiedLink] = useState(false);
@@ -21,15 +56,15 @@ export default function SyncModal({ isOpen, onClose }) {
 
         setSessionCount(sesiones.length);
 
-        const payload = {
+        // Compactar datos con esquema ultra liviano
+        const compact = compactPayload({
           rutinas,
           sesiones,
           perfil,
-          prs,
-          t: Date.now()
-        };
+          prs
+        });
 
-        const jsonStr = JSON.stringify(payload);
+        const jsonStr = JSON.stringify(compact);
         const base64 = btoa(unescape(encodeURIComponent(jsonStr)));
         setSyncCode(base64);
 
@@ -67,8 +102,10 @@ export default function SyncModal({ isOpen, onClose }) {
   const handleManualImport = () => {
     if (!importCodeText.trim()) return alert("Por favor pega el código de sincronización");
     try {
-      const decodedJson = decodeURIComponent(escape(atob(importCodeText.trim())));
-      const parsed = JSON.parse(decodedJson);
+      const cleanBase64 = importCodeText.trim().replace(/ /g, '+');
+      const decodedJson = decodeURIComponent(escape(atob(cleanBase64)));
+      const rawParsed = JSON.parse(decodedJson);
+      const parsed = expandPayload(rawParsed);
 
       if (parsed.rutinas && Array.isArray(parsed.rutinas) && parsed.rutinas.length > 0) {
         localStorage.setItem('mbtracker_rutinas', JSON.stringify(parsed.rutinas));
@@ -88,8 +125,12 @@ export default function SyncModal({ isOpen, onClose }) {
       if (parsed.perfil) {
         localStorage.setItem('mbtracker_perfil', JSON.stringify(parsed.perfil));
       }
-      if (parsed.prs) {
-        localStorage.setItem('mbtracker_prs', JSON.stringify(parsed.prs));
+      if (parsed.prs && Array.isArray(parsed.prs) && parsed.prs.length > 0) {
+        const localPrs = JSON.parse(localStorage.getItem('mbtracker_prs') || '[]');
+        const pMap = new Map();
+        localPrs.forEach(p => pMap.set(p.ejercicio_id || p.id, p));
+        parsed.prs.forEach(p => pMap.set(p.ejercicio_id || p.id, p));
+        localStorage.setItem('mbtracker_prs', JSON.stringify(Array.from(pMap.values())));
       }
 
       setImportSuccess(true);
@@ -123,7 +164,7 @@ export default function SyncModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* GUÍA RÁPIDA: CELULAR -> COMPUTADORA */}
+        {/* 1. CELULAR -> COMPUTADORA (Opción Principal y más rápida) */}
         <div className="bg-gradient-to-br from-emerald-950/40 via-slate-950 to-slate-950 border border-emerald-500/30 rounded-2xl p-4 space-y-3 shadow-lg">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-black text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -131,12 +172,12 @@ export default function SyncModal({ isOpen, onClose }) {
               <span>1. Pasar de CELULAR a COMPUTADORA</span>
             </span>
             <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-500/30">
-              {sessionCount} entrenamientos listos
+              {sessionCount} entrenamientos
             </span>
           </div>
           
           <p className="text-xs text-slate-300 leading-relaxed">
-            Si entrenaste en tu celular y quieres ver tu historial en la computadora:
+            Para ver tu entrenamiento en la computadora después de entrenar en el gym:
           </p>
 
           <div className="flex flex-col sm:flex-row gap-2 pt-1">
@@ -160,37 +201,26 @@ export default function SyncModal({ isOpen, onClose }) {
             </button>
           </div>
 
-          <p className="text-[11px] text-slate-400 italic">
-            👉 <strong>Paso:</strong> Copia el enlace en tu celu, ábrelo en tu compu (por WhatsApp Web) ¡y listo! Tus entrenamientos de ayer aparecerán de inmediato.
+          <p className="text-[11px] text-slate-400">
+            👉 Copia el enlace en tu celu, ábrelo en tu compu (por WhatsApp Web) ¡y tu historial aparecerá de inmediato!
           </p>
         </div>
 
-        {/* GUÍA RÁPIDA: COMPUTADORA -> CELULAR (QR) */}
+        {/* 2. COMPUTADORA -> CELULAR (QR) */}
         <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-center space-y-3">
           <div className="flex items-center justify-center gap-2 text-xs font-bold text-sky-400 uppercase tracking-wider">
-            <Monitor className="w-4 h-4" /> 2. Pasar de COMPUTADORA a CELULAR
+            <Monitor className="w-4 h-4" /> 2. Pasar de COMPUTADORA a CELULAR (QR)
           </div>
           <p className="text-xs text-slate-300">
-            Abre la cámara de tu celular y apunta a este código QR para sincronizar todo en 1 segundo:
+            Abre la cámara de tu celular y apunta a este código QR para sincronizar:
           </p>
 
           <div className="flex justify-center p-3 sm:p-4 bg-white rounded-3xl w-fit mx-auto shadow-2xl border-4 border-white">
-            {syncUrl ? (
-              <QRCodeSVG
-                value={syncUrl}
-                size={200}
-                level="L"
-                includeMargin={false}
-              />
-            ) : (
-              <div className="w-48 h-48 flex items-center justify-center text-slate-400 text-xs">
-                Generando QR...
-              </div>
-            )}
+            <SafeQRCode value={syncUrl} size={190} />
           </div>
         </div>
 
-        {/* Opción 3: Importar / Pegar Código Manual */}
+        {/* 3. Pegar Código Manual */}
         <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
