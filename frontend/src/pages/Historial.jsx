@@ -2,14 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { 
   History, Calendar, Clock, Dumbbell, Trophy, Trash2, 
   ChevronDown, ChevronUp, MapPin, TrendingUp, Flame, Mountain, Heart, Compass, Flag, FileText,
-  Plus, Sparkles, Download, Upload, Copy, Check, X, Award
+  Plus, Sparkles, Download, Upload, Copy, Check, X, Award, Edit3, CheckCircle2, Search
 } from 'lucide-react';
 import { api, DEFAULT_RUTINAS, DEFAULT_EJERCICIOS } from '../services/api';
+
+const MUSCLE_GROUPS = ['Todos', 'Pecho', 'Espalda', 'Glúteos', 'Piernas', 'Hombros', 'Brazos', 'Core', 'Cardio'];
 
 export default function Historial() {
   const [sesiones, setSesiones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedSession, setExpandedSession] = useState(null);
+  const [toastMessage, setToastMessage] = useState('');
+
+  // Edición de nombres de ejercicio inline
+  const [editingExercise, setEditingExercise] = useState(null); // { sessionId, ejercicio_id, oldName }
+  const [editExerciseName, setEditExerciseName] = useState('');
+
+  // Modal para Añadir Ejercicio a una Sesión Pasada
+  const [addExerciseModalSessionId, setAddExerciseModalSessionId] = useState(null);
+  const [catalogEjercicios, setCatalogEjercicios] = useState([]);
+  const [selectedMuscle, setSelectedMuscle] = useState('Todos');
+  const [searchEj, setSearchEj] = useState('');
+  const [selectedCatalogItem, setSelectedCatalogItem] = useState(null);
+  const [isCustomExercise, setIsCustomExercise] = useState(false);
+  const [customExName, setCustomExName] = useState('');
+  const [customExGroup, setCustomExGroup] = useState('Pecho');
+  const [newSeriesList, setNewSeriesList] = useState([
+    { peso_kg: 20, repeticiones: 10 },
+    { peso_kg: 20, repeticiones: 10 },
+    { peso_kg: 20, repeticiones: 10 }
+  ]);
 
   // Modales de Recuperación y Respaldo
   const [showManualModal, setShowManualModal] = useState(false);
@@ -33,7 +55,13 @@ export default function Historial() {
 
   useEffect(() => {
     loadSesiones();
+    api.getEjercicios().then(data => setCatalogEjercicios(data || [])).catch(() => {});
   }, []);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(''), 3200);
+  };
 
   // Cargar ejercicios por defecto cuando se abre el modal
   useEffect(() => {
@@ -84,6 +112,151 @@ export default function Historial() {
       loadSesiones();
     } catch (e) {
       alert("Error al eliminar sesión");
+    }
+  };
+
+  // --- ACCIONES EN EJERCICIOS DEL HISTORIAL ---
+
+  const handleStartEditExercise = (sessionId, item) => {
+    setEditingExercise({ sessionId, ejercicio_id: item.ejercicio_id, oldName: item.nombre });
+    setEditExerciseName(item.nombre);
+  };
+
+  const handleSaveEditedExerciseName = async (sessionId, item) => {
+    if (!editExerciseName.trim()) return;
+    const newName = editExerciseName.trim();
+    try {
+      const session = sesiones.find(s => s.id === sessionId);
+      if (!session) return;
+
+      const updatedSeries = (session.series || []).map(s => {
+        const matchesId = item.ejercicio_id && parseInt(s.ejercicio_id || s.id) === parseInt(item.ejercicio_id);
+        const matchesName = (s.ejercicio?.nombre || s.nombre || s.nombre_ejercicio) === item.nombre;
+        if (matchesId || matchesName) {
+          return {
+            ...s,
+            nombre: newName,
+            nombre_ejercicio: newName,
+            ejercicio: {
+              ...(s.ejercicio || {}),
+              nombre: newName
+            }
+          };
+        }
+        return s;
+      });
+
+      await api.updateSesion(sessionId, { ...session, series: updatedSeries });
+      await loadSesiones();
+      setEditingExercise(null);
+      showToast(`✓ Nombre cambiado a "${newName}"`);
+    } catch (e) {
+      alert("Error al actualizar el nombre del ejercicio");
+    }
+  };
+
+  const handleDeleteExerciseFromSession = async (sessionId, item) => {
+    if (!confirm(`¿Deseas eliminar el ejercicio "${item.nombre}" y todas sus series de este entrenamiento?`)) return;
+    try {
+      const session = sesiones.find(s => s.id === sessionId);
+      if (!session) return;
+
+      const updatedSeries = (session.series || []).filter(s => {
+        const matchesId = item.ejercicio_id && parseInt(s.ejercicio_id || s.id) === parseInt(item.ejercicio_id);
+        const matchesName = (s.ejercicio?.nombre || s.nombre || s.nombre_ejercicio) === item.nombre;
+        return !(matchesId || matchesName);
+      });
+
+      await api.updateSesion(sessionId, { ...session, series: updatedSeries });
+      await loadSesiones();
+      showToast(`✓ Ejercicio "${item.nombre}" eliminado`);
+    } catch (e) {
+      alert("Error al eliminar el ejercicio");
+    }
+  };
+
+  const handleOpenAddExerciseModal = async (sessionId) => {
+    setAddExerciseModalSessionId(sessionId);
+    setSelectedCatalogItem(null);
+    setIsCustomExercise(false);
+    setCustomExName('');
+    setCustomExGroup('Pecho');
+    setSearchEj('');
+    setSelectedMuscle('Todos');
+    setNewSeriesList([
+      { peso_kg: 20, repeticiones: 10 },
+      { peso_kg: 20, repeticiones: 10 },
+      { peso_kg: 20, repeticiones: 10 }
+    ]);
+    if (catalogEjercicios.length === 0) {
+      try {
+        const eData = await api.getEjercicios();
+        setCatalogEjercicios(eData || []);
+      } catch (e) {}
+    }
+  };
+
+  const handleAddSeriesRow = () => {
+    setNewSeriesList(prev => {
+      const last = prev[prev.length - 1] || { peso_kg: 20, repeticiones: 10 };
+      return [...prev, { peso_kg: last.peso_kg, repeticiones: last.repeticiones }];
+    });
+  };
+
+  const handleRemoveSeriesRow = (idx) => {
+    if (newSeriesList.length <= 1) return;
+    setNewSeriesList(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleUpdateSeriesField = (idx, field, val) => {
+    setNewSeriesList(prev => prev.map((s, i) => i === idx ? { ...s, [field]: val } : s));
+  };
+
+  const handleSaveNewExerciseToSession = async () => {
+    if (!addExerciseModalSessionId) return;
+
+    let finalName = '';
+    let finalGroup = 'General';
+    let finalId = Date.now();
+
+    if (isCustomExercise) {
+      if (!customExName.trim()) return alert("Por favor escribe el nombre del ejercicio.");
+      finalName = customExName.trim();
+      finalGroup = customExGroup;
+    } else {
+      if (!selectedCatalogItem) return alert("Por favor selecciona un ejercicio de la lista o escribe uno personalizado.");
+      finalName = selectedCatalogItem.nombre;
+      finalGroup = selectedCatalogItem.grupo_muscular || 'General';
+      finalId = selectedCatalogItem.id;
+    }
+
+    try {
+      const session = sesiones.find(s => s.id === addExerciseModalSessionId);
+      if (!session) return;
+
+      const seriesToAdd = newSeriesList.map((s, idx) => ({
+        id: Date.now() + idx,
+        ejercicio_id: finalId,
+        numero_serie: (session.series?.length || 0) + idx + 1,
+        peso_kg: parseFloat(s.peso_kg) || 0,
+        repeticiones: parseInt(s.repeticiones) || 10,
+        completada: true,
+        nombre: finalName,
+        nombre_ejercicio: finalName,
+        ejercicio: {
+          id: finalId,
+          nombre: finalName,
+          grupo_muscular: finalGroup
+        }
+      }));
+
+      const updatedSeries = [...(session.series || []), ...seriesToAdd];
+      await api.updateSesion(addExerciseModalSessionId, { ...session, series: updatedSeries });
+      await loadSesiones();
+      setAddExerciseModalSessionId(null);
+      showToast(`✓ "${finalName}" añadido con éxito al entrenamiento`);
+    } catch (e) {
+      alert("Error al añadir el ejercicio: " + e.message);
     }
   };
 
@@ -245,6 +418,14 @@ export default function Historial() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6 pb-28">
+      {/* Toast Notificación */}
+      {toastMessage && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-slate-950 px-4 py-2.5 rounded-2xl shadow-xl font-black text-sm flex items-center gap-2 animate-bounce">
+          <CheckCircle2 className="w-5 h-5" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* Header con Acciones Rápidas */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -468,21 +649,75 @@ export default function Historial() {
                     {!isOutdoor && exercisesGrouped.length > 0 && (
                       exercisesGrouped.map((item, idx) => {
                         const note = item.series.find(s => s.notas)?.notas;
+                        const isEditingThis = editingExercise?.sessionId === sesion.id && 
+                                              (editingExercise?.ejercicio_id === item.ejercicio_id || editingExercise?.oldName === item.nombre);
                         return (
                           <div key={idx} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <h4 className="font-bold text-white text-sm">{item.nombre}</h4>
-                                {note && (
-                                  <div className="mt-1 flex items-center gap-1.5 text-[11px] text-amber-300 font-medium bg-amber-500/10 px-2.5 py-0.5 rounded-lg border border-amber-500/20 w-fit">
-                                    <FileText className="w-3 h-3 text-amber-400 shrink-0" />
-                                    <span>{note}</span>
-                                  </div>
-                                )}
+                            <div className="flex items-center justify-between gap-2">
+                              {isEditingThis ? (
+                                <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                                  <input
+                                    type="text"
+                                    value={editExerciseName}
+                                    onChange={(e) => setEditExerciseName(e.target.value)}
+                                    placeholder="Nombre del ejercicio..."
+                                    className="bg-slate-950 border border-sky-500 rounded-xl px-2.5 py-1 text-xs font-bold text-white focus:outline-none flex-1 min-w-0 shadow-inner"
+                                    autoFocus
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') handleSaveEditedExerciseName(sesion.id, item);
+                                      if (e.key === 'Escape') setEditingExercise(null);
+                                    }}
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSaveEditedExerciseName(sesion.id, item)}
+                                    className="p-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold shrink-0 transition-colors"
+                                    title="Guardar nombre"
+                                  >
+                                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditingExercise(null)}
+                                    className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white shrink-0 transition-colors"
+                                    title="Cancelar"
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                                  <h4 className="font-bold text-white text-sm truncate">{item.nombre}</h4>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleStartEditExercise(sesion.id, item)}
+                                    className="p-1 rounded-lg text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 transition-colors shrink-0"
+                                    title="Editar nombre de este ejercicio"
+                                  >
+                                    <Edit3 className="w-3.5 h-3.5" />
+                                  </button>
+                                  {note && (
+                                    <div className="flex items-center gap-1 text-[11px] text-amber-300 font-medium bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20 w-fit shrink-0">
+                                      <FileText className="w-3 h-3 text-amber-400 shrink-0" />
+                                      <span>{note}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <span className="text-[10px] font-semibold text-sky-400 px-2 py-0.5 rounded-md bg-sky-500/10">
+                                  {item.grupo_muscular}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteExerciseFromSession(sesion.id, item)}
+                                  className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                                  title="Eliminar este ejercicio de este entrenamiento"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
                               </div>
-                              <span className="text-[10px] font-semibold text-sky-400 px-2 py-0.5 rounded-md bg-sky-500/10">
-                                {item.grupo_muscular}
-                              </span>
                             </div>
 
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
@@ -504,6 +739,18 @@ export default function Historial() {
                           </div>
                         );
                       })
+                    )}
+
+                    {/* Botón para añadir ejercicio a este entrenamiento */}
+                    {!isOutdoor && (
+                      <button
+                        type="button"
+                        onClick={() => handleOpenAddExerciseModal(sesion.id)}
+                        className="w-full py-2.5 sm:py-3 rounded-2xl border border-dashed border-sky-500/40 hover:border-sky-400 bg-sky-500/5 hover:bg-sky-500/15 text-sky-400 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm"
+                      >
+                        <Plus className="w-4 h-4 stroke-[3]" />
+                        <span>Añadir Ejercicio a este Entrenamiento</span>
+                      </button>
                     )}
 
                     {/* Notas de Check-in y Ánimo del Coach */}
@@ -733,6 +980,228 @@ export default function Historial() {
               </div>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* MODAL PARA AÑADIR EJERCICIO A UN ENTRENAMIENTO DEL HISTORIAL */}
+      {addExerciseModalSessionId !== null && (
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto">
+            {/* Header */}
+            <div className="p-4 sm:p-5 border-b border-slate-800 bg-slate-950/80 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold">
+                  <Dumbbell className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-black text-white text-base sm:text-lg">Añadir Ejercicio</h3>
+                  <p className="text-xs text-sky-400 font-medium truncate max-w-xs sm:max-w-md">
+                    Al entrenamiento: {sesiones.find(s => s.id === addExerciseModalSessionId)?.nombre || 'Sesión'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAddExerciseModalSessionId(null)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-4 sm:p-5 space-y-4 overflow-y-auto flex-1">
+              {/* Selector de modo: Catálogo vs Personalizado */}
+              <div className="flex items-center gap-2 p-1 bg-slate-950 rounded-2xl border border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsCustomExercise(false)}
+                  className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                    !isCustomExercise ? 'bg-sky-500 text-slate-950 font-black shadow-md' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  Elegir del Catálogo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsCustomExercise(true)}
+                  className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                    isCustomExercise ? 'bg-sky-500 text-slate-950 font-black shadow-md' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  + Ejercicio Personalizado
+                </button>
+              </div>
+
+              {!isCustomExercise ? (
+                <div className="space-y-3">
+                  {/* Buscador */}
+                  <div className="relative">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                    <input
+                      type="text"
+                      placeholder="Buscar por nombre o músculo..."
+                      value={searchEj}
+                      onChange={(e) => setSearchEj(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 rounded-2xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none placeholder:text-slate-500"
+                    />
+                  </div>
+
+                  {/* Pills de Categorías */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto py-1 w-full">
+                    {MUSCLE_GROUPS.map((group) => (
+                      <button
+                        key={group}
+                        type="button"
+                        onClick={() => setSelectedMuscle(group)}
+                        className={`shrink-0 px-3 py-1 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all ${
+                          selectedMuscle === group
+                            ? 'bg-sky-500 text-slate-950 font-black shadow-md'
+                            : 'bg-slate-950 text-slate-300 border border-slate-800 hover:border-slate-700'
+                        }`}
+                      >
+                        {group}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Lista de ejercicios para seleccionar */}
+                  <div className="max-h-40 overflow-y-auto space-y-1.5 pr-1 border border-slate-800/80 rounded-2xl p-2 bg-slate-950/60">
+                    {((catalogEjercicios.length > 0 ? catalogEjercicios : DEFAULT_EJERCICIOS).filter(e => {
+                      const matchM = selectedMuscle === 'Todos' || e.grupo_muscular === selectedMuscle;
+                      const matchS = !searchEj || e.nombre.toLowerCase().includes(searchEj.toLowerCase());
+                      return matchM && matchS;
+                    })).slice(0, 30).map((ej) => {
+                      const isChosen = selectedCatalogItem?.id === ej.id;
+                      return (
+                        <div
+                          key={ej.id}
+                          onClick={() => setSelectedCatalogItem(ej)}
+                          className={`p-2.5 rounded-xl cursor-pointer flex items-center justify-between transition-all ${
+                            isChosen
+                              ? 'bg-sky-500/20 border border-sky-500/60 text-white'
+                              : 'bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800/50 text-slate-300'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="text-xs font-bold truncate">{ej.nombre}</span>
+                            <span className="text-[10px] text-sky-400 bg-sky-500/10 px-1.5 py-0.5 rounded-md border border-sky-500/20 shrink-0">
+                              {ej.grupo_muscular}
+                            </span>
+                          </div>
+                          {isChosen && <Check className="w-4 h-4 text-sky-400 shrink-0" />}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {selectedCatalogItem && (
+                    <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 font-bold flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span>Seleccionado: <strong>{selectedCatalogItem.nombre}</strong> ({selectedCatalogItem.grupo_muscular})</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3 bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800">
+                  <div>
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Nombre del Ejercicio</label>
+                    <input
+                      type="text"
+                      placeholder="Ej: Press Francés en Polea, Sentadilla búlgara..."
+                      value={customExName}
+                      onChange={(e) => setCustomExName(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Grupo Muscular</label>
+                    <select
+                      value={customExGroup}
+                      onChange={(e) => setCustomExGroup(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none font-bold"
+                    >
+                      {MUSCLE_GROUPS.filter(g => g !== 'Todos').map(g => (
+                        <option key={g} value={g}>{g}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {/* Configuración de Series */}
+              <div className="space-y-2 pt-2 border-t border-slate-800">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">Series realizadas:</span>
+                  <button
+                    type="button"
+                    onClick={handleAddSeriesRow}
+                    className="text-xs font-bold text-sky-400 hover:text-sky-300 flex items-center gap-1 bg-sky-500/10 px-2.5 py-1 rounded-lg border border-sky-500/20"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Añadir Serie
+                  </button>
+                </div>
+
+                <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                  {newSeriesList.map((s, idx) => (
+                    <div key={idx} className="flex items-center gap-2 bg-slate-950 p-2 rounded-xl border border-slate-800 text-xs">
+                      <span className="font-mono font-bold text-sky-400 w-8 text-center shrink-0">#{idx + 1}</span>
+                      <div className="flex items-center gap-1 flex-1">
+                        <input
+                          type="number"
+                          step="0.5"
+                          placeholder="Peso"
+                          value={s.peso_kg}
+                          onChange={(e) => handleUpdateSeriesField(idx, 'peso_kg', e.target.value)}
+                          className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-center text-white font-mono focus:outline-none focus:border-sky-500"
+                        />
+                        <span className="text-slate-500 text-[10px] font-bold">kg</span>
+                      </div>
+                      <span className="text-slate-600 font-bold">×</span>
+                      <div className="flex items-center gap-1 flex-1">
+                        <input
+                          type="number"
+                          placeholder="Reps"
+                          value={s.repeticiones}
+                          onChange={(e) => handleUpdateSeriesField(idx, 'repeticiones', e.target.value)}
+                          className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-center text-white font-mono focus:outline-none focus:border-sky-500"
+                        />
+                        <span className="text-slate-500 text-[10px] font-bold">reps</span>
+                      </div>
+                      {newSeriesList.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSeriesRow(idx)}
+                          className="p-1 rounded-lg text-slate-500 hover:text-rose-400 shrink-0"
+                          title="Quitar serie"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Modal */}
+            <div className="p-4 border-t border-slate-800 bg-slate-950/80 flex items-center justify-end gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => setAddExerciseModalSessionId(null)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveNewExerciseToSession}
+                className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-1.5"
+              >
+                <Check className="w-4 h-4 stroke-[3]" />
+                <span>Guardar Ejercicio en Sesión</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

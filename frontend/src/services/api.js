@@ -851,6 +851,42 @@ export const api = {
     return nuevaSesion;
   },
 
+  updateSesion: async (id, data) => {
+    const targetId = parseInt(id) || id;
+    const current = getStored('sesiones', []);
+    let updatedSession = null;
+
+    const updatedList = current.map(s => {
+      if (s.id === targetId || String(s.id) === String(id)) {
+        const series = (data.series !== undefined ? data.series : s.series) || [];
+        const totalVolumen = series.reduce((acc, item) => {
+          return acc + ((parseFloat(item.peso_kg) || 0) * (parseInt(item.repeticiones) || 0));
+        }, 0);
+
+        updatedSession = {
+          ...s,
+          ...data,
+          id: targetId,
+          volumen_total_kg: Math.round(totalVolumen),
+          series: series
+        };
+        return updatedSession;
+      }
+      return s;
+    });
+
+    if (updatedSession) {
+      setStored('sesiones', updatedList);
+      cloudSync.pushToCloud();
+    }
+
+    try {
+      await request(`/api/sesiones/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+    } catch (e) {}
+
+    return updatedSession || data;
+  },
+
   deleteSesion: async (id) => {
     const current = getStored('sesiones', []);
     setStored('sesiones', current.filter(s => s.id !== parseInt(id)));
