@@ -282,14 +282,23 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
         const reps = parseInt(s.repeticiones) || 0;
         // Tomar cualquier serie marcada o con datos, o incluir series de ejercicios presentes
         if (s.completada || peso > 0 || reps > 0 || ex.series.length > 0) {
+          const ejNombre = ex.nombre || ex.ejercicio?.nombre || 'Ejercicio';
+          const ejGrupo = ex.grupo_muscular || ex.ejercicio?.grupo_muscular || 'General';
           completedSeries.push({
             ejercicio_id: ex.ejercicio_id || 1,
+            nombre: ejNombre,
+            nombre_ejercicio: ejNombre,
             numero_serie: s.numero_serie || 1,
             peso_kg: peso,
             repeticiones: reps > 0 ? reps : 10,
             rpe: parseFloat(s.rpe) || null,
             completada: true,
             notas: ex.notas || s.notas || null,
+            ejercicio: {
+              id: ex.ejercicio_id || 1,
+              nombre: ejNombre,
+              grupo_muscular: ejGrupo
+            }
           });
         }
       });
@@ -299,12 +308,19 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
     if (completedSeries.length === 0) {
       completedSeries.push({
         ejercicio_id: 1,
+        nombre: "Sesión Libre / Movilidad",
+        nombre_ejercicio: "Sesión Libre / Movilidad",
         numero_serie: 1,
         peso_kg: 0,
         repeticiones: 1,
         rpe: null,
         completada: true,
-        notas: "Sesión Libre / Movilidad"
+        notas: "Sesión Libre / Movilidad",
+        ejercicio: {
+          id: 1,
+          nombre: "Sesión Libre / Movilidad",
+          grupo_muscular: "General"
+        }
       });
     }
 

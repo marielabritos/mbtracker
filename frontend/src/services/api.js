@@ -678,16 +678,49 @@ export const api = {
 
   // --- SESIONES DE ENTRENAMIENTO (FINALIZAR & GUARDAR) ---
   getSesiones: async () => {
+    const catalog = getStored('ejercicios', DEFAULT_EJERCICIOS);
+    const catMap = new Map();
+    DEFAULT_EJERCICIOS.forEach(e => catMap.set(parseInt(e.id), e));
+    (catalog || []).forEach(e => catMap.set(parseInt(e.id), e));
+
+    const repairSeries = (list) => {
+      return list.map(s => ({
+        ...s,
+        series: (s.series || []).map(item => {
+          const ejId = parseInt(item.ejercicio_id || item.id);
+          const fromCat = catMap.get(ejId);
+          const currentName = item.ejercicio?.nombre || item.nombre || item.nombre_ejercicio;
+          const isGeneric = !currentName || currentName.trim().toLowerCase() === 'ejercicio';
+          const resolvedName = !isGeneric ? currentName : (fromCat ? fromCat.nombre : 'Ejercicio');
+          const resolvedGroup = item.ejercicio?.grupo_muscular || item.grupo_muscular || fromCat?.grupo_muscular || 'General';
+          const resolvedEquipo = item.ejercicio?.equipo || item.equipo || fromCat?.equipo || 'Mancuerna';
+
+          return {
+            ...item,
+            ejercicio_id: ejId || item.ejercicio_id,
+            nombre: resolvedName,
+            nombre_ejercicio: resolvedName,
+            ejercicio: {
+              id: ejId || item.ejercicio_id,
+              nombre: resolvedName,
+              grupo_muscular: resolvedGroup,
+              equipo: resolvedEquipo
+            }
+          };
+        })
+      }));
+    };
+
     let local = getStored('sesiones', []);
     if (!local || local.length === 0) {
-      local = DEFAULT_SESIONES_HISTORIAL;
+      local = repairSeries(DEFAULT_SESIONES_HISTORIAL);
       setStored('sesiones', local);
     } else {
       // Asegurar que las 3 sesiones históricas existan en local
       const map = new Map();
       DEFAULT_SESIONES_HISTORIAL.forEach(s => map.set(s.id, s));
       local.forEach(s => map.set(s.id, s));
-      local = Array.from(map.values()).sort((a, b) => new Date(b.fecha_inicio || b.fecha || 0) - new Date(a.fecha_inicio || a.fecha || 0));
+      local = repairSeries(Array.from(map.values())).sort((a, b) => new Date(b.fecha_inicio || b.fecha || 0) - new Date(a.fecha_inicio || a.fecha || 0));
       setStored('sesiones', local);
     }
     try {
@@ -696,7 +729,7 @@ export const api = {
         const map = new Map();
         local.forEach(s => map.set(s.id, s));
         data.forEach(s => map.set(s.id, { ...map.get(s.id), ...s }));
-        const merged = Array.from(map.values()).sort((a, b) => {
+        const merged = repairSeries(Array.from(map.values())).sort((a, b) => {
           const tA = new Date(a.fecha_inicio || a.fecha || 0).getTime();
           const tB = new Date(b.fecha_inicio || b.fecha || 0).getTime();
           return tB - tA;
@@ -723,17 +756,33 @@ export const api = {
       if (isPR) {
         prMap[s.ejercicio_id] = peso;
       }
-      const ejInfo = catalog.find(e => e.id === s.ejercicio_id) || { nombre: s.nombre_ejercicio || 'Ejercicio', grupo_muscular: 'General' };
+      const ejId = parseInt(s.ejercicio_id || s.id);
+      const ejInfo = catalog.find(e => parseInt(e.id) === ejId) || 
+                     DEFAULT_EJERCICIOS.find(e => parseInt(e.id) === ejId) || 
+                     { nombre: s.nombre || s.nombre_ejercicio || 'Ejercicio', grupo_muscular: s.grupo_muscular || 'General' };
+      const resolvedName = (s.nombre && s.nombre.toLowerCase() !== 'ejercicio') 
+        ? s.nombre 
+        : (s.nombre_ejercicio && s.nombre_ejercicio.toLowerCase() !== 'ejercicio')
+          ? s.nombre_ejercicio
+          : ejInfo.nombre;
+
       return {
         id: Date.now() + idx,
-        ejercicio_id: s.ejercicio_id,
+        ejercicio_id: ejId,
+        nombre: resolvedName,
+        nombre_ejercicio: resolvedName,
         numero_serie: s.numero_serie || idx + 1,
         peso_kg: peso,
         repeticiones: parseInt(s.repeticiones) || 0,
         rpe: s.rpe || null,
         completada: true,
         es_pr: isPR,
-        ejercicio: ejInfo
+        ejercicio: {
+          id: ejId,
+          nombre: resolvedName,
+          grupo_muscular: ejInfo.grupo_muscular || s.grupo_muscular || 'General',
+          equipo: ejInfo.equipo || 'Mancuerna'
+        }
       };
     });
 

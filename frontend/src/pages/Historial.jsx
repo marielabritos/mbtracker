@@ -175,22 +175,70 @@ export default function Historial() {
     }
   };
 
-  // Agrupar las series de una sesión por ejercicio
+  // Agrupar las series de una sesión por ejercicio resolviendo nombre y grupo
   const groupSeriesByExercise = (series) => {
     if (!series || !Array.isArray(series)) return [];
+
+    let catalog = [];
+    try {
+      catalog = JSON.parse(localStorage.getItem('mbtracker_ejercicios') || '[]');
+    } catch (e) {}
+
     const map = {};
     series.forEach((s) => {
-      const ejId = s.ejercicio_id || s.id || Math.random();
-      const ejNombre = s.ejercicio?.nombre || s.nombre_ejercicio || 'Ejercicio';
-      const ejGrupo = s.ejercicio?.grupo_muscular || '';
-      if (!map[ejId]) {
-        map[ejId] = {
-          nombre: ejNombre,
-          grupo_muscular: ejGrupo,
+      const ejId = parseInt(s.ejercicio_id || s.id);
+      const rawName = s.ejercicio?.nombre || s.nombre || s.nombre_ejercicio || '';
+      const rawGroup = s.ejercicio?.grupo_muscular || s.grupo_muscular || '';
+
+      let finalName = rawName;
+      let finalGroup = rawGroup;
+
+      // Si el nombre es genérico ("Ejercicio") o está vacío, resolverlo con el catálogo o DEFAULT_EJERCICIOS
+      if (!finalName || finalName.trim().toLowerCase() === 'ejercicio') {
+        const matchCat = (catalog || []).find(e => parseInt(e.id) === ejId) || 
+                         DEFAULT_EJERCICIOS.find(e => parseInt(e.id) === ejId);
+        if (matchCat) {
+          finalName = matchCat.nombre;
+          if (!finalGroup) finalGroup = matchCat.grupo_muscular;
+        }
+      }
+
+      // Si aún no se encontró, buscar en las rutinas guardadas por si es un ejercicio de rutina
+      if (!finalName || finalName.trim().toLowerCase() === 'ejercicio') {
+        try {
+          const rutinas = JSON.parse(localStorage.getItem('mbtracker_rutinas') || '[]');
+          for (const r of rutinas) {
+            for (const d of (r.dias || [])) {
+              for (const e of (d.ejercicios || [])) {
+                if (parseInt(e.ejercicio_id || e.id) === ejId) {
+                  const candidate = e.ejercicio?.nombre || e.nombre;
+                  if (candidate && candidate.trim().toLowerCase() !== 'ejercicio') {
+                    finalName = candidate;
+                    finalGroup = e.ejercicio?.grupo_muscular || e.grupo_muscular || finalGroup;
+                    break;
+                  }
+                }
+              }
+              if (finalName && finalName.trim().toLowerCase() !== 'ejercicio') break;
+            }
+            if (finalName && finalName.trim().toLowerCase() !== 'ejercicio') break;
+          }
+        } catch (e) {}
+      }
+
+      finalName = finalName || 'Ejercicio';
+      finalGroup = finalGroup || 'General';
+
+      const key = ejId || finalName;
+      if (!map[key]) {
+        map[key] = {
+          ejercicio_id: ejId,
+          nombre: finalName,
+          grupo_muscular: finalGroup,
           series: [],
         };
       }
-      map[ejId].series.push(s);
+      map[key].series.push(s);
     });
     return Object.values(map);
   };

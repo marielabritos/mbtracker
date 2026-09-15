@@ -1,3 +1,5 @@
+import { DEFAULT_EJERCICIOS } from '../services/api';
+
 // Compactador ultra eficiente de datos para MBTracker
 // Reduce el tamaño del JSON en un 80% eliminando duplicaciones para que entre en cualquier QR y URL
 
@@ -35,14 +37,23 @@ export function compactPayload(raw) {
     duracion_segundos: s.duracion_segundos,
     animo: s.animo,
     molestia: s.molestia,
-    series: (s.series || []).map(item => ({
-      ejercicio_id: item.ejercicio_id,
-      numero_serie: item.numero_serie,
-      peso_kg: item.peso_kg,
-      repeticiones: item.repeticiones,
-      completada: item.completada,
-      es_pr: item.es_pr
-    }))
+    series: (s.series || []).map(item => {
+      const ejId = parseInt(item.ejercicio_id);
+      const def = DEFAULT_EJERCICIOS.find(e => parseInt(e.id) === ejId);
+      const n = item.ejercicio?.nombre || item.nombre || item.nombre_ejercicio;
+      const validName = (n && n.toLowerCase() !== 'ejercicio') ? n : (def?.nombre || undefined);
+      const validGroup = item.ejercicio?.grupo_muscular || item.grupo_muscular || (def?.grupo_muscular || undefined);
+      return {
+        ejercicio_id: item.ejercicio_id,
+        nombre: validName,
+        grupo_muscular: validGroup,
+        numero_serie: item.numero_serie,
+        peso_kg: item.peso_kg,
+        repeticiones: item.repeticiones,
+        completada: item.completada,
+        es_pr: item.es_pr
+      };
+    })
   }));
 
   const cleanPrs = (raw.prs || []).map(p => ({
@@ -101,13 +112,25 @@ export function expandPayload(compact) {
   const sesiones = rawSesiones.map(s => ({
     ...s,
     fecha_inicio: s.fecha_inicio || s.fecha,
-    series: (s.series || []).map(item => ({
-      ...item,
-      ejercicio: item.ejercicio || {
-        id: item.ejercicio_id,
-        nombre: item.nombre || 'Ejercicio'
-      }
-    }))
+    series: (s.series || []).map(item => {
+      const ejId = parseInt(item.ejercicio_id);
+      const def = DEFAULT_EJERCICIOS.find(e => parseInt(e.id) === ejId);
+      const resolvedName = (item.nombre && item.nombre.toLowerCase() !== 'ejercicio')
+        ? item.nombre
+        : (def?.nombre || 'Ejercicio');
+      const resolvedGroup = item.grupo_muscular || def?.grupo_muscular || 'General';
+      return {
+        ...item,
+        nombre: resolvedName,
+        nombre_ejercicio: resolvedName,
+        grupo_muscular: resolvedGroup,
+        ejercicio: {
+          id: ejId,
+          nombre: resolvedName,
+          grupo_muscular: resolvedGroup
+        }
+      };
+    })
   }));
 
   const perfil = compact.p || compact.perfil || {};
