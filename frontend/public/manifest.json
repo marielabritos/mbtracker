@@ -1,16 +1,24 @@
 {
   "short_name": "MBTracker",
-  "name": "MBTracker - Entrenamiento Personal",
+  "name": "MBTracker - Mariela Britos",
+  "description": "Tu app de entrenamiento personal, seguimiento de rutinas y progreso.",
   "icons": [
     {
-      "src": "dumbbell.svg",
-      "type": "image/svg+xml",
+      "src": "/logo.png",
+      "type": "image/png",
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "type": "image/png",
       "sizes": "192x192 512x512"
     }
   ],
   "start_url": "/",
-  "background_color": "#0F172A",
-  "theme_color": "#0F172A",
+  "scope": "/",
+  "background_color": "#020617",
+  "theme_color": "#020617",
   "display": "standalone",
   "orientation": "portrait"
 }

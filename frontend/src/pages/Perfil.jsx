@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   User, Flame, Apple, Heart, Activity, Dumbbell, 
-  Scale, Droplets, Sparkles, Check, Save, ChevronRight, Info, Award, Zap, Utensils, Lock, Key, LogOut, ShieldCheck 
+  Scale, Droplets, Sparkles, Check, Save, ChevronRight, Info, Award, Zap, Utensils, Lock, Key, LogOut, ShieldCheck,
+  Smartphone, Share, PlusSquare
 } from 'lucide-react';
 
 export default function Perfil({ onLogout }) {
@@ -444,6 +445,55 @@ export default function Perfil({ onLogout }) {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Usar como App en iPhone / Móvil */}
+      <div className="bg-gradient-to-br from-slate-900/90 via-slate-900 to-sky-950/30 border border-sky-500/30 rounded-3xl p-5 sm:p-6 space-y-4 shadow-xl">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-400">
+            <Smartphone className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="font-bold text-lg text-white">Usar como App en iPhone</h3>
+            <p className="text-xs text-sky-400">Instálala en tu pantalla de inicio en 10 segundos (sin App Store)</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 space-y-1.5">
+            <div className="w-7 h-7 rounded-xl bg-sky-500/20 text-sky-400 font-black text-xs flex items-center justify-center">
+              1
+            </div>
+            <p className="text-xs font-bold text-white">Abre en Safari</p>
+            <p className="text-[11px] text-slate-400 leading-tight">
+              Ingresa a MBTracker desde el navegador <strong>Safari</strong> de tu iPhone.
+            </p>
+          </div>
+
+          <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 space-y-1.5">
+            <div className="w-7 h-7 rounded-xl bg-sky-500/20 text-sky-400 font-black text-xs flex items-center justify-center">
+              2
+            </div>
+            <p className="text-xs font-bold text-white">Toca Compartir</p>
+            <p className="text-[11px] text-slate-400 leading-tight">
+              Toca el botón <strong>Compartir</strong> (el cuadrado con la flecha hacia arriba ⬆️ en la barra inferior).
+            </p>
+          </div>
+
+          <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 space-y-1.5">
+            <div className="w-7 h-7 rounded-xl bg-sky-500/20 text-sky-400 font-black text-xs flex items-center justify-center">
+              3
+            </div>
+            <p className="text-xs font-bold text-white">Agregar a Inicio</p>
+            <p className="text-[11px] text-slate-400 leading-tight">
+              Baja en el menú y selecciona <strong>"Agregar a pantalla de inicio"</strong>. ¡Y listo!
+            </p>
+          </div>
+        </div>
+
+        <p className="text-[11px] text-slate-400 italic">
+          ✨ Se abrirá a pantalla completa con su propio ícono, sin barras de Safari, como cualquier app nativa.
+        </p>
       </div>
 
       {/* Seguridad & Clave de Acceso */}
