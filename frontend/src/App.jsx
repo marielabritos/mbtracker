@@ -16,6 +16,7 @@ import Calculadora1RM from './pages/Calculadora1RM';
 import Calendario from './pages/Calendario';
 import { Bot, MessageSquare, Sparkles, CheckCircle2 } from 'lucide-react';
 import { expandPayload } from './utils/syncCompressor';
+import { cloudSync } from './services/cloudSyncService';
 
 const STORAGE_KEY = 'mbtracker_active_workout';
 const AUTH_KEY = 'mbtracker_auth_user';
@@ -45,78 +46,102 @@ export default function App() {
 
   // Escuchar si se abre la app con un enlace de sincronización (?sync=...)
   useEffect(() => {
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      let syncParam = urlParams.get('sync');
-      if (!syncParam && window.location.hash) {
-        const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'));
-        syncParam = hashParams.get('sync');
-      }
+    const handleUrlSync = async () => {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        let syncParam = urlParams.get('sync');
+        if (!syncParam && window.location.hash) {
+          const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'));
+          syncParam = hashParams.get('sync');
+        }
 
-      if (syncParam) {
-        const cleanBase64 = syncParam.replace(/ /g, '+');
-        const decodedJson = decodeURIComponent(escape(atob(cleanBase64)));
-        const rawParsed = JSON.parse(decodedJson);
-        const parsed = expandPayload(rawParsed);
+        if (syncParam) {
+          const clean = syncParam.trim();
 
-        if (parsed.rutinas && Array.isArray(parsed.rutinas) && parsed.rutinas.length > 0) {
-          const localRutinas = JSON.parse(localStorage.getItem('mbtracker_rutinas') || '[]');
-          const rMap = new Map();
-          localRutinas.forEach(r => {
-            if (r.id) rMap.set(String(r.id), r);
-          });
-          parsed.rutinas.forEach(incoming => {
-            const matchKey = Array.from(rMap.keys()).find(k => {
-              const existing = rMap.get(k);
-              return String(existing.id) === String(incoming.id) || 
-                     (existing.nombre && incoming.nombre && existing.nombre.trim().toLowerCase() === incoming.nombre.trim().toLowerCase());
-            });
-            if (matchKey) {
-              const existing = rMap.get(matchKey);
-              rMap.set(matchKey, { ...existing, ...incoming });
-            } else {
-              rMap.set(String(incoming.id || Date.now() + Math.random()), incoming);
+          // 1. Sincronización ultrarrápida vía Nube (enlace corto como ?sync=cloud o clave corta de 10 caracteres)
+          if (clean === 'cloud' || (clean.length >= 6 && clean.length <= 25 && !clean.includes('{') && !clean.includes('='))) {
+            const specificKey = clean === 'cloud' ? null : clean;
+            const res = await cloudSync.pullFromCloud(true, specificKey);
+            if (res && res.success) {
+              const rCount = res.rutinasCount || res.data?.rutinas?.length || 0;
+              const sCount = res.sesionesCount || res.data?.sesiones?.length || 0;
+              setSyncToast(`✨ ¡Sincronizado con éxito desde la Nube! (${rCount} Rutinas y ${sCount} Entrenamientos)`);
+              window.history.replaceState({}, document.title, window.location.pathname);
+              setTimeout(() => {
+                setSyncToast('');
+                window.location.reload();
+              }, 1200);
+              return;
             }
-          });
-          const uniqueRutinas = Array.from(rMap.values());
-          localStorage.setItem('mbtracker_rutinas', JSON.stringify(uniqueRutinas));
-          localStorage.setItem('mbtracker_has_custom_rutinas', 'true');
-        }
-        if (parsed.sesiones && Array.isArray(parsed.sesiones) && parsed.sesiones.length > 0) {
-          const localSesiones = JSON.parse(localStorage.getItem('mbtracker_sesiones') || '[]');
-          const sMap = new Map();
-          localSesiones.forEach(s => sMap.set(s.id, s));
-          parsed.sesiones.forEach(s => sMap.set(s.id, { ...(sMap.get(s.id) || {}), ...s }));
-          const merged = Array.from(sMap.values()).sort((a, b) => {
-            const tA = new Date(a.fecha_inicio || a.fecha || 0).getTime();
-            const tB = new Date(b.fecha_inicio || b.fecha || 0).getTime();
-            return tB - tA;
-          });
-          localStorage.setItem('mbtracker_sesiones', JSON.stringify(merged));
-        }
-        if (parsed.perfil) {
-          localStorage.setItem('mbtracker_perfil', JSON.stringify(parsed.perfil));
-        }
-        if (parsed.prs && Array.isArray(parsed.prs) && parsed.prs.length > 0) {
-          const localPrs = JSON.parse(localStorage.getItem('mbtracker_prs') || '[]');
-          const pMap = new Map();
-          localPrs.forEach(p => pMap.set(p.ejercicio_id || p.id, p));
-          parsed.prs.forEach(p => pMap.set(p.ejercicio_id || p.id, p));
-          localStorage.setItem('mbtracker_prs', JSON.stringify(Array.from(pMap.values())));
-        }
+          }
 
-        const rCount = parsed.rutinas?.length || 0;
-        const sCount = parsed.sesiones?.length || 0;
-        setSyncToast(`✨ ¡Sincronizado con éxito! (${rCount} Rutinas y ${sCount} Entrenamientos cargados)`);
-        window.history.replaceState({}, document.title, window.location.pathname);
-        setTimeout(() => {
-          setSyncToast('');
-          window.location.reload();
-        }, 1200);
+          // 2. Soporte para enlaces legacy en base64
+          const cleanBase64 = clean.replace(/ /g, '+');
+          const decodedJson = decodeURIComponent(escape(atob(cleanBase64)));
+          const rawParsed = JSON.parse(decodedJson);
+          const parsed = expandPayload(rawParsed);
+
+          if (parsed.rutinas && Array.isArray(parsed.rutinas) && parsed.rutinas.length > 0) {
+            const localRutinas = JSON.parse(localStorage.getItem('mbtracker_rutinas') || '[]');
+            const rMap = new Map();
+            localRutinas.forEach(r => {
+              if (r.id) rMap.set(String(r.id), r);
+            });
+            parsed.rutinas.forEach(incoming => {
+              const matchKey = Array.from(rMap.keys()).find(k => {
+                const existing = rMap.get(k);
+                return String(existing.id) === String(incoming.id) || 
+                       (existing.nombre && incoming.nombre && existing.nombre.trim().toLowerCase() === incoming.nombre.trim().toLowerCase());
+              });
+              if (matchKey) {
+                const existing = rMap.get(matchKey);
+                rMap.set(matchKey, { ...existing, ...incoming });
+              } else {
+                rMap.set(String(incoming.id || Date.now() + Math.random()), incoming);
+              }
+            });
+            const uniqueRutinas = Array.from(rMap.values());
+            localStorage.setItem('mbtracker_rutinas', JSON.stringify(uniqueRutinas));
+            localStorage.setItem('mbtracker_has_custom_rutinas', 'true');
+          }
+          if (parsed.sesiones && Array.isArray(parsed.sesiones) && parsed.sesiones.length > 0) {
+            const localSesiones = JSON.parse(localStorage.getItem('mbtracker_sesiones') || '[]');
+            const sMap = new Map();
+            localSesiones.forEach(s => sMap.set(s.id, s));
+            parsed.sesiones.forEach(s => sMap.set(s.id, { ...(sMap.get(s.id) || {}), ...s }));
+            const merged = Array.from(sMap.values()).sort((a, b) => {
+              const tA = new Date(a.fecha_inicio || a.fecha || 0).getTime();
+              const tB = new Date(b.fecha_inicio || b.fecha || 0).getTime();
+              return tB - tA;
+            });
+            localStorage.setItem('mbtracker_sesiones', JSON.stringify(merged));
+          }
+          if (parsed.perfil) {
+            localStorage.setItem('mbtracker_perfil', JSON.stringify(parsed.perfil));
+          }
+          if (parsed.prs && Array.isArray(parsed.prs) && parsed.prs.length > 0) {
+            const localPrs = JSON.parse(localStorage.getItem('mbtracker_prs') || '[]');
+            const pMap = new Map();
+            localPrs.forEach(p => pMap.set(p.ejercicio_id || p.id, p));
+            parsed.prs.forEach(p => pMap.set(p.ejercicio_id || p.id, p));
+            localStorage.setItem('mbtracker_prs', JSON.stringify(Array.from(pMap.values())));
+          }
+
+          const rCount = parsed.rutinas?.length || 0;
+          const sCount = parsed.sesiones?.length || 0;
+          setSyncToast(`✨ ¡Sincronizado con éxito! (${rCount} Rutinas y ${sCount} Entrenamientos cargados)`);
+          window.history.replaceState({}, document.title, window.location.pathname);
+          setTimeout(() => {
+            setSyncToast('');
+            window.location.reload();
+          }, 1200);
+        }
+      } catch (e) {
+        console.error("Error reading sync parameter from URL", e);
       }
-    } catch (e) {
-      console.error("Error reading sync parameter from URL", e);
-    }
+    };
+
+    handleUrlSync();
   }, []);
 
   useEffect(() => {
