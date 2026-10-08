@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Play, Flame, Trophy, Dumbbell, Clock, ChevronRight, TrendingUp, 
-  CalendarCheck, Calendar, Check, X, Eye, Sparkles, CheckCircle2, Zap 
+  CalendarCheck, Calendar, Check, X, Eye, Sparkles, CheckCircle2, Zap, Menu 
 } from 'lucide-react';
 import { api } from '../services/api';
 import ExerciseModal from '../components/ExerciseModal';
@@ -66,7 +66,15 @@ const PROTOCOLS = {
   }
 };
 
-export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach, onOpenSteps, onOpenHIIT, onOpenSpotify }) {
+export default function Dashboard({ 
+  onStartWorkout, 
+  onNavigateTab, 
+  onOpenCoach, 
+  onOpenSteps, 
+  onOpenHIIT, 
+  onOpenSpotify,
+  onOpenMenu 
+}) {
   const [stats, setStats] = useState(null);
   const [rutinas, setRutinas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -75,6 +83,7 @@ export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach, 
   const [activeProtocolModal, setActiveProtocolModal] = useState(null);
   const [selectedExerciseIds, setSelectedExerciseIds] = useState(new Set());
   const [selectedVisualExercise, setSelectedVisualExercise] = useState(null);
+  const [dashboardView, setDashboardView] = useState('hoy'); // 'hoy' | 'metricas' | 'movilidad'
 
   // Leer datos de pasos de hoy
   const todayStr = new Date().toISOString().split('T')[0];
@@ -180,637 +189,626 @@ export default function Dashboard({ onStartWorkout, onNavigateTab, onOpenCoach, 
     });
   };
 
+  const todayFormatted = new Date().toLocaleDateString('es-ES', { 
+    weekday: 'long', 
+    day: 'numeric', 
+    month: 'long' 
+  });
+  const todayFormattedCap = todayFormatted.charAt(0).toUpperCase() + todayFormatted.slice(1);
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 space-y-6 pb-28">
-      {/* Header Saludo con Logo MB */}
+    <div className="max-w-4xl mx-auto px-4 py-5 space-y-5 pb-28">
+      {/* Header Saludo con Logo MB y Botón de Menú */}
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <img 
             src="/logo.png" 
             alt="MB" 
-            className="w-12 h-12 rounded-2xl object-contain bg-black border border-slate-800 shadow-xl p-0.5" 
+            className="w-12 h-12 rounded-2xl object-contain bg-black border border-slate-800 shadow-xl p-0.5 shrink-0" 
           />
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-sky-400">MB Training Fitness • Mariela Britos</span>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">¿Listo para entrenar hoy?</h2>
+          <div className="min-w-0">
+            <span className="text-xs font-bold uppercase tracking-wider text-sky-400 truncate block">
+              MB Training Fitness • Mariela Britos
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight truncate">
+              ¡Hola, Mariela! 👋
+            </h2>
+            <p className="text-xs text-slate-400 capitalize mt-0.5">
+              {todayFormattedCap}
+            </p>
           </div>
         </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={onOpenMenu}
+            className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-400 text-xs font-black shadow-md transition-all active:scale-95"
+            title="Abrir Menú de Herramientas"
+          >
+            <Menu className="w-4 h-4" />
+            <span className="hidden sm:inline">Menú</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Fila Horizontal de Accesos Rápidos (Chips compactos) */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-0.5 -mx-4 px-4 sm:mx-0 sm:px-0">
         <button
-          onClick={handleStartQuickEmpty}
-          className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold border border-slate-700 transition-all"
+          onClick={onOpenSteps}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-xs font-bold text-slate-200 shrink-0 transition-all active:scale-95 shadow-sm"
         >
-          <Dumbbell className="w-4 h-4 text-sky-400" />
-          Sesión Libre
+          <span className="text-sm">👟</span>
+          <span>Pasos: <strong className="text-emerald-400 font-mono">{todaySteps.toLocaleString('es-ES')}</strong></span>
+        </button>
+
+        <button
+          onClick={onOpenHIIT}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-900 border border-slate-800 hover:border-rose-500/50 text-xs font-bold text-slate-200 shrink-0 transition-all active:scale-95 shadow-sm"
+        >
+          <span className="text-sm">⏱️</span>
+          <span>HIIT & Tabata</span>
+        </button>
+
+        <button
+          onClick={onOpenSpotify}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-900 border border-slate-800 hover:border-[#1DB954]/50 text-xs font-bold text-slate-200 shrink-0 transition-all active:scale-95 shadow-sm"
+        >
+          <span className="text-sm">🎵</span>
+          <span>Spotify Gym</span>
+        </button>
+
+        <button
+          onClick={onOpenCoach}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-900 border border-slate-800 hover:border-sky-500/50 text-xs font-bold text-slate-200 shrink-0 transition-all active:scale-95 shadow-sm"
+        >
+          <span className="text-sm">🤖</span>
+          <span>Coach MB</span>
+        </button>
+
+        <button
+          onClick={() => onNavigateTab('calendario')}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-900 border border-slate-800 hover:border-sky-500/50 text-xs font-bold text-slate-200 shrink-0 transition-all active:scale-95 shadow-sm"
+        >
+          <span className="text-sm">📅</span>
+          <span>Calendario</span>
+        </button>
+
+        <button
+          onClick={() => onNavigateTab('fuerza_1rm')}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 text-xs font-bold text-slate-200 shrink-0 transition-all active:scale-95 shadow-sm"
+        >
+          <span className="text-sm">🎯</span>
+          <span>1RM</span>
+        </button>
+
+        <button
+          onClick={onOpenMenu}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-black text-sky-400 shrink-0 transition-all active:scale-95 shadow-sm"
+        >
+          <Menu className="w-3.5 h-3.5" />
+          <span>Más Opciones...</span>
         </button>
       </div>
 
-      {/* TARJETA INTERACTIVA: 🤖 COACH VIRTUAL MB & CHECK-IN DE ÁNIMO */}
-      <div 
-        onClick={onOpenCoach}
-        className="p-5 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/80 border border-sky-500/40 hover:border-sky-400/90 transition-all cursor-pointer shadow-xl relative overflow-hidden group active:scale-98"
-      >
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="relative shrink-0">
-              <img 
-                src="/logo.png" 
-                alt="Coach MB" 
-                className="w-12 h-12 rounded-2xl object-contain bg-black border border-slate-700 p-0.5 shadow-lg group-hover:scale-105 transition-transform" 
-              />
-              <span className="w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-900 absolute -bottom-0.5 -right-0.5 animate-pulse" />
-            </div>
-
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="font-black text-sm sm:text-base text-white group-hover:text-sky-300 truncate">
-                  Coach Virtual MB • Check-in Diario
-                </h3>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black border border-emerald-500/30">
-                  Ánimo & Registro
-                </span>
-              </div>
-              <p className="text-xs text-slate-300 mt-1 leading-snug">
-                ¿Qué vas a entrenar hoy? Registra tu ánimo y molestias para medirlas en el historial.
-              </p>
-            </div>
-          </div>
-
-          <div className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-sky-500 to-emerald-400 text-slate-950 font-black text-xs shadow-lg shadow-sky-500/20 group-hover:brightness-110 transition-all">
-            <span>Check-in</span>
-            <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
-          </div>
-        </div>
-      </div>
-
-      {/* WIDGET INTERACTIVO DE PASOS DIARIOS & PODÓMETRO */}
-      <div 
-        onClick={onOpenSteps}
-        className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-emerald-950/30 via-slate-900 to-slate-900 border border-emerald-500/40 hover:border-emerald-400 transition-all cursor-pointer group shadow-xl relative overflow-hidden active:scale-98"
-      >
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/20 shrink-0">
-              👟
-            </div>
-
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-black text-sm sm:text-base text-white group-hover:text-emerald-400 truncate">
-                  Pasos Diarios & Podómetro
-                </h3>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black border border-emerald-500/30">
-                  {todaySteps >= stepsGoal ? '¡META LOGRADA! 🎉' : `${Math.round((todaySteps / stepsGoal) * 100)}%`}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 sm:gap-3 text-xs text-slate-300 mt-0.5 font-mono flex-wrap">
-                <span className="font-bold text-white">
-                  {todaySteps.toLocaleString('es-ES')} <span className="text-slate-400 text-[11px] font-normal">/ {stepsGoal.toLocaleString('es-ES')}</span>
-                </span>
-                <span>•</span>
-                <span className="text-sky-400 font-bold">{(todaySteps * 0.00076).toFixed(1)} km</span>
-                <span>•</span>
-                <span className="text-amber-400 font-bold">{Math.round(todaySteps * 0.04)} kcal</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow-md">
-            <span>Contar</span>
-            <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
-          </div>
-        </div>
-
-        {/* Barra de progreso rápida */}
-        <div className="w-full bg-slate-800 rounded-full h-2 mt-3 overflow-hidden">
-          <div 
-            className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500 shadow-md shadow-emerald-500/30"
-            style={{ width: `${Math.min(100, Math.round((todaySteps / stepsGoal) * 100))}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Hero: Empezar Entrenamiento */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-600 via-sky-700 to-indigo-950 p-5 sm:p-7 md:p-8 shadow-2xl text-white">
-        <div className="relative z-10 space-y-4 max-w-full">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold tracking-wide uppercase text-sky-200 border border-white/15">
-            <Flame className="w-3.5 h-3.5 text-amber-300" />
-            Entrenamiento del Día
-          </div>
-
-          <div>
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-tight">Inicia tu rutina ahora</h3>
-            <p className="text-sky-100/80 text-xs sm:text-sm mt-1">
-              Registra tus series en vivo, visualiza tus pesos anteriores y usa el cronómetro de descanso.
-            </p>
-          </div>
-
-          {/* Selectores de Rutina & Día Responsivos */}
-          {rutinas.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-              <div className="space-y-1 min-w-0">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-sky-200 block">Rutina</label>
-                <select
-                  value={selectedRutinaId}
-                  onChange={(e) => handleRutinaChange(e.target.value)}
-                  className="w-full bg-slate-900/90 border border-white/20 text-white rounded-2xl px-3.5 py-3 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-400 truncate shadow-inner"
-                >
-                  {rutinas.map((r) => (
-                    <option key={r.id} value={r.id} className="bg-slate-900 text-white">
-                      {r.nombre}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1 min-w-0">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-sky-200 block">Día</label>
-                <select
-                  value={selectedDiaId}
-                  onChange={(e) => setSelectedDiaId(e.target.value)}
-                  className="w-full bg-slate-900/90 border border-white/20 text-white rounded-2xl px-3.5 py-3 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-400 truncate shadow-inner"
-                >
-                  {rutinas
-                    .find((r) => r.id === parseInt(selectedRutinaId))
-                    ?.dias?.map((d) => (
-                      <option key={d.id} value={d.id} className="bg-slate-900 text-white">
-                        {d.nombre}
-                      </option>
-                    ))}
-                </select>
-              </div>
-            </div>
-          )}
-
-          {/* Badges de Duración y Tiempo */}
-          {selectedRutinaId && (
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-200 bg-black/25 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
-                <Calendar className="w-3.5 h-3.5 text-amber-300" />
-                Vigencia: {rutinas.find(r => r.id === parseInt(selectedRutinaId))?.duracion_semanas || '4 semanas'}
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-200 bg-black/25 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
-                <Clock className="w-3.5 h-3.5 text-sky-300" />
-                ~{rutinas.find(r => r.id === parseInt(selectedRutinaId))?.duracion_estimada_minutos || 50} min por sesión
-              </span>
-            </div>
-          )}
-
-          {/* Botones de Acción */}
-          <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
-            <button
-              onClick={handleStartSelected}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-950 font-black text-sm sm:text-base shadow-xl transition-all active:scale-95"
-            >
-              <Play className="w-5 h-5 fill-current text-sky-600" />
-              Empezar Entrenamiento
-            </button>
-            <button
-              onClick={handleStartQuickEmpty}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/15 transition-all"
-            >
-              <Dumbbell className="w-4 h-4 text-sky-300" />
-              Sesión Libre (Sin Rutina)
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Sección Dedicada: Calentamiento, Rehabilitación y Estiramientos */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
-          <div>
-            <h3 className="font-black text-lg text-white">Movilidad & Rehabilitación</h3>
-            <p className="text-xs text-slate-400">Sesiones rápidas para articulaciones, rodilla, tobillo y flexibilidad</p>
-          </div>
-          <span className="text-[11px] font-bold text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-lg border border-sky-500/20">
-            1 toque
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div 
-            onClick={() => handleOpenProtocolModal('calentamiento')}
-            className="p-4 rounded-3xl bg-slate-900/90 border border-amber-500/30 hover:border-amber-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
-          >
-            <div>
-              <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
-                🔥
-              </div>
-              <h4 className="font-black text-sm text-white group-hover:text-amber-400">Calentamiento</h4>
-              <p className="text-[11px] text-slate-400 mt-1 leading-snug">Hombros, columna y caderas</p>
-            </div>
-            <div className="mt-3 flex items-center justify-between text-xs font-bold text-amber-400">
-              <span>Elegir Ejercicios</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </div>
-          </div>
-
-          <div 
-            onClick={() => handleOpenProtocolModal('rodilla')}
-            className="p-4 rounded-3xl bg-slate-900/90 border border-emerald-500/30 hover:border-emerald-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
-          >
-            <div>
-              <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
-                🦵
-              </div>
-              <h4 className="font-black text-sm text-white group-hover:text-emerald-400">Rehab Rodilla</h4>
-              <p className="text-[11px] text-slate-400 mt-1 leading-snug">Tendón rotuliano y glúteo medio</p>
-            </div>
-            <div className="mt-3 flex items-center justify-between text-xs font-bold text-emerald-400">
-              <span>Elegir Ejercicios</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </div>
-          </div>
-
-          <div 
-            onClick={() => handleOpenProtocolModal('tobillo')}
-            className="p-4 rounded-3xl bg-slate-900/90 border border-sky-500/30 hover:border-sky-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
-          >
-            <div>
-              <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
-                🦶
-              </div>
-              <h4 className="font-black text-sm text-white group-hover:text-sky-400">Rehab Tobillo</h4>
-              <p className="text-[11px] text-slate-400 mt-1 leading-snug">Dorsiflexión y tendón de Aquiles</p>
-            </div>
-            <div className="mt-3 flex items-center justify-between text-xs font-bold text-sky-400">
-              <span>Elegir Ejercicios</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </div>
-          </div>
-
-          <div 
-            onClick={() => handleOpenProtocolModal('estiramientos')}
-            className="p-4 rounded-3xl bg-slate-900/90 border border-purple-500/30 hover:border-purple-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
-          >
-            <div>
-              <div className="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
-                🧘
-              </div>
-              <h4 className="font-black text-sm text-white group-hover:text-purple-400">Estiramientos</h4>
-              <p className="text-[11px] text-slate-400 mt-1 leading-snug">Flexibilidad y descompresión</p>
-            </div>
-            <div className="mt-3 flex items-center justify-between text-xs font-bold text-purple-400">
-              <span>Elegir Ejercicios</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* SECCIÓN DESTACADA: 🎯 FUERZA 1RM & 📅 CALENDARIO */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {/* Calendario Card */}
-        <div 
-          onClick={() => onNavigateTab && onNavigateTab('calendario')}
-          className="p-5 rounded-3xl bg-gradient-to-br from-sky-950/40 via-slate-900 to-slate-900 border border-sky-500/40 hover:border-sky-400/80 transition-all cursor-pointer group shadow-xl relative overflow-hidden active:scale-98 flex items-center justify-between gap-4"
+      {/* Selector de Pestañas del Dashboard (Organización Limpia) */}
+      <div className="flex items-center p-1 bg-slate-900/90 border border-slate-800 rounded-2xl gap-1">
+        <button
+          onClick={() => setDashboardView('hoy')}
+          className={`flex-1 py-2.5 px-2 sm:px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+            dashboardView === 'hoy'
+              ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/20'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
         >
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-11 h-11 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-md shadow-sky-500/20 shrink-0">
-              📅
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="font-black text-sm sm:text-base text-white group-hover:text-sky-400 truncate">
-                  Calendario de Sesiones
-                </h3>
-                <span className="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 text-[10px] font-black border border-sky-500/30">
-                  NUEVO
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">
-                Vista mensual interactiva, días activos, constancia y registros.
-              </p>
-            </div>
-          </div>
+          <Flame className="w-3.5 h-3.5" />
+          <span>Entrenamiento</span>
+        </button>
 
-          <div className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs shadow-md">
-            <span>Ver</span>
-            <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
-          </div>
-        </div>
-
-        {/* 1RM Card */}
-        <div 
-          onClick={() => onNavigateTab && onNavigateTab('fuerza_1rm')}
-          className="p-5 rounded-3xl bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-900 border border-amber-500/40 hover:border-amber-400/80 transition-all cursor-pointer group shadow-xl relative overflow-hidden active:scale-98 flex items-center justify-between gap-4"
+        <button
+          onClick={() => setDashboardView('metricas')}
+          className={`flex-1 py-2.5 px-2 sm:px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+            dashboardView === 'metricas'
+              ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/20'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
         >
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-md shadow-amber-500/20 shrink-0">
-              🎯
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="font-black text-sm sm:text-base text-white group-hover:text-amber-400 truncate">
-                  Fuerza 1RM (RPMs)
-                </h3>
-              </div>
-              <p className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">
-                Calcula tu 1RM, zonas de carga (%1RM) y prueba tu fuerza.
-              </p>
-            </div>
-          </div>
+          <TrendingUp className="w-3.5 h-3.5" />
+          <span>Métricas & PRs</span>
+        </button>
 
-          <div className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md">
-            <span>Calcular</span>
-            <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
-          </div>
-        </div>
-      </div>
-
-      {/* SECCIÓN NUEVA: ⏱️ HIIT & TABATA / 🎵 SPOTIFY GYM */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {/* HIIT / Tabata Card */}
-        <div 
-          onClick={onOpenHIIT}
-          className="p-5 rounded-3xl bg-gradient-to-br from-rose-950/40 via-slate-900 to-slate-900 border border-rose-500/40 hover:border-rose-400 transition-all cursor-pointer group shadow-xl relative overflow-hidden active:scale-98 flex items-center justify-between gap-4"
+        <button
+          onClick={() => setDashboardView('movilidad')}
+          className={`flex-1 py-2.5 px-2 sm:px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+            dashboardView === 'movilidad'
+              ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/20'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
         >
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md shadow-rose-500/20 shrink-0">
-              ⏱️
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="font-black text-sm sm:text-base text-white group-hover:text-rose-400 truncate">
-                  Temporizador HIIT & Tabata
-                </h3>
-                <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-black border border-rose-500/30">
-                  INTERVALOS
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">
-                Tabata 4 min, HIIT 10 min, sprints y beeps de cuenta regresiva.
-              </p>
-            </div>
-          </div>
-
-          <div className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 hover:brightness-110 text-slate-950 font-black text-xs shadow-md">
-            <span>Iniciar</span>
-            <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
-          </div>
-        </div>
-
-        {/* Spotify Music Card */}
-        <div 
-          onClick={onOpenSpotify}
-          className="p-5 rounded-3xl bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-900 border border-[#1DB954]/40 hover:border-[#1DB954] transition-all cursor-pointer group shadow-xl relative overflow-hidden active:scale-98 flex items-center justify-between gap-4"
-        >
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-2xl bg-[#1DB954]/15 border border-[#1DB954]/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md shadow-[#1DB954]/20 shrink-0">
-              🎵
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="font-black text-sm sm:text-base text-white group-hover:text-[#1DB954] truncate">
-                  Spotify Gym & Playlists
-                </h3>
-                <span className="px-2 py-0.5 rounded-full bg-[#1DB954]/20 text-[#1DB954] text-[10px] font-black border border-[#1DB954]/30">
-                  MÚSICA
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">
-                Phonk, reggaeton gym, cardio hits o pega tu playlist favorita.
-              </p>
-            </div>
-          </div>
-
-          <div className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#1DB954] hover:bg-[#1ed760] text-slate-950 font-black text-xs shadow-md">
-            <span>Escuchar</span>
-            <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
-          </div>
-        </div>
+          <Zap className="w-3.5 h-3.5" />
+          <span>Movilidad & Outdoor</span>
+        </button>
       </div>
 
-      {/* SECCIÓN NUEVA: 🏃 DEPORTES Y AIRE LIBRE */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🏃</span>
-            <h3 className="font-bold text-base sm:text-lg text-white">Deportes & Aire Libre</h3>
-          </div>
-          <span className="text-xs font-bold text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-full border border-sky-500/20">
-            GPS • KM • Ritmo • Desnivel
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {/* Running */}
-          <div
-            onClick={() => onStartWorkout({ tipo: 'outdoor_cardio', deporte: 'running', nombre: 'Sesión de Running' })}
-            className="p-5 rounded-3xl bg-slate-900/90 border border-sky-500/30 hover:border-sky-400 hover:bg-slate-800/90 transition-all cursor-pointer group shadow-xl flex flex-col justify-between active:scale-98"
-          >
-            <div className="space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md shadow-sky-500/20">
-                🏃
+      {/* ======================================================== */}
+      {/* VISTA 1: HOY / ENTRENAMIENTO (LIMPIA Y ENFOCADA)          */}
+      {/* ======================================================== */}
+      {dashboardView === 'hoy' && (
+        <div className="space-y-5 animate-fadeIn">
+          {/* Hero: Empezar Entrenamiento */}
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-600 via-sky-700 to-indigo-950 p-5 sm:p-7 md:p-8 shadow-2xl text-white">
+            <div className="relative z-10 space-y-4 max-w-full">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold tracking-wide uppercase text-sky-200 border border-white/15">
+                <Flame className="w-3.5 h-3.5 text-amber-300" />
+                Entrenamiento del Día
               </div>
-              <h4 className="font-black text-base text-white group-hover:text-sky-400">Running / Carrera</h4>
-              <p className="text-xs text-slate-400 leading-snug">
-                Seguimiento de distancia (km), ritmo (min/km), calorías, parciales por vuelta y pulsaciones.
-              </p>
-            </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-black text-sky-400">
-              <span>Iniciar Carrera</span>
-              <div className="w-6 h-6 rounded-full bg-sky-500 text-slate-950 flex items-center justify-center shadow-md">
-                <ChevronRight className="w-4 h-4 stroke-[3]" />
+              <div>
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-tight">Inicia tu rutina ahora</h3>
+                <p className="text-sky-100/80 text-xs sm:text-sm mt-1">
+                  Registra tus series en vivo, visualiza tus pesos anteriores y usa el cronómetro de descanso.
+                </p>
               </div>
-            </div>
-          </div>
 
-          {/* Bicicleta */}
-          <div
-            onClick={() => onStartWorkout({ tipo: 'outdoor_cardio', deporte: 'ciclismo', nombre: 'Ruta en Bicicleta' })}
-            className="p-5 rounded-3xl bg-slate-900/90 border border-emerald-500/30 hover:border-emerald-400 hover:bg-slate-800/90 transition-all cursor-pointer group shadow-xl flex flex-col justify-between active:scale-98"
-          >
-            <div className="space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md shadow-emerald-500/20">
-                🚴
-              </div>
-              <h4 className="font-black text-base text-white group-hover:text-emerald-400">Bicicleta / Ciclismo</h4>
-              <p className="text-xs text-slate-400 leading-snug">
-                Ruta, montaña o spinning con velocidad media (km/h), tiempo de pedaleo y desnivel.
-              </p>
-            </div>
+              {/* Selectores de Rutina & Día Responsivos */}
+              {rutinas.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  <div className="space-y-1 min-w-0">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-sky-200 block">Rutina</label>
+                    <select
+                      value={selectedRutinaId}
+                      onChange={(e) => handleRutinaChange(e.target.value)}
+                      className="w-full bg-slate-900/90 border border-white/20 text-white rounded-2xl px-3.5 py-3 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-400 truncate shadow-inner"
+                    >
+                      {rutinas.map((r) => (
+                        <option key={r.id} value={r.id} className="bg-slate-900 text-white">
+                          {r.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-black text-emerald-400">
-              <span>Iniciar Pedaleo</span>
-              <div className="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center shadow-md">
-                <ChevronRight className="w-4 h-4 stroke-[3]" />
-              </div>
-            </div>
-          </div>
-
-          {/* Montañismo */}
-          <div
-            onClick={() => onStartWorkout({ tipo: 'outdoor_cardio', deporte: 'montanismo', nombre: 'Ascenso & Montañismo' })}
-            className="p-5 rounded-3xl bg-slate-900/90 border border-amber-500/30 hover:border-amber-400 hover:bg-slate-800/90 transition-all cursor-pointer group shadow-xl flex flex-col justify-between active:scale-98"
-          >
-            <div className="space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-md shadow-amber-500/20">
-                ⛰️
-              </div>
-              <h4 className="font-black text-base text-white group-hover:text-amber-400">Montañismo & Trekking</h4>
-              <p className="text-xs text-slate-400 leading-snug">
-                Ascensos y senderismo con desnivel positivo acumulado (+D m), peso de mochila (kg) y terreno.
-              </p>
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-black text-amber-400">
-              <span>Iniciar Trekking</span>
-              <div className="w-6 h-6 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center shadow-md">
-                <ChevronRight className="w-4 h-4 stroke-[3]" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Métricas / Estadísticas Rápidas */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-semibold">Total Sesiones</span>
-            <Dumbbell className="w-4 h-4 text-sky-400" />
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl md:text-3xl font-black text-white">
-              {stats?.total_entrenamientos || 0}
-            </span>
-            <span className="text-[11px] text-slate-400 block mt-0.5">completadas</span>
-          </div>
-        </div>
-
-        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-semibold">Racha mensual</span>
-            <Flame className="w-4 h-4 text-amber-400" />
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl md:text-3xl font-black text-amber-400">
-              {stats?.racha_dias_mes || 0}
-            </span>
-            <span className="text-[11px] text-slate-400 block mt-0.5">días este mes</span>
-          </div>
-        </div>
-
-        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-semibold">Volumen 7d</span>
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl md:text-3xl font-black text-emerald-400">
-              {stats?.volumen_semanal_kg ? `${Math.round(stats.volumen_semanal_kg).toLocaleString()} kg` : '0 kg'}
-            </span>
-            <span className="text-[11px] text-slate-400 block mt-0.5">levantados</span>
-          </div>
-        </div>
-
-        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 md:p-5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-semibold">Tiempo Total</span>
-            <Clock className="w-4 h-4 text-indigo-400" />
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl md:text-3xl font-black text-white">
-              {stats?.tiempo_total_minutos ? `${stats.tiempo_total_minutos}m` : '0m'}
-            </span>
-            <span className="text-[11px] text-slate-400 block mt-0.5">en el gimnasio</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Récords Personales (PRs) */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-amber-400" />
-            <h3 className="font-bold text-lg text-white">Tus Mejores Marcas (PRs)</h3>
-          </div>
-          <button
-            onClick={() => onNavigateTab('progreso')}
-            className="text-xs font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1"
-          >
-            Ver Progreso <ChevronRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {stats?.ultimos_prs && stats.ultimos_prs.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            {stats.ultimos_prs.map((pr) => (
-              <div
-                key={pr.ejercicio_id}
-                className="bg-slate-900/90 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-4 transition-all"
-              >
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400/90 block">
-                  {pr.grupo_muscular}
-                </span>
-                <h4 className="font-bold text-slate-200 text-sm mt-0.5 truncate" title={pr.ejercicio_nombre}>
-                  {pr.ejercicio_nombre}
-                </h4>
-                <div className="mt-2 flex items-baseline gap-2">
-                  <span className="text-2xl font-black text-amber-400 font-mono">
-                    {pr.peso_maximo_kg} kg
-                  </span>
-                  <span className="text-xs text-slate-400">× {pr.repeticiones} reps</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 text-center text-slate-400">
-            <p className="text-sm">Aún no has registrado récords. ¡Completa tu primer entrenamiento para ver tus marcas aquí!</p>
-          </div>
-        )}
-      </div>
-
-      {/* Últimos Entrenamientos */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CalendarCheck className="w-5 h-5 text-sky-400" />
-            <h3 className="font-bold text-lg text-white">Actividad Reciente</h3>
-          </div>
-          <button
-            onClick={() => onNavigateTab('historial')}
-            className="text-xs font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1"
-          >
-            Ver Todo <ChevronRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {stats?.ultimas_sesiones && stats.ultimas_sesiones.length > 0 ? (
-          <div className="space-y-2">
-            {stats.ultimas_sesiones.map((sesion) => (
-              <div
-                key={sesion.id}
-                className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex items-center justify-between hover:bg-slate-800/50 transition-all cursor-pointer"
-                onClick={() => onNavigateTab('historial')}
-              >
-                <div>
-                  <h4 className="font-bold text-white text-sm">{sesion.nombre}</h4>
-                  <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
-                    <span>{new Date(sesion.fecha_inicio).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
-                    <span>•</span>
-                    <span>{sesion.series.length} series registradas</span>
-                    {sesion.duracion_segundos > 0 && (
-                      <>
-                        <span>•</span>
-                        <span>{Math.round(sesion.duracion_segundos / 60)} min</span>
-                      </>
-                    )}
+                  <div className="space-y-1 min-w-0">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-sky-200 block">Día</label>
+                    <select
+                      value={selectedDiaId}
+                      onChange={(e) => setSelectedDiaId(e.target.value)}
+                      className="w-full bg-slate-900/90 border border-white/20 text-white rounded-2xl px-3.5 py-3 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-400 truncate shadow-inner"
+                    >
+                      {rutinas
+                        .find((r) => r.id === parseInt(selectedRutinaId))
+                        ?.dias?.map((d) => (
+                          <option key={d.id} value={d.id} className="bg-slate-900 text-white">
+                            {d.nombre}
+                          </option>
+                        ))}
+                    </select>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-slate-500" />
+              )}
+
+              {/* Badges de Duración y Tiempo */}
+              {selectedRutinaId && (
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-200 bg-black/25 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
+                    <Calendar className="w-3.5 h-3.5 text-amber-300" />
+                    Vigencia: {rutinas.find(r => r.id === parseInt(selectedRutinaId))?.duracion_semanas || '4 semanas'}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-200 bg-black/25 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
+                    <Clock className="w-3.5 h-3.5 text-sky-300" />
+                    ~{rutinas.find(r => r.id === parseInt(selectedRutinaId))?.duracion_estimada_minutos || 50} min por sesión
+                  </span>
+                </div>
+              )}
+
+              {/* Botones de Acción */}
+              <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
+                <button
+                  onClick={handleStartSelected}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-950 font-black text-sm sm:text-base shadow-xl transition-all active:scale-95"
+                >
+                  <Play className="w-5 h-5 fill-current text-sky-600" />
+                  Empezar Entrenamiento
+                </button>
+                <button
+                  onClick={handleStartQuickEmpty}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/15 transition-all"
+                >
+                  <Dumbbell className="w-4 h-4 text-sky-300" />
+                  Sesión Libre (Sin Rutina)
+                </button>
               </div>
-            ))}
+            </div>
           </div>
-        ) : (
-          <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 text-center text-slate-400">
-            <p className="text-sm">No hay entrenamientos recientes registrados.</p>
+
+          {/* Tarjeta Podómetro Resumida */}
+          <div 
+            onClick={onOpenSteps}
+            className="p-4 rounded-3xl bg-slate-900/90 border border-emerald-500/30 hover:border-emerald-400 transition-all cursor-pointer group shadow-lg flex items-center justify-between gap-3 active:scale-98"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+                👟
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="font-bold text-sm text-white group-hover:text-emerald-400">Podómetro de Hoy</h4>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    {todaySteps >= stepsGoal ? '¡Meta Lograda!' : `${Math.round((todaySteps / stepsGoal) * 100)}%`}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5 font-mono">
+                  <span className="text-emerald-400 font-bold">{todaySteps.toLocaleString('es-ES')} pasos</span>
+                  <span>•</span>
+                  <span>{(todaySteps * 0.00076).toFixed(1)} km</span>
+                  <span>•</span>
+                  <span>{Math.round(todaySteps * 0.04)} kcal</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="shrink-0 flex items-center gap-1 text-xs font-bold text-emerald-400">
+              <span className="hidden sm:inline">Contar</span>
+              <ChevronRight className="w-4 h-4" />
+            </div>
           </div>
-        )}
-      </div>
+
+          {/* Tarjeta Coach MB Check-in */}
+          <div 
+            onClick={onOpenCoach}
+            className="p-4 rounded-3xl bg-slate-900/90 border border-sky-500/30 hover:border-sky-400 transition-all cursor-pointer group shadow-lg flex items-center justify-between gap-3 active:scale-98"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+                🤖
+              </div>
+              <div className="min-w-0">
+                <h4 className="font-bold text-sm text-white group-hover:text-sky-300">Coach MB • Check-in de Ánimo</h4>
+                <p className="text-xs text-slate-400 truncate">Registra cómo te sientes hoy antes de entrenar</p>
+              </div>
+            </div>
+            <div className="shrink-0 flex items-center gap-1 text-xs font-bold text-sky-400">
+              <span className="hidden sm:inline">Check-in</span>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+          </div>
+
+          {/* Actividad Reciente */}
+          <div className="space-y-3 pt-1">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CalendarCheck className="w-4 h-4 text-sky-400" />
+                <h3 className="font-bold text-base text-white">Últimas Sesiones</h3>
+              </div>
+              <button
+                onClick={() => onNavigateTab('historial')}
+                className="text-xs font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1"
+              >
+                Ver Todo <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {stats?.ultimas_sesiones && stats.ultimas_sesiones.length > 0 ? (
+              <div className="space-y-2">
+                {stats.ultimas_sesiones.slice(0, 3).map((sesion) => (
+                  <div
+                    key={sesion.id}
+                    className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between hover:bg-slate-800/50 transition-all cursor-pointer"
+                    onClick={() => onNavigateTab('historial')}
+                  >
+                    <div>
+                      <h4 className="font-bold text-white text-xs sm:text-sm">{sesion.nombre}</h4>
+                      <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
+                        <span>{new Date(sesion.fecha_inicio).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                        <span>•</span>
+                        <span>{sesion.series.length} series</span>
+                        {sesion.duracion_segundos > 0 && (
+                          <>
+                            <span>•</span>
+                            <span>{Math.round(sesion.duracion_segundos / 60)} min</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-slate-500" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 text-center text-slate-400 text-xs">
+                No hay entrenamientos recientes registrados.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* VISTA 2: MÉTRICAS & PRs                                  */}
+      {/* ======================================================== */}
+      {dashboardView === 'metricas' && (
+        <div className="space-y-5 animate-fadeIn">
+          {/* Métricas / Estadísticas Rápidas */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 flex flex-col justify-between shadow-lg">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-xs font-semibold">Total Sesiones</span>
+                <Dumbbell className="w-4 h-4 text-sky-400" />
+              </div>
+              <div className="mt-3">
+                <span className="text-2xl sm:text-3xl font-black text-white">
+                  {stats?.total_entrenamientos || 0}
+                </span>
+                <span className="text-[11px] text-slate-400 block mt-0.5">completadas</span>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 flex flex-col justify-between shadow-lg">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-xs font-semibold">Racha mensual</span>
+                <Flame className="w-4 h-4 text-amber-400" />
+              </div>
+              <div className="mt-3">
+                <span className="text-2xl sm:text-3xl font-black text-amber-400">
+                  {stats?.racha_dias_mes || 0}
+                </span>
+                <span className="text-[11px] text-slate-400 block mt-0.5">días este mes</span>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 flex flex-col justify-between shadow-lg">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-xs font-semibold">Volumen 7d</span>
+                <TrendingUp className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div className="mt-3">
+                <span className="text-2xl sm:text-3xl font-black text-emerald-400">
+                  {stats?.volumen_semanal_kg ? `${Math.round(stats.volumen_semanal_kg).toLocaleString()} kg` : '0 kg'}
+                </span>
+                <span className="text-[11px] text-slate-400 block mt-0.5">levantados</span>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 flex flex-col justify-between shadow-lg">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="text-xs font-semibold">Tiempo Total</span>
+                <Clock className="w-4 h-4 text-indigo-400" />
+              </div>
+              <div className="mt-3">
+                <span className="text-2xl sm:text-3xl font-black text-white">
+                  {stats?.tiempo_total_minutos ? `${stats.tiempo_total_minutos}m` : '0m'}
+                </span>
+                <span className="text-[11px] text-slate-400 block mt-0.5">en el gimnasio</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Récords Personales (PRs) */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-amber-400" />
+                <h3 className="font-bold text-lg text-white">Tus Mejores Marcas (PRs)</h3>
+              </div>
+              <button
+                onClick={() => onNavigateTab('progreso')}
+                className="text-xs font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1"
+              >
+                Ver Progreso <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {stats?.ultimos_prs && stats.ultimos_prs.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                {stats.ultimos_prs.map((pr) => (
+                  <div
+                    key={pr.ejercicio_id}
+                    className="bg-slate-900/90 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-4 transition-all shadow-md"
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400/90 block">
+                      {pr.grupo_muscular}
+                    </span>
+                    <h4 className="font-bold text-slate-200 text-sm mt-0.5 truncate" title={pr.ejercicio_nombre}>
+                      {pr.ejercicio_nombre}
+                    </h4>
+                    <div className="mt-2 flex items-baseline gap-2">
+                      <span className="text-2xl font-black text-amber-400 font-mono">
+                        {pr.peso_maximo_kg} kg
+                      </span>
+                      <span className="text-xs text-slate-400">× {pr.repeticiones} reps</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 text-center text-slate-400">
+                <p className="text-sm">Aún no has registrado récords. ¡Completa tu primer entrenamiento para ver tus marcas aquí!</p>
+              </div>
+            )}
+          </div>
+
+          {/* Acceso a Calendario & 1RM */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div 
+              onClick={() => onNavigateTab && onNavigateTab('calendario')}
+              className="p-4 rounded-3xl bg-slate-900 border border-sky-500/30 hover:border-sky-400 transition-all cursor-pointer group shadow-lg flex items-center justify-between gap-3"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-xl">
+                  📅
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-white group-hover:text-sky-400">Calendario de Sesiones</h4>
+                  <p className="text-xs text-slate-400">Vista mensual y días activos</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-sky-400" />
+            </div>
+
+            <div 
+              onClick={() => onNavigateTab && onNavigateTab('fuerza_1rm')}
+              className="p-4 rounded-3xl bg-slate-900 border border-amber-500/30 hover:border-amber-400 transition-all cursor-pointer group shadow-lg flex items-center justify-between gap-3"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-xl">
+                  🎯
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-white group-hover:text-amber-400">Calculadora 1RM</h4>
+                  <p className="text-xs text-slate-400">Prueba tu fuerza y zonas de carga</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-amber-400" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* VISTA 3: MOVILIDAD & DEPORTES OUTDOOR                    */}
+      {/* ======================================================== */}
+      {dashboardView === 'movilidad' && (
+        <div className="space-y-6 animate-fadeIn">
+          {/* Movilidad & Rehabilitación */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between px-1">
+              <div>
+                <h3 className="font-black text-lg text-white">Movilidad & Rehabilitación</h3>
+                <p className="text-xs text-slate-400">Sesiones rápidas para articulaciones, rodilla, tobillo y flexibilidad</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div 
+                onClick={() => handleOpenProtocolModal('calentamiento')}
+                className="p-4 rounded-3xl bg-slate-900 border border-amber-500/30 hover:border-amber-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
+                    🔥
+                  </div>
+                  <h4 className="font-black text-sm text-white group-hover:text-amber-400">Calentamiento</h4>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-snug">Hombros, columna y caderas</p>
+                </div>
+                <div className="mt-3 flex items-center justify-between text-xs font-bold text-amber-400">
+                  <span>Elegir</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </div>
+              </div>
+
+              <div 
+                onClick={() => handleOpenProtocolModal('rodilla')}
+                className="p-4 rounded-3xl bg-slate-900 border border-emerald-500/30 hover:border-emerald-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
+                    🦵
+                  </div>
+                  <h4 className="font-black text-sm text-white group-hover:text-emerald-400">Rehab Rodilla</h4>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-snug">Tendón rotuliano y glúteo</p>
+                </div>
+                <div className="mt-3 flex items-center justify-between text-xs font-bold text-emerald-400">
+                  <span>Elegir</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </div>
+              </div>
+
+              <div 
+                onClick={() => handleOpenProtocolModal('tobillo')}
+                className="p-4 rounded-3xl bg-slate-900 border border-sky-500/30 hover:border-sky-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
+                    🦶
+                  </div>
+                  <h4 className="font-black text-sm text-white group-hover:text-sky-400">Rehab Tobillo</h4>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-snug">Dorsiflexión y Aquiles</p>
+                </div>
+                <div className="mt-3 flex items-center justify-between text-xs font-bold text-sky-400">
+                  <span>Elegir</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </div>
+              </div>
+
+              <div 
+                onClick={() => handleOpenProtocolModal('estiramientos')}
+                className="p-4 rounded-3xl bg-slate-900 border border-purple-500/30 hover:border-purple-500/70 hover:bg-slate-800/80 transition-all cursor-pointer group shadow-lg flex flex-col justify-between active:scale-98"
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition-transform">
+                    🧘
+                  </div>
+                  <h4 className="font-black text-sm text-white group-hover:text-purple-400">Estiramientos</h4>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-snug">Flexibilidad y relax</p>
+                </div>
+                <div className="mt-3 flex items-center justify-between text-xs font-bold text-purple-400">
+                  <span>Elegir</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Deportes & Aire Libre */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="font-bold text-base sm:text-lg text-white">Deportes & GPS Outdoor</h3>
+              <span className="text-xs font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/20">
+                KM • Ritmo
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div
+                onClick={() => onStartWorkout({ tipo: 'outdoor_cardio', deporte: 'running', nombre: 'Sesión de Running' })}
+                className="p-4 rounded-3xl bg-slate-900 border border-sky-500/30 hover:border-sky-400 transition-all cursor-pointer group shadow-md flex items-center justify-between gap-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-xl">
+                    🏃
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-white group-hover:text-sky-400">Running</h4>
+                    <p className="text-[11px] text-slate-400">Carrera y ritmo</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-sky-400" />
+              </div>
+
+              <div
+                onClick={() => onStartWorkout({ tipo: 'outdoor_cardio', deporte: 'ciclismo', nombre: 'Ruta en Bicicleta' })}
+                className="p-4 rounded-3xl bg-slate-900 border border-emerald-500/30 hover:border-emerald-400 transition-all cursor-pointer group shadow-md flex items-center justify-between gap-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-xl">
+                    🚴
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-white group-hover:text-emerald-400">Ciclismo</h4>
+                    <p className="text-[11px] text-slate-400">Ruta y velocidad</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-emerald-400" />
+              </div>
+
+              <div
+                onClick={() => onStartWorkout({ tipo: 'outdoor_cardio', deporte: 'montanismo', nombre: 'Ascenso & Montañismo' })}
+                className="p-4 rounded-3xl bg-slate-900 border border-amber-500/30 hover:border-amber-400 transition-all cursor-pointer group shadow-md flex items-center justify-between gap-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-xl">
+                    ⛰️
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-white group-hover:text-amber-400">Trekking</h4>
+                    <p className="text-[11px] text-slate-400">Ascensos y desnivel</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-amber-400" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal Interactivo de Protocolo (Calentamiento / Rehabilitación / Estiramientos) */}
       {activeProtocolModal && (

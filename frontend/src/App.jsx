@@ -6,6 +6,7 @@ import PasosTrackerModal from './components/PasosTrackerModal';
 import HIITTimerModal from './components/HIITTimerModal';
 import SpotifyPlayerModal from './components/SpotifyPlayerModal';
 import SyncModal from './components/SyncModal';
+import MenuDrawer from './components/MenuDrawer';
 import Dashboard from './pages/Dashboard';
 import Rutinas from './pages/Rutinas';
 import Entrenar from './pages/Entrenar';
@@ -37,6 +38,7 @@ export default function App() {
   const [isHIITModalOpen, setIsHIITModalOpen] = useState(false);
   const [isSpotifyModalOpen, setIsSpotifyModalOpen] = useState(false);
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [syncToast, setSyncToast] = useState('');
 
   const [activeWorkout, setActiveWorkout] = useState(() => {
@@ -205,6 +207,7 @@ export default function App() {
         onOpenSpotify={() => setIsSpotifyModalOpen(true)}
         onOpenHIIT={() => setIsHIITModalOpen(true)}
         onOpenSync={() => setIsSyncModalOpen(true)}
+        onOpenMenu={() => setIsMenuOpen(true)}
       />
 
       {/* Contenido Principal */}
@@ -217,6 +220,7 @@ export default function App() {
             onOpenSteps={() => setIsStepsModalOpen(true)}
             onOpenHIIT={() => setIsHIITModalOpen(true)}
             onOpenSpotify={() => setIsSpotifyModalOpen(true)}
+            onOpenMenu={() => setIsMenuOpen(true)}
           />
         )}
 
@@ -275,6 +279,21 @@ export default function App() {
         </div>
         <span className="hidden sm:inline text-xs font-black tracking-tight">Coach MB • Ánimo</span>
       </button>
+
+      {/* Menú Lateral Desplegable / Drawer de Opciones */}
+      <MenuDrawer
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        activeTab={activeTab}
+        onNavigateTab={setActiveTab}
+        onOpenCoach={() => setIsCoachOpen(true)}
+        onOpenSteps={() => setIsStepsModalOpen(true)}
+        onOpenHIIT={() => setIsHIITModalOpen(true)}
+        onOpenSpotify={() => setIsSpotifyModalOpen(true)}
+        onOpenSync={() => setIsSyncModalOpen(true)}
+        onStartWorkout={handleStartWorkout}
+        onLogout={handleLogout}
+      />
 
       {/* Modal de Sincronización QR / Enlace PC ↔ Móvil */}
       <SyncModal

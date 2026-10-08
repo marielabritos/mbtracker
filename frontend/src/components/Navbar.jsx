@@ -1,19 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Dumbbell, Calendar, History, TrendingUp, Play, User, LogOut, Lock, Zap, CalendarDays, Layers, RefreshCw, Smartphone } from 'lucide-react';
+import { 
+  Home, Dumbbell, Calendar, History, TrendingUp, Play, User, 
+  LogOut, Lock, Zap, CalendarDays, Layers, RefreshCw, Smartphone, Menu 
+} from 'lucide-react';
 import { api } from '../services/api';
 
-export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLogout, onOpenSync }) {
+export default function Navbar({ 
+  activeTab, 
+  setActiveTab, 
+  isWorkoutActive, 
+  onLogout, 
+  onOpenSync,
+  onOpenMenu 
+}) {
   const [isSyncingCloud, setIsSyncingCloud] = useState(false);
   const [syncStatusText, setSyncStatusText] = useState('');
 
-  const navItems = [
+  // Items para barra inferior móvil (solo los 4 principales + Menú)
+  const mobileNavItems = [
     { id: 'dashboard', label: 'Inicio', icon: Home },
     { id: 'entrenar', label: 'Entrenar', icon: isWorkoutActive ? Play : Dumbbell, highlight: isWorkoutActive },
     { id: 'rutinas', label: 'Rutinas', icon: Layers },
-    { id: 'calendario', label: 'Calendario', icon: CalendarDays },
-    { id: 'fuerza_1rm', label: '1RM', icon: Zap },
-    { id: 'progreso', label: 'Progreso', icon: TrendingUp },
     { id: 'historial', label: 'Historial', icon: History },
+  ];
+
+  // Items para barra superior de escritorio
+  const desktopNavItems = [
+    { id: 'dashboard', label: 'Inicio', icon: Home },
+    { id: 'entrenar', label: 'Entrenar', icon: isWorkoutActive ? Play : Dumbbell, highlight: isWorkoutActive },
+    { id: 'rutinas', label: 'Rutinas', icon: Layers },
+    { id: 'historial', label: 'Historial', icon: History },
+    { id: 'calendario', label: 'Calendario', icon: CalendarDays },
+    { id: 'progreso', label: 'Progreso', icon: TrendingUp },
     { id: 'perfil', label: 'Perfil', icon: User },
   ];
 
@@ -58,7 +76,7 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {/* Botón Sincronización Móvil */}
           <button
             type="button"
@@ -67,7 +85,7 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
             title="Sincronizar datos entre Computadora y Celular"
           >
             <Smartphone className="w-3.5 h-3.5 text-sky-400" />
-            <span className="text-[11px] font-black">Sincronizar</span>
+            <span className="text-[11px] font-black">Nube</span>
           </button>
 
           {isWorkoutActive && (
@@ -80,15 +98,15 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
             </button>
           )}
 
-          {onLogout && (
-            <button
-              onClick={onLogout}
-              className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-rose-400 transition-colors"
-              title="Cerrar sesión / Bloquear"
-            >
-              <Lock className="w-4 h-4" />
-            </button>
-          )}
+          {/* Botón Abrir Menú Móvil */}
+          <button
+            type="button"
+            onClick={onOpenMenu}
+            className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 active:scale-95 transition-all"
+            title="Abrir Menú"
+          >
+            <Menu className="w-5 h-5 text-sky-400" />
+          </button>
         </div>
       </header>
 
@@ -106,15 +124,15 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
           </div>
         </div>
 
-        <nav className="flex items-center gap-2">
-          {navItems.map((item) => {
+        <nav className="flex items-center gap-1.5">
+          {desktopNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
                   isActive
                     ? 'bg-sky-500/15 text-sky-400 border border-sky-500/30'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -129,40 +147,50 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
             );
           })}
 
+          {/* Botón Menú Completo en Desktop */}
+          <button
+            type="button"
+            onClick={onOpenMenu}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition-all active:scale-95 ml-1"
+            title="Abrir Menú de Herramientas"
+          >
+            <Menu className="w-4 h-4 text-sky-400" />
+            <span>Menú</span>
+          </button>
+
           {/* Botón Sincronización Desktop */}
           <button
             type="button"
             onClick={handleSyncClick}
-            className="ml-2 px-3.5 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-400 text-xs font-black flex items-center gap-2 transition-all shadow-md active:scale-95"
+            className="ml-1 px-3 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-400 text-xs font-black flex items-center gap-1.5 transition-all shadow-md active:scale-95"
             title="Sincronizar instantáneamente con tu celular (QR o Enlace)"
           >
             <Smartphone className="w-4 h-4 text-sky-400" />
-            <span>Sincronizar Celular</span>
+            <span>Sincronizar</span>
           </button>
 
           {onLogout && (
             <button
               onClick={onLogout}
-              className="ml-2 p-2 rounded-xl bg-slate-800 hover:bg-rose-500/15 hover:border-rose-500/30 border border-transparent text-slate-400 hover:text-rose-400 text-xs font-bold flex items-center gap-1.5 transition-all"
+              className="ml-1 p-2 rounded-xl bg-slate-800 hover:bg-rose-500/15 hover:border-rose-500/30 border border-transparent text-slate-400 hover:text-rose-400 text-xs font-bold flex items-center gap-1.5 transition-all"
               title="Cerrar sesión / Bloquear app"
             >
               <LogOut className="w-4 h-4" />
-              <span>Bloquear</span>
             </button>
           )}
         </nav>
       </header>
 
-      {/* Mobile Fixed Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 px-2 py-2 flex items-center justify-around shadow-2xl">
-        {navItems.map((item) => {
+      {/* Mobile Fixed Bottom Navigation Bar - LIMPIA Y ESPACIOSA (4 pestañas + Botón Menú) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 px-3 py-1.5 flex items-center justify-around shadow-2xl safe-area-bottom">
+        {mobileNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
           return (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all relative ${
+              className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-2xl transition-all relative ${
                 isActive
                   ? 'text-sky-400 font-bold'
                   : 'text-slate-400 hover:text-slate-200'
@@ -170,7 +198,7 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
             >
               <div
                 className={`p-1.5 rounded-xl transition-all ${
-                  isActive ? 'bg-sky-500/20 scale-110 shadow-lg shadow-sky-500/20' : ''
+                  isActive ? 'bg-sky-500/20 scale-110 shadow-md shadow-sky-500/20' : ''
                 }`}
               >
                 <Icon className={`w-5 h-5 ${item.highlight ? 'animate-pulse text-emerald-400' : ''}`} />
@@ -182,6 +210,18 @@ export default function Navbar({ activeTab, setActiveTab, isWorkoutActive, onLog
             </button>
           );
         })}
+
+        {/* Botón 5: Menú / Más */}
+        <button
+          type="button"
+          onClick={onOpenMenu}
+          className="flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-2xl text-slate-400 hover:text-sky-400 transition-all active:scale-95"
+        >
+          <div className="p-1.5 rounded-xl hover:bg-slate-800">
+            <Menu className="w-5 h-5 text-sky-400" />
+          </div>
+          <span className="text-[10px] tracking-tight font-black text-sky-400">Menú</span>
+        </button>
       </nav>
     </>
   );
