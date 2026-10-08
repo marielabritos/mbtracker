@@ -652,6 +652,14 @@ export default function Entrenar({ workoutData, onFinishWorkout, onCancelWorkout
                         </span>
                       </div>
                     )}
+
+                    {/* Notas y Progresión del Ejercicio */}
+                    {ex.notas && (
+                      <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-amber-300 font-medium bg-amber-500/10 px-2.5 py-1 rounded-xl border border-amber-500/20 w-fit mt-1.5">
+                        <FileText className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <span>{ex.notas}</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-1">

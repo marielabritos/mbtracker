@@ -18,6 +18,7 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
   const [showCreateCustomExercise, setShowCreateCustomExercise] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [selectedVisualExercise, setSelectedVisualExercise] = useState(null);
+  const [routineFilter, setRoutineFilter] = useState('todas');
 
   // Formulario nuevo ejercicio personalizado
   const [newCustomEx, setNewCustomEx] = useState({
@@ -449,6 +450,77 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
         </div>
       </div>
 
+      {/* Selector Rápido de Categorías de Rutina */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0">
+        <button
+          type="button"
+          onClick={() => setRoutineFilter('todas')}
+          className={`px-3.5 py-2 rounded-2xl text-xs font-black transition-all shrink-0 flex items-center gap-1.5 shadow-sm active:scale-95 ${
+            routineFilter === 'todas'
+              ? 'bg-sky-500 text-slate-950 shadow-sky-500/20'
+              : 'bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800'
+          }`}
+        >
+          <span>✨</span>
+          <span>Todas ({rutinas.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setRoutineFilter('inicial');
+            const found = rutinas.find(r => (r.nombre || '').toLowerCase().includes('inicial'));
+            if (found) setExpandedRutina(found.id);
+          }}
+          className={`px-3.5 py-2 rounded-2xl text-xs font-black transition-all shrink-0 flex items-center gap-1.5 shadow-sm active:scale-95 ${
+            routineFilter === 'inicial'
+              ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/20'
+              : 'bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 hover:bg-emerald-500/20'
+          }`}
+        >
+          <span>🌱</span>
+          <span>Rutina Inicial</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setRoutineFilter('tu_rutina');
+            const found = rutinas.find(r => (r.nombre || '').toLowerCase().includes('tu rutina'));
+            if (found) {
+              setExpandedRutina(found.id);
+            } else {
+              handleOpenCreateModal();
+            }
+          }}
+          className={`px-3.5 py-2 rounded-2xl text-xs font-black transition-all shrink-0 flex items-center gap-1.5 shadow-sm active:scale-95 ${
+            routineFilter === 'tu_rutina'
+              ? 'bg-amber-500 text-slate-950 shadow-amber-500/20'
+              : 'bg-amber-500/10 border border-amber-500/25 text-amber-300 hover:bg-amber-500/20'
+          }`}
+        >
+          <span>⭐</span>
+          <span>Tu Rutina</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setRoutineFilter('progresiva');
+            const found = rutinas.find(r => (r.nombre || '').toLowerCase().includes('progresiva'));
+            if (found) setExpandedRutina(found.id);
+          }}
+          className={`px-3.5 py-2 rounded-2xl text-xs font-black transition-all shrink-0 flex items-center gap-1.5 shadow-sm active:scale-95 ${
+            routineFilter === 'progresiva'
+              ? 'bg-purple-500 text-slate-950 shadow-purple-500/20'
+              : 'bg-purple-500/10 border border-purple-500/25 text-purple-300 hover:bg-purple-500/20'
+          }`}
+        >
+          <span>⚡</span>
+          <span>Rutina Progresiva</span>
+        </button>
+      </div>
+
       {/* Lista de Rutinas */}
       {rutinas.length === 0 ? (
         <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 text-center space-y-4">
@@ -466,12 +538,35 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
         </div>
       ) : (
         <div className="space-y-4">
-          {rutinas.map((rutina) => {
+          {rutinas
+            .filter((r) => {
+              if (routineFilter === 'todas') return true;
+              const nLow = (r.nombre || '').toLowerCase();
+              if (routineFilter === 'inicial') return nLow.includes('inicial');
+              if (routineFilter === 'tu_rutina') return nLow.includes('tu rutina');
+              if (routineFilter === 'progresiva') return nLow.includes('progresiva');
+              return true;
+            })
+            .map((rutina) => {
             const isExpanded = expandedRutina === rutina.id;
+            const nameLow = (rutina.nombre || '').toLowerCase();
+            const isInicial = nameLow.includes('inicial');
+            const isTuRutina = nameLow.includes('tu rutina');
+            const isProgresiva = nameLow.includes('progresiva');
+
+            let cardClasses = "bg-slate-900/90 border border-slate-800 rounded-3xl overflow-hidden shadow-xl transition-all";
+            if (isTuRutina) {
+              cardClasses = "bg-gradient-to-b from-amber-950/25 via-slate-900/95 to-slate-900/90 border border-amber-500/40 rounded-3xl overflow-hidden shadow-xl transition-all ring-1 ring-amber-500/20";
+            } else if (isInicial) {
+              cardClasses = "bg-gradient-to-b from-emerald-950/25 via-slate-900/95 to-slate-900/90 border border-emerald-500/40 rounded-3xl overflow-hidden shadow-xl transition-all ring-1 ring-emerald-500/20";
+            } else if (isProgresiva) {
+              cardClasses = "bg-gradient-to-b from-purple-950/25 via-slate-900/95 to-slate-900/90 border border-purple-500/40 rounded-3xl overflow-hidden shadow-xl transition-all ring-1 ring-purple-500/20";
+            }
+
             return (
               <div
                 key={rutina.id}
-                className="bg-slate-900/90 border border-slate-800 rounded-3xl overflow-hidden shadow-xl transition-all"
+                className={cardClasses}
               >
                 {/* Header Rutina Responsivo Móvil & Desktop */}
                 <div
@@ -481,10 +576,35 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
                   <div className="flex items-start justify-between gap-2.5">
                     {/* Badge Días + Título Completo */}
                     <div className="flex items-start gap-3 flex-1 min-w-0">
-                      <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 font-black shrink-0 text-sm mt-0.5">
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black shrink-0 text-sm mt-0.5 border ${
+                        isTuRutina 
+                          ? 'bg-amber-500/15 border-amber-500/30 text-amber-400' 
+                          : isInicial 
+                          ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
+                          : isProgresiva
+                          ? 'bg-purple-500/15 border-purple-500/30 text-purple-400'
+                          : 'bg-sky-500/10 border-sky-500/20 text-sky-400'
+                      }`}>
                         {rutina.dias?.length || 0}d
                       </div>
                       <div className="flex-1 min-w-0 space-y-1.5">
+                        {/* Etiqueta especial de la rutina */}
+                        {isInicial && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-black border border-emerald-500/30">
+                            🌱 Rutina Inicial • Full Body Básica
+                          </span>
+                        )}
+                        {isTuRutina && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 text-[10px] font-black border border-amber-500/30">
+                            ⭐ Tu Rutina • Espacio Personalizado
+                          </span>
+                        )}
+                        {isProgresiva && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-500/15 text-purple-300 text-[10px] font-black border border-purple-500/30">
+                            ⚡ Rutina Progresiva • Sobrecarga & Pirámides
+                          </span>
+                        )}
+
                         <h3 className="font-bold text-white text-base md:text-lg leading-snug break-words">
                           {rutina.nombre}
                         </h3>
@@ -509,17 +629,31 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
 
                     {/* Botones de Acción */}
                     <div className="flex items-center gap-1 shrink-0 pt-0.5">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenEditModal(rutina);
-                        }}
-                        className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 hover:text-sky-300 text-xs font-bold border border-slate-700 transition-colors"
-                        title="Editar rutina y ejercicios"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline">Editar</span>
-                      </button>
+                      {isTuRutina ? (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenEditModal(rutina);
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow-md transition-all active:scale-95"
+                          title="Diseñar y personalizar tu rutina"
+                        >
+                          <Edit3 className="w-3.5 h-3.5 stroke-[2.5]" />
+                          <span>Diseñar</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenEditModal(rutina);
+                          }}
+                          className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 hover:text-sky-300 text-xs font-bold border border-slate-700 transition-colors"
+                          title="Editar rutina y ejercicios"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">Editar</span>
+                        </button>
+                      )}
 
                       <button
                         onClick={(e) => {
@@ -542,6 +676,51 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
                 {/* Días y Ejercicios desplegables */}
                 {isExpanded && (
                   <div className="border-t border-slate-800/80 p-4 sm:p-5 space-y-4 bg-slate-950/40">
+                    {/* Banners Explicativos para las Rutinas Genéricas */}
+                    {isInicial && (
+                      <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-200 flex items-start gap-2.5">
+                        <span className="text-base shrink-0">🌱</span>
+                        <div className="space-y-0.5">
+                          <div className="font-bold text-white text-xs">Full Body con Básicos Fundamentales</div>
+                          <p className="text-[11px] text-emerald-300/90 leading-relaxed">
+                            Trabaja todo el cuerpo en una sola sesión con los movimientos esenciales: sentadilla, press plano, remo, hip thrust, militar y plancha. Ideal para construir fuerza y dominar la técnica de base.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {isTuRutina && (
+                      <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-200 flex items-start justify-between gap-3">
+                        <div className="space-y-1">
+                          <div className="font-bold text-white text-xs flex items-center gap-1.5">
+                            <span>✏️</span>
+                            <span>¡Este es tu espacio para crear tu rutina!</span>
+                          </div>
+                          <p className="text-[11px] text-amber-200/90 leading-relaxed">
+                            Toca en <strong>"Diseñar"</strong> o en <strong>"Modificar orden"</strong> para cambiar los ejercicios, renombrar los días y ajustar series o repeticiones según tus preferencias.
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleOpenEditModal(rutina)}
+                          className="shrink-0 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95"
+                        >
+                          Personalizar
+                        </button>
+                      </div>
+                    )}
+
+                    {isProgresiva && (
+                      <div className="p-3.5 rounded-2xl bg-purple-500/10 border border-purple-500/25 text-xs text-purple-200 flex items-start gap-2.5">
+                        <span className="text-base shrink-0">⚡</span>
+                        <div className="space-y-0.5">
+                          <div className="font-bold text-white text-xs">Estructura con Sobrecarga Progresiva</div>
+                          <p className="text-[11px] text-purple-300/90 leading-relaxed">
+                            Esquema piramidal (12 ➔ 10 ➔ 8 ➔ 6 reps): sube el peso serie a serie conforme bajan las repeticiones. Intenta aumentar 1-2.5 kg o sacar 1 rep más semana a semana para romper estancamientos.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
                     {rutina.dias?.map((dia) => (
                       <div
                         key={dia.id}
@@ -549,7 +728,9 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
                       >
                         <div className="flex items-center justify-between flex-wrap gap-2">
                           <h4 className="font-bold text-slate-200 text-sm flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-sky-400" />
+                            <span className={`w-2 h-2 rounded-full ${
+                              isTuRutina ? 'bg-amber-400' : isInicial ? 'bg-emerald-400' : isProgresiva ? 'bg-purple-400' : 'bg-sky-400'
+                            }`} />
                             {dia.nombre}
                           </h4>
                           <div className="flex items-center gap-2">
@@ -570,7 +751,8 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
                                     grupo_muscular: e.ejercicio?.grupo_muscular || 'General',
                                     series_objetivo: e.series_objetivo || 3,
                                     reps_objetivo: e.reps_objetivo || '8-12',
-                                    descanso_segundos: e.descanso_segundos || 90
+                                    descanso_segundos: e.descanso_segundos || 90,
+                                    notas: e.notas || ''
                                   }))
                                 })
                               }
@@ -580,6 +762,21 @@ export default function Rutinas({ onStartWorkout, onOpenSync }) {
                             </button>
                           </div>
                         </div>
+
+                        {/* Mensaje si el día no tiene ejercicios */}
+                        {(!dia.ejercicios || dia.ejercicios.length === 0) && (
+                          <div className="py-6 px-4 text-center rounded-2xl bg-slate-950/60 border border-dashed border-slate-800 space-y-2">
+                            <Dumbbell className="w-6 h-6 text-slate-600 mx-auto" />
+                            <p className="text-xs font-bold text-slate-300">Este día aún no tiene ejercicios</p>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEditModal(rutina)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500 text-slate-950 font-bold text-xs shadow-md"
+                            >
+                              <Plus className="w-3.5 h-3.5 stroke-[3]" /> Añadir Ejercicios
+                            </button>
+                          </div>
+                        )}
 
                         {/* Lista de Ejercicios del Día */}
                         <div className="space-y-1.5">

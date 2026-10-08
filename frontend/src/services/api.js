@@ -155,29 +155,249 @@ export const DEFAULT_EJERCICIOS = [
 
 export const DEFAULT_RUTINAS = [
   {
-    id: 1002,
-    nombre: "Rutina Full Body (Cuerpo Completo)",
-    descripcion: "Fuerza, tono y masa muscular global con empuje en polea, press mancuernas, jalón supino, face pull, hip thrust, femoral sentado, pallof y caminata de granjero.",
-    duracion_semanas: "6 semanas",
-    duracion_estimada_minutos: 60,
+    id: 1001,
+    nombre: "Rutina Inicial",
+    descripcion: "Full Body básico de cuerpo completo con los ejercicios fundamentales. Ideal para ganar fuerza base, dominar la técnica y tonificar todo el cuerpo.",
+    duracion_semanas: "4 semanas",
+    duracion_estimada_minutos: 45,
     activa: true,
     dias: [
       {
-        id: 2001,
-        nombre: "Día 1: Full Body Fuerza, Tren Superior & Inferior Completo",
+        id: 2010,
+        nombre: "Día 1: Full Body Básica (Movimientos Fundamentales)",
         orden: 1,
         ejercicios: [
-          { id: 201, ejercicio_id: 130, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 1, ejercicio: { id: 130, nombre: "Empuje en Polea para Pecho", grupo_muscular: "Pecho", equipo: "Polea" } },
-          { id: 202, ejercicio_id: 2, series_objetivo: 3, reps_objetivo: "8-10", descanso_segundos: 90, orden: 2, ejercicio: { id: 2, nombre: "Press de Banca Plano con Mancuernas", grupo_muscular: "Pecho", equipo: "Mancuerna" } },
-          { id: 203, ejercicio_id: 15, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 3, ejercicio: { id: 15, nombre: "Jalón al Pecho Agarre Supino / Estrecho", grupo_muscular: "Espalda", equipo: "Polea" } },
-          { id: 204, ejercicio_id: 131, series_objetivo: 3, reps_objetivo: "12-15", descanso_segundos: 60, orden: 4, ejercicio: { id: 131, nombre: "Face Pull en Polea con Cuerda (Pull Face)", grupo_muscular: "Hombros", equipo: "Polea" } },
-          { id: 205, ejercicio_id: 26, series_objetivo: 4, reps_objetivo: "8-10", descanso_segundos: 120, orden: 5, ejercicio: { id: 26, nombre: "Hip Thrust con Barra", grupo_muscular: "Glúteos", equipo: "Barra" } },
-          { id: 206, ejercicio_id: 48, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 6, ejercicio: { id: 48, nombre: "Prensa de Piernas 45°", grupo_muscular: "Piernas", equipo: "Máquina" } },
-          { id: 207, ejercicio_id: 56, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 90, orden: 7, ejercicio: { id: 56, nombre: "Curl Femoral Sentado en Máquina", grupo_muscular: "Piernas", equipo: "Máquina" } },
-          { id: 208, ejercicio_id: 132, series_objetivo: 3, reps_objetivo: "12-15", descanso_segundos: 60, orden: 8, ejercicio: { id: 132, nombre: "Press Pallof en Polea", grupo_muscular: "Core", equipo: "Polea" } },
-          { id: 209, ejercicio_id: 133, series_objetivo: 3, reps_objetivo: "40-50m", descanso_segundos: 60, orden: 9, ejercicio: { id: 133, nombre: "Caminata de Granjero con Mancuernas (Farmer's Walk)", grupo_muscular: "Core", equipo: "Mancuerna" } },
-          { id: 210, ejercicio_id: 77, series_objetivo: 3, reps_objetivo: "10-12", descanso_segundos: 60, orden: 10, ejercicio: { id: 77, nombre: "Extensiones de Tríceps en Polea (Cuerda)", grupo_muscular: "Brazos", equipo: "Polea" } },
-          { id: 211, ejercicio_id: 84, series_objetivo: 3, reps_objetivo: "45s", descanso_segundos: 60, orden: 11, ejercicio: { id: 84, nombre: "Plancha Abdominal", grupo_muscular: "Core", equipo: "Peso Corporal" } }
+          {
+            id: 501,
+            ejercicio_id: 47,
+            series_objetivo: 3,
+            reps_objetivo: "10-12",
+            descanso_segundos: 90,
+            orden: 1,
+            notas: "Básico de pierna y glúteo. Mantener espalda recta y pecho erguido.",
+            ejercicio: { id: 47, nombre: "Sentadilla Goblet con Mancuerna", grupo_muscular: "Piernas", equipo: "Mancuerna" }
+          },
+          {
+            id: 502,
+            ejercicio_id: 2,
+            series_objetivo: 3,
+            reps_objetivo: "10-12",
+            descanso_segundos: 90,
+            orden: 2,
+            notas: "Básico de pecho y empuje. Bajar controlado hasta la línea del pecho.",
+            ejercicio: { id: 2, nombre: "Press de Banca Plano con Mancuernas", grupo_muscular: "Pecho", equipo: "Mancuerna" }
+          },
+          {
+            id: 503,
+            ejercicio_id: 19,
+            series_objetivo: 3,
+            reps_objetivo: "10-12",
+            descanso_segundos: 90,
+            orden: 3,
+            notas: "Básico de espalda y tracción. Espalda recta y codo pegado al cuerpo.",
+            ejercicio: { id: 19, nombre: "Remo Unilateral con Mancuerna (Serrucho)", grupo_muscular: "Espalda", equipo: "Mancuerna" }
+          },
+          {
+            id: 504,
+            ejercicio_id: 26,
+            series_objetivo: 3,
+            reps_objetivo: "10-12",
+            descanso_segundos: 90,
+            orden: 4,
+            notas: "Básico de glúteo e isquios. Empujar con talones y bloquear 1s arriba.",
+            ejercicio: { id: 26, nombre: "Hip Thrust con Barra", grupo_muscular: "Glúteos", equipo: "Barra" }
+          },
+          {
+            id: 505,
+            ejercicio_id: 60,
+            series_objetivo: 3,
+            reps_objetivo: "10-12",
+            descanso_segundos: 60,
+            orden: 5,
+            notas: "Básico de hombros. Empuje vertical con abdomen firme.",
+            ejercicio: { id: 60, nombre: "Press Militar con Barra / Mancuernas", grupo_muscular: "Hombros", equipo: "Mancuerna" }
+          },
+          {
+            id: 506,
+            ejercicio_id: 84,
+            series_objetivo: 3,
+            reps_objetivo: "30-45s",
+            descanso_segundos: 60,
+            orden: 6,
+            notas: "Básico de core y estabilidad. Cuerpo en línea recta y abdomen apretado.",
+            ejercicio: { id: 84, nombre: "Plancha Abdominal", grupo_muscular: "Core", equipo: "Peso Corporal" }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 1000,
+    nombre: "Tu Rutina",
+    descripcion: "Tu espacio para crear y personalizar tu rutina. Agrega tus ejercicios preferidos, define tus series, repeticiones y días de entrenamiento a tu gusto.",
+    duracion_semanas: "4 semanas",
+    duracion_estimada_minutos: 50,
+    activa: true,
+    dias: [
+      {
+        id: 2020,
+        nombre: "Día 1: Mi Rutina Personalizada",
+        orden: 1,
+        ejercicios: [
+          {
+            id: 601,
+            ejercicio_id: 2,
+            series_objetivo: 3,
+            reps_objetivo: "8-12",
+            descanso_segundos: 90,
+            orden: 1,
+            notas: "Toca 'Editar' para cambiar este ejercicio o agregar los tuyos.",
+            ejercicio: { id: 2, nombre: "Press de Banca Plano con Mancuernas", grupo_muscular: "Pecho", equipo: "Mancuerna" }
+          },
+          {
+            id: 602,
+            ejercicio_id: 14,
+            series_objetivo: 3,
+            reps_objetivo: "8-12",
+            descanso_segundos: 90,
+            orden: 2,
+            notas: "Puedes modificar repeticiones, series y pesos objetivo.",
+            ejercicio: { id: 14, nombre: "Jalón al Pecho en Polea", grupo_muscular: "Espalda", equipo: "Polea" }
+          },
+          {
+            id: 603,
+            ejercicio_id: 26,
+            series_objetivo: 3,
+            reps_objetivo: "8-12",
+            descanso_segundos: 90,
+            orden: 3,
+            notas: "Arma tu rutina a medida con todos los ejercicios que quieras.",
+            ejercicio: { id: 26, nombre: "Hip Thrust con Barra", grupo_muscular: "Glúteos", equipo: "Barra" }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 1004,
+    nombre: "Rutina Progresiva",
+    descripcion: "Estructura avanzada con sobrecarga progresiva y esquema piramidal (12-10-8-6 reps). Aumenta el peso sesión a sesión para superar mesetas y ganar fuerza y masa muscular.",
+    duracion_semanas: "6 semanas",
+    duracion_estimada_minutos: 55,
+    activa: true,
+    dias: [
+      {
+        id: 2030,
+        nombre: "Día 1: Progresión Tren Superior (Fuerza & Hipertrofia)",
+        orden: 1,
+        ejercicios: [
+          {
+            id: 701,
+            ejercicio_id: 1,
+            series_objetivo: 4,
+            reps_objetivo: "12-10-8-6",
+            descanso_segundos: 120,
+            orden: 1,
+            notas: "Progresión piramidal: subir peso serie a serie a medida que bajan las reps.",
+            ejercicio: { id: 1, nombre: "Press de Banca Plano con Barra", grupo_muscular: "Pecho", equipo: "Barra" }
+          },
+          {
+            id: 702,
+            ejercicio_id: 18,
+            series_objetivo: 4,
+            reps_objetivo: "12-10-8-6",
+            descanso_segundos: 120,
+            orden: 2,
+            notas: "Sobrecarga progresiva: buscar +1 o 2 kg por semana con buena técnica.",
+            ejercicio: { id: 18, nombre: "Remo con Barra", grupo_muscular: "Espalda", equipo: "Barra" }
+          },
+          {
+            id: 703,
+            ejercicio_id: 60,
+            series_objetivo: 3,
+            reps_objetivo: "10-8-8",
+            descanso_segundos: 90,
+            orden: 3,
+            notas: "Progresión de carga: RPE 8-9 en las series finales.",
+            ejercicio: { id: 60, nombre: "Press Militar con Barra / Mancuernas", grupo_muscular: "Hombros", equipo: "Mancuerna" }
+          },
+          {
+            id: 704,
+            ejercicio_id: 14,
+            series_objetivo: 3,
+            reps_objetivo: "12-10-8",
+            descanso_segundos: 90,
+            orden: 4,
+            notas: "Progresión en polea: control excéntrico de 2 segundos.",
+            ejercicio: { id: 14, nombre: "Jalón al Pecho en Polea", grupo_muscular: "Espalda", equipo: "Polea" }
+          },
+          {
+            id: 705,
+            ejercicio_id: 131,
+            series_objetivo: 3,
+            reps_objetivo: "15-12-12",
+            descanso_segundos: 60,
+            orden: 5,
+            notas: "Salud escapular y hombro posterior. Pausa de 1s en contracción.",
+            ejercicio: { id: 131, nombre: "Face Pull en Polea con Cuerda (Pull Face)", grupo_muscular: "Hombros", equipo: "Polea" }
+          }
+        ]
+      },
+      {
+        id: 2031,
+        nombre: "Día 2: Progresión Tren Inferior & Glúteos",
+        orden: 2,
+        ejercicios: [
+          {
+            id: 706,
+            ejercicio_id: 26,
+            series_objetivo: 4,
+            reps_objetivo: "12-10-8-6",
+            descanso_segundos: 120,
+            orden: 1,
+            notas: "Progresión reina de glúteo: aumentar peso en cada serie con pausa arriba.",
+            ejercicio: { id: 26, nombre: "Hip Thrust con Barra", grupo_muscular: "Glúteos", equipo: "Barra" }
+          },
+          {
+            id: 707,
+            ejercicio_id: 48,
+            series_objetivo: 4,
+            reps_objetivo: "12-10-8-8",
+            descanso_segundos: 120,
+            orden: 2,
+            notas: "Progresión de piernas: foco en profundidad y control excéntrico.",
+            ejercicio: { id: 48, nombre: "Prensa de Piernas 45°", grupo_muscular: "Piernas", equipo: "Máquina" }
+          },
+          {
+            id: 708,
+            ejercicio_id: 52,
+            series_objetivo: 3,
+            reps_objetivo: "10-8-8",
+            descanso_segundos: 90,
+            orden: 3,
+            notas: "Sobrecarga en isquios y glúteos. Espalda recta y cadera atrás.",
+            ejercicio: { id: 52, nombre: "Peso Muerto Rumano con Barra (RDL)", grupo_muscular: "Piernas", equipo: "Barra" }
+          },
+          {
+            id: 709,
+            ejercicio_id: 33,
+            series_objetivo: 3,
+            reps_objetivo: "15-12-10",
+            descanso_segundos: 60,
+            orden: 4,
+            notas: "Aislamiento glúteo medio: serie final al fallo técnico.",
+            ejercicio: { id: 33, nombre: "Abducciones de Cadera en Máquina", grupo_muscular: "Glúteos", equipo: "Máquina" }
+          },
+          {
+            id: 710,
+            ejercicio_id: 84,
+            series_objetivo: 3,
+            reps_objetivo: "45-60s",
+            descanso_segundos: 60,
+            orden: 5,
+            notas: "Progresión de tiempo bajo tensión: sumar 5s cada semana.",
+            ejercicio: { id: 84, nombre: "Plancha Abdominal", grupo_muscular: "Core", equipo: "Peso Corporal" }
+          }
         ]
       }
     ]
@@ -547,7 +767,7 @@ export const api = {
   },
 
   // --- RUTINAS ---
-            getRutinas: async () => {
+  getRutinas: async () => {
     const deletedIds = getStored('deleted_rutina_ids', []);
     let localRutinas = getStored('rutinas', null);
 
@@ -555,6 +775,24 @@ export const api = {
       localRutinas = DEFAULT_RUTINAS;
       setStored('rutinas', localRutinas);
       return localRutinas.filter(r => !deletedIds.includes(r.id));
+    }
+
+    // Asegurarse de que las rutinas genéricas oficiales (Rutina Inicial, Tu Rutina, Rutina Progresiva)
+    // estén disponibles al inicio si el usuario no las ha borrado intencionalmente
+    const genericTargetIds = [1001, 1000, 1004];
+    const existingIds = new Set(localRutinas.map(r => r.id));
+    const existingNames = new Set(localRutinas.map(r => (r.nombre || '').trim().toLowerCase()));
+
+    const missingGenerics = DEFAULT_RUTINAS.filter(defR => 
+      genericTargetIds.includes(defR.id) &&
+      !existingIds.has(defR.id) && 
+      !existingNames.has((defR.nombre || '').trim().toLowerCase()) &&
+      !deletedIds.includes(defR.id)
+    );
+
+    if (missingGenerics.length > 0) {
+      localRutinas = [...missingGenerics, ...localRutinas];
+      setStored('rutinas', localRutinas);
     }
 
     // Devolver las rutinas locales tal cual las guardó o editó el usuario
